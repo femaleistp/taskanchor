@@ -13,3 +13,6 @@ Week 3 deliverable: Software Requirements Specification (SRS) document included 
 - Angular
 - SQL Server
 - Entity Framework Core
+
+## Design Diagrams
+- UML Class Diagram: /docs/class-diagram.pdf
