@@ -1,7 +1,6 @@
 ﻿using TaskAnchor.API.Services;
 using TaskStatus = TaskAnchor.API.Models.TaskStatus;
 using PriorityLevel = TaskAnchor.API.Models.PriorityLevel;
-using Microsoft.VisualBasic;
 
 namespace TaskAnchor.Tests
 {
@@ -31,7 +30,13 @@ namespace TaskAnchor.Tests
             var tasks = new List<SortableTaskTestItem> { dueTodayTask, overdueTask };
 
             // Act 
-            var result = TaskSortRules.SortTasks(tasks, today).ToList();
+            var result = TaskSortRules.SortTasks(
+                tasks, 
+                t => t.Status,
+                t => t.DueDate,
+                t => t.PriorityLevel,
+                today
+            ).ToList();
 
             // Assert 
             Assert.Equal("Overdue Task", result[0].Title);
@@ -59,10 +64,16 @@ namespace TaskAnchor.Tests
             };
             var tasks = new List<SortableTaskTestItem> { laterDueTask, earlierDueTask };
             // Act 
-            var result = TaskSortRules.SortTasks(tasks, today).ToList();
+            var result = TaskSortRules.SortTasks(
+                tasks,
+                t => t.Status,
+                t => t.DueDate,
+                t => t.PriorityLevel,
+                today
+            ).ToList();
             // Assert
             Assert.Equal("Earlier Due Task", result[0].Title);
-            Assert.Equal("Later Due Tasks", result[1].Title);
+            Assert.Equal("Later Due Task", result[1].Title);
         }
 
         [Fact]
@@ -86,7 +97,7 @@ namespace TaskAnchor.Tests
             };
             var mediumPriorityTask = new SortableTaskTestItem
             {
-                Title = "Mediium Priority Task",
+                Title = "Medium Priority Task",
                 Status = TaskStatus.Active,
                 DueDate = null,
                 PriorityLevel = PriorityLevel.Medium
@@ -98,11 +109,17 @@ namespace TaskAnchor.Tests
                 mediumPriorityTask
             };
             // Act
-            var result = TaskSortRules.SortTasks(tasks, today).ToList();
+            var result = TaskSortRules.SortTasks(
+                tasks,
+                t => t.Status,
+                t => t.DueDate,
+                t => t.PriorityLevel,
+                today
+            ).ToList();
             // Assert
             Assert.Equal("High Priority Task", result[0].Title);
             Assert.Equal("Medium Priority Task", result[1].Title);
-            Assert.Equal("High Priority Task", result[2].Title);
+            Assert.Equal("Low Priority Task", result[2].Title);
         }
 
         [Fact]
@@ -126,7 +143,13 @@ namespace TaskAnchor.Tests
             };
             var tasks = new List<SortableTaskTestItem> { noDueDateTask, dueDateTask };
             // Act
-            var result = TaskSortRules.SortTasks(tasks, today).ToList();
+            var result = TaskSortRules.SortTasks(
+                tasks,
+                t => t.Status,
+                t => t.DueDate,
+                t => t.PriorityLevel,
+                today
+            ).ToList();
             // Assert
             Assert.Equal("Due Date Task", result[0].Title);
             Assert.Equal("No Due Date Task", result[1].Title);
@@ -165,7 +188,13 @@ namespace TaskAnchor.Tests
                 moreOverdueTask
             };
             // Act 
-            var result = TaskSortRules.SortTasks(tasks, today).ToList();
+            var result = TaskSortRules.SortTasks(
+                tasks,
+                t => t.Status,
+                t => t.DueDate,
+                t => t.PriorityLevel,
+                today
+            ).ToList();
             // Assert
             Assert.Equal("More Overdue Task", result[0].Title);
             Assert.Equal("Less Overdue Task", result[1].Title);
@@ -224,7 +253,13 @@ namespace TaskAnchor.Tests
                 task1, task2, task3, task4, task5, task6
             };
             // Act
-            var result = TaskSortRules.SortTasks(tasks, today).ToList();
+            var result = TaskSortRules.SortTasks(
+                tasks,
+                t => t.Status,
+                t => t.DueDate,
+                t => t.PriorityLevel,
+                today
+            ).ToList();
             // Assert
             Assert.Equal("Overdue Three Days", result[0].Title);
             Assert.Equal("Overdue Yesterday", result[1].Title);
