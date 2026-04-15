@@ -64,6 +64,23 @@ namespace TaskAnchor.API.Controllers
             return NoContent();
         }
 
+        [HttpPut("{id}/status")]
+        public IActionResult UpdateTaskStatus(int id, [FromBody] UpdateTaskStatusRequest request)
+        {
+            var existingTask = _context.Tasks.FirstOrDefault(t => t.TaskId == id);
+            if (existingTask == null)
+            {
+                return NotFound();
+            }
+            var updated = TaskItemStatusService.UpdateStatus(existingTask, request.NewStatus);
+            if (!updated)
+            {
+                return BadRequest("Invalid status transition.");
+            }
+            _context.SaveChanges();
+            return NoContent();
+        }
+
         [HttpDelete("{id}")]
         public IActionResult DeleteTask(int id)
         {
