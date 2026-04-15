@@ -47,11 +47,11 @@ namespace TaskAnchor.API.Migrations
 
             modelBuilder.Entity("TaskAnchor.API.Models.TaskItem", b =>
                 {
-                    b.Property<int>("TaskItemId")
+                    b.Property<int>("TaskId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("TaskItemId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("TaskId"));
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
@@ -78,7 +78,7 @@ namespace TaskAnchor.API.Migrations
                     b.Property<int>("UserId")
                         .HasColumnType("int");
 
-                    b.HasKey("TaskItemId");
+                    b.HasKey("TaskId");
 
                     b.ToTable("Tasks");
                 });

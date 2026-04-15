@@ -30,7 +30,7 @@ namespace TaskAnchor.API.Migrations
                 name: "Tasks",
                 columns: table => new
                 {
-                    TaskItemId = table.Column<int>(type: "int", nullable: false)
+                    TaskId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     UserId = table.Column<int>(type: "int", nullable: false),
                     Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
@@ -43,7 +43,7 @@ namespace TaskAnchor.API.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Tasks", x => x.TaskItemId);
+                    table.PrimaryKey("PK_Tasks", x => x.TaskId);
                 });
         }
 
