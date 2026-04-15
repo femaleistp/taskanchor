@@ -44,5 +44,37 @@ namespace TaskAnchor.API.Controllers
             );
             return Ok(sortedTasks);
         }
+
+        [HttpPut("{id}")]
+        public IActionResult UpdateTask(int id, [FromBody] TaskItem updatedTask)
+        {
+            var existingTask = _context.Tasks.FirstOrDefault(t => t.TaskId == id);
+            if (existingTask == null)
+            {
+                return NotFound();
+            }
+            existingTask.Title = updatedTask.Title;
+            existingTask.Description = updatedTask.Description;
+            existingTask.PriorityLevel = updatedTask.PriorityLevel;
+            existingTask.DueDate = updatedTask.DueDate;
+            existingTask.NextAction = updatedTask.NextAction;
+            existingTask.LastUpdatedDate = TaskTimestampRules.GetUpdatedTimestamp();
+
+            _context.SaveChanges();
+            return NoContent();
+        }
+
+        [HttpDelete("{id}")]
+        public IActionResult DeleteTask(int id)
+        {
+            var existingTask = _context.Tasks.FirstOrDefault(t => t.TaskId == id);
+            if(existingTask == null)
+            {
+                return NotFound();
+            }
+            _context.Tasks.Remove(existingTask);
+            _context.SaveChanges();
+            return NoContent();
+        }
     }
 }
