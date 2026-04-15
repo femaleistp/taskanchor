@@ -30,5 +30,19 @@ namespace TaskAnchor.API.Controllers
 
             return CreatedAtAction(nameof(CreateTask), new { id = task.TaskId }, task);
         }
+
+        [HttpGet]
+        public IActionResult GetTasks()
+        {
+            var tasks = _context.Tasks.ToList();
+            var sortedTasks = TaskSortRules.SortTasks(
+                tasks,
+                t => t.Status,
+                t => t.DueDate,
+                t => t.PriorityLevel,
+                DateTime.UtcNow
+            );
+            return Ok(sortedTasks);
+        }
     }
 }
