@@ -42,5 +42,23 @@ namespace TaskAnchor.Tests
             Assert.Equal(TaskStatus.Completed, task.Status);
             Assert.Equal(originalTimestamp, task.LastUpdatedDate);
         }
+
+        [Fact]
+        public void InProgress_To_Completed_Updates_Status_And_LastUpdatedDate()
+        {
+            // Arrange
+            var task = new TaskItem
+            {
+                Status = TaskStatus.InProgress,
+                LastUpdatedDate = DateTime.UtcNow.AddDays(-1)
+            };
+            var newStatus = TaskStatus.Completed;
+            // Act
+            var result = TaskItemStatusService.UpdateStatus(task, newStatus);
+            // Assert
+            Assert.True(result);
+            Assert.Equal(TaskStatus.Completed, task.Status);
+            Assert.True(task.LastUpdatedDate > DateTime.UtcNow.AddMinutes(-1));
+        }
     }
 }
