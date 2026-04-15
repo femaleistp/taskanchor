@@ -1,8 +1,11 @@
-﻿namespace TaskAnchor.API.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace TaskAnchor.API.Models
 {
     public class TaskItem
     {
-        public int TaskId { get; set; }
+        [Key]
+        public int TaskItemId { get; set; }
 
         public int UserId { get; set; }
 
