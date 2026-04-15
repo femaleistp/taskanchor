@@ -12,7 +12,11 @@ namespace TaskAnchor.API.Services
             Func<T, PriorityLevel> getPriority,
             DateTime today)
         {
-            throw new NotImplementedException();
+            return tasks 
+                .OrderByDescending(t => OverdueRules.IsOverdue(getStatus(t), getDueDate(t), today)) // Overdue first
+                .ThenBy(t => getDueDate(t) == null) // Tasks with due dates first
+                .ThenBy(t => getDueDate(t)) // Earlier due dates first
+                .ThenByDescending(t => getPriority(t)); // Higher priority first
         }
     }
 }
