@@ -34,7 +34,9 @@ namespace TaskAnchor.API.Controllers
         [HttpGet]
         public IActionResult GetTasks()
         {
-            var tasks = _context.Tasks.ToList();
+            var tasks = _context.Tasks
+                .Where(t => t.Status != TaskStatus.Completed)
+                .ToList();
             var sortedTasks = TaskSortRules.SortTasks(
                 tasks,
                 t => t.Status,
