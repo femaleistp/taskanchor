@@ -31,7 +31,9 @@ namespace TaskAnchor.API.Controllers
             return CreatedAtAction(nameof(CreateTask), new { id = task.TaskId }, task);
         }
 
-        [HttpGet]
+        //GET returns only Active + InProgress tasks
+        //Completed tasks are excluded
+                [HttpGet]
         public IActionResult GetTasks()
         {
             var tasks = _context.Tasks
@@ -65,7 +67,7 @@ namespace TaskAnchor.API.Controllers
             _context.SaveChanges();
             return NoContent();
         }
-
+        // PUT /api/tasks/{id}/status
         [HttpPut("{id}/status")]
         public IActionResult UpdateTaskStatus(int id, [FromBody] UpdateTaskStatusRequest request)
         {
