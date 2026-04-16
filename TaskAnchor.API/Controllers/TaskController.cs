@@ -23,6 +23,7 @@ namespace TaskAnchor.API.Controllers
         public IActionResult CreateTask([FromBody] TaskItem task)
         {
             // Logic to create a new task
+            task.UserId = 1; // Temporary hardcoded user ID for testing purposes
             task.Status = TaskStatus.Active;
             task.LastUpdatedDate = TaskTimestampRules.GetUpdatedTimestamp();
 
@@ -35,8 +36,8 @@ namespace TaskAnchor.API.Controllers
         [HttpPost("{id}/progress")]
         public IActionResult CreateProgressLogEntry(int id, [FromBody] CreateProgressLogEntryRequest request)
         {
-            var existingTask = _context.Tasks.FirstOrDefault(t => t.TaskId == id);
-            if(existingTask == null)
+            var existingTask = _context.Tasks.FirstOrDefault(t => t.TaskId == id && t.UserId == 1); // Temporary hardcoded user ID for testing purposes, should be t.TaskId == id in production
+            if (existingTask == null)
             {
                 return NotFound();
             }
@@ -63,7 +64,7 @@ namespace TaskAnchor.API.Controllers
         public IActionResult GetTasks()
         {
             var tasks = _context.Tasks
-                .Where(t => t.Status != TaskStatus.Completed)
+                .Where(t => t.UserId == 1 && t.Status != TaskStatus.Completed) // Temporary hardcoded user ID for testing purposes, exclude completed tasks
                 .ToList();
             var sortedTasks = TaskSortRules.SortTasks(
                 tasks,
@@ -78,7 +79,7 @@ namespace TaskAnchor.API.Controllers
         [HttpGet("{id}/progress")]
         public IActionResult GetProgressLogEntries(int id)
         {
-            var existingTask = _context.Tasks.FirstOrDefault(t => t.TaskId == id);
+            var existingTask = _context.Tasks.FirstOrDefault(t => t.TaskId == id && t.UserId == 1); // Temporary hardcoded user ID for testing purposes, should be t.TaskId == id in production
             if (existingTask == null)
             {
                 return NotFound();
@@ -93,7 +94,7 @@ namespace TaskAnchor.API.Controllers
         [HttpPut("{id}")]
         public IActionResult UpdateTask(int id, [FromBody] TaskItem updatedTask)
         {
-            var existingTask = _context.Tasks.FirstOrDefault(t => t.TaskId == id);
+            var existingTask = _context.Tasks.FirstOrDefault(t => t.TaskId == id && t.UserId == 1); // Temporary hardcoded user ID for testing purposes, should be t.TaskId == id in production
             if (existingTask == null)
             {
                 return NotFound();
@@ -112,7 +113,7 @@ namespace TaskAnchor.API.Controllers
         [HttpPut("{id}/status")]
         public IActionResult UpdateTaskStatus(int id, [FromBody] UpdateTaskStatusRequest request)
         {
-            var existingTask = _context.Tasks.FirstOrDefault(t => t.TaskId == id);
+            var existingTask = _context.Tasks.FirstOrDefault(t => t.TaskId == id && t.UserId == 1);  // Temporary hardcoded user ID for testing purposes, should be t.TaskId == id in production
             if (existingTask == null)
             {
                 return NotFound();
@@ -129,8 +130,8 @@ namespace TaskAnchor.API.Controllers
         [HttpDelete("{id}")]
         public IActionResult DeleteTask(int id)
         {
-            var existingTask = _context.Tasks.FirstOrDefault(t => t.TaskId == id);
-            if(existingTask == null)
+            var existingTask = _context.Tasks.FirstOrDefault(t => t.TaskId == id && t.UserId == 1); // Temporary hardcoded user ID for testing purposes, should be t.TaskId == id in production
+            if (existingTask == null)
             {
                 return NotFound();
             }
