@@ -7,7 +7,7 @@ The system ensures that tasks remain visible and actionable until they are compl
 
 ## Tech Stack
 - ASP.NET Core API
-- Angular
+- Angular (planned)
 - SQL Server
 - Entity Framework Core
 
@@ -20,15 +20,80 @@ The system ensures that tasks remain visible and actionable until they are compl
 - TaskAnchor_Use_Case_Diagram.pdf
 
 /TaskAnchor.API
-- ASP.NET Core backend
+- Controllers/
+  - TasksController.cs
+- Data/
+  - TaskAnchorDbContext.cs
+- Models/
+  - TaskItem.cs
+  - ProgressLogEntry.cs
+  - UpdateTaskStatusRequest.cs
+- Services/
+  - TaskRules.cs
+  - OverdueRules.cs
+  - TaskSortRules.cs
+  - TaskItemStatusService.cs
+  - TaskTimestampRules.cs
+- Migrations/
+  - InitialCreate.cs
+  - TaskAnchorDbContextModelSnapshot.cs
+- Program.cs
+- appsettings.json
+
+/TaskAnchor.Tests
+- TaskRulesTests.cs
+- OverdueRulesTests.cs
+- TaskSortRulesTests.cs
+- TaskItemStatusTests.cs
 
 ## Current Status
 
-Planning phase complete:
-- SRS updated
-- Class diagram created
-- Use case diagram created
-- Test planning document created
+Backend implementation in progress.
 
-Next step:
-- Begin backend implementation (Task API endpoints)
+### Implemented
+- Core domain models:
+  - TaskItem
+  - ProgressLogEntry
+- Enums:
+  - TaskStatus (Active, InProgress, Completed)
+  - PriorityLevel (Low, Medium, High)
+- Business rules:
+  - TaskRules (status transitions)
+  - OverdueRules (derived overdue logic)
+  - TaskSortRules (sorting behavior)
+  - TaskItemStatusService (controlled status updates)
+  - TaskTimestampRules (LastUpdatedDate handling)
+- Persistence:
+  - Entity Framework Core DbContext
+  - Initial migration and database schema
+- API Endpoints:
+  - POST /api/tasks (create task, defaults to Active)
+  - GET /api/tasks (returns Active + InProgress only, excludes Completed)
+  - PUT /api/tasks/{id} (update task details)
+  - PUT /api/tasks/{id}/status (update status with validation)
+  - DELETE /api/tasks/{id} (delete task)
+
+### Behavior
+- Tasks remain visible until marked Completed
+- Completed tasks are excluded from the main task list
+- Status transitions are validated through defined rules
+- LastUpdatedDate is updated on create, edit, and status change
+- Tasks are sorted by:
+  1. Overdue
+  2. Due date (earliest first)
+  3. Priority (High to Low for tasks without due dates)
+
+### Test Coverage
+- TaskRules tests (status transitions)
+- OverdueRules tests (overdue determination)
+- TaskSortRules tests (sorting behavior)
+- TaskItemStatusService tests (status updates)
+
+## Next Steps
+- Implement Progress Log endpoints:
+  - POST /api/tasks/{id}/progress
+  - GET /api/tasks/{id}/progress
+
+## Notes
+- This project follows a strict MVP scope focused on single-user task management.
+- Advanced features such as notifications, tagging, and multi-user support are intentionally out of scope.
