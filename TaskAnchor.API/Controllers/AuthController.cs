@@ -38,5 +38,21 @@ namespace TaskAnchor.API.Controllers
             _context.SaveChanges();
             return Ok("User registered successfully.");
         }
+
+        [HttpPost("login")]
+        public IActionResult Login([FromBody] LoginRequest request)
+        {
+            var user = _context.AppUsers.FirstOrDefault(u => u.Email == request.Email);
+            if(user == null)
+            {
+                return Unauthorized("Invalid email or password.");
+            }
+            var hashedPassword = PasswordHasherService.HashPassword(request.Password);
+            if(user.PasswordHash != hashedPassword)
+            {
+                return Unauthorized("Invalid email or password.");
+            }
+            return Ok("Login successful.");
+        }
     }
 }
