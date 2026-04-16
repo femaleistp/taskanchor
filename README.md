@@ -22,20 +22,27 @@ The system ensures that tasks remain visible and actionable until they are compl
 /TaskAnchor.API
 - Controllers/
   - TasksController.cs
+  - AuthController.cs
 - Data/
   - TaskAnchorDbContext.cs
 - Models/
   - TaskItem.cs
   - ProgressLogEntry.cs
+  - AppUser.cs
+  - RegisterRequest.cs
+  - LoginRequest.cs
   - UpdateTaskStatusRequest.cs
+  - CreateProgressLogEntryRequest.cs
 - Services/
   - TaskRules.cs
   - OverdueRules.cs
   - TaskSortRules.cs
   - TaskItemStatusService.cs
   - TaskTimestampRules.cs
+  - PasswordHasherService.cs
 - Migrations/
   - InitialCreate.cs
+  - AddUsers.cs
   - TaskAnchorDbContextModelSnapshot.cs
 - Program.cs
 - appsettings.json
@@ -45,55 +52,113 @@ The system ensures that tasks remain visible and actionable until they are compl
 - OverdueRulesTests.cs
 - TaskSortRulesTests.cs
 - TaskItemStatusTests.cs
+- ProgressLogTests.cs
 
 ## Current Status
 
-Backend implementation in progress.
+Backend MVP implementation complete.
 
 ### Implemented
-- Core domain models:
-  - TaskItem
-  - ProgressLogEntry
-- Enums:
-  - TaskStatus (Active, InProgress, Completed)
-  - PriorityLevel (Low, Medium, High)
-- Business rules:
-  - TaskRules (status transitions)
-  - OverdueRules (derived overdue logic)
-  - TaskSortRules (sorting behavior)
-  - TaskItemStatusService (controlled status updates)
-  - TaskTimestampRules (LastUpdatedDate handling)
-- Persistence:
-  - Entity Framework Core DbContext
-  - Initial migration and database schema
-- API Endpoints:
-  - POST /api/tasks (create task, defaults to Active)
-  - GET /api/tasks (returns Active + InProgress only, excludes Completed)
-  - PUT /api/tasks/{id} (update task details)
-  - PUT /api/tasks/{id}/status (update status with validation)
-  - DELETE /api/tasks/{id} (delete task)
+
+#### Authentication
+- POST /api/auth/register
+- POST /api/auth/login
+- Password hashing using SHA256
+- Basic authentication only (no token/session enforcement yet)
+
+#### Task Management
+- POST /api/tasks (create task)
+- GET /api/tasks (returns Active + InProgress only)
+- PUT /api/tasks/{id} (update task details)
+- PUT /api/tasks/{id}/status (validated status transitions)
+- DELETE /api/tasks/{id} (delete task)
+
+#### Progress Log
+- POST /api/tasks/{id}/progress (add entry)
+- GET /api/tasks/{id}/progress (view entries)
+
+#### Core Domain Models
+- TaskItem
+- ProgressLogEntry
+- AppUser
+
+#### Enums
+- TaskStatus (Active, InProgress, Completed)
+- PriorityLevel (Low, Medium, High)
+
+#### Business Rules
+- TaskRules (status transitions)
+- OverdueRules (derived overdue logic)
+- TaskSortRules (sorting behavior)
+- TaskItemStatusService (controlled status updates)
+- TaskTimestampRules (LastUpdatedDate handling)
+
+#### Persistence
+- Entity Framework Core DbContext
+- SQL Server database
+- Migrations:
+  - InitialCreate
+  - AddUsers
 
 ### Behavior
+
 - Tasks remain visible until marked Completed
 - Completed tasks are excluded from the main task list
 - Status transitions are validated through defined rules
-- LastUpdatedDate is updated on create, edit, and status change
+- LastUpdatedDate is updated on:
+  - create
+  - edit
+  - status change
+  - Progress Log entry
 - Tasks are sorted by:
   1. Overdue
   2. Due date (earliest first)
   3. Priority (High to Low for tasks without due dates)
 
+### User Scoping (MVP)
+
+- Tasks are associated with a UserId
+- Current implementation uses a temporary single-user approach (`UserId = 1`)
+- Full authentication enforcement is not yet implemented
+
 ### Test Coverage
+
 - TaskRules tests (status transitions)
 - OverdueRules tests (overdue determination)
 - TaskSortRules tests (sorting behavior)
 - TaskItemStatusService tests (status updates)
+- ProgressLog tests:
+  - creation
+  - ordering
+  - LastUpdatedDate updates
 
 ## Next Steps
-- Implement Progress Log endpoints:
-  - POST /api/tasks/{id}/progress
-  - GET /api/tasks/{id}/progress
+
+- Build Angular frontend:
+  - Register + Login UI
+  - Task list view
+  - Task create/edit form
+  - Progress Log UI
 
 ## Notes
+
 - This project follows a strict MVP scope focused on single-user task management.
 - Advanced features such as notifications, tagging, and multi-user support are intentionally out of scope.
+- Authentication is intentionally minimal for MVP and will be expanded in future iterations.
+
+## Changelog
+
+v1.2 (04/16/2026)
+- Added authentication endpoints (register and login)
+- Implemented Progress Log create and retrieval endpoints
+- Added status update endpoint to API
+- Introduced AppUser model and Users table
+- Added password hashing service
+- Implemented user-scoped task filtering (MVP single-user approach)
+- Added ProgressLog tests
+- Updated README to reflect completed backend MVP
+
+v1.1
+- Initial backend structure
+- Core task management features
+- Sorting, overdue logic, and status rules implemented
