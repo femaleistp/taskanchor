@@ -11,5 +11,6 @@ namespace TaskAnchor.API.Data
         }
         public DbSet<TaskItem> Tasks { get; set; }
         public DbSet<ProgressLogEntry> ProgressLogEntries { get; set; }
+        public DbSet<AppUser> AppUsers { get; set; }
     }
 }

@@ -53,7 +53,7 @@ namespace TaskAnchor.API.Controllers
             _context.ProgressLogEntries.Add(progressLogEntry);
             existingTask.LastUpdatedDate = TaskTimestampRules.GetUpdatedTimestamp();
             _context.SaveChanges();
-            return CreatedAtAction("", progressLogEntry);
+            return Created("", progressLogEntry);
         }
 
 
