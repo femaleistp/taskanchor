@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using System.Numerics;
 using TaskAnchor.API.Data;
 using TaskAnchor.API.Models;
 using TaskAnchor.API.Services;
@@ -54,10 +53,7 @@ namespace TaskAnchor.API.Controllers
             _context.ProgressLogEntries.Add(progressLogEntry);
             existingTask.LastUpdatedDate = TaskTimestampRules.GetUpdatedTimestamp();
             _context.SaveChanges();
-            return CreatedAtAction(
-                nameof(CreateProgressLogEntry), 
-                new { id = progressLogEntry.ProgressLogEntryId }, 
-                progressLogEntry);
+            return CreatedAtAction("", progressLogEntry);
         }
 
 
