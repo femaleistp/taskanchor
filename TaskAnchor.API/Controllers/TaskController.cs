@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System.Numerics;
 using TaskAnchor.API.Data;
 using TaskAnchor.API.Models;
 using TaskAnchor.API.Services;
 using TaskStatus = TaskAnchor.API.Models.TaskStatus;
+
 
 namespace TaskAnchor.API.Controllers
 {
@@ -31,9 +33,37 @@ namespace TaskAnchor.API.Controllers
             return CreatedAtAction(nameof(CreateTask), new { id = task.TaskId }, task);
         }
 
+        [HttpPost("{id}/progress")]
+        public IActionResult CreateProgressLogEntry(int id, [FromBody] CreateProgressLogEntryRequest request)
+        {
+            var existingTask = _context.Tasks.FirstOrDefault(t => t.TaskId == id);
+            if(existingTask == null)
+            {
+                return NotFound();
+            }
+            if(string.IsNullOrWhiteSpace(request.EntryText))
+            {
+                return BadRequest("EntryText is required.");
+            }
+            var progressLogEntry = new ProgressLogEntry
+            {
+                TaskId = id,
+                EntryText = request.EntryText.Trim(),
+                CreatedDate = TaskTimestampRules.GetUpdatedTimestamp()
+            };
+            _context.ProgressLogEntries.Add(progressLogEntry);
+            existingTask.LastUpdatedDate = TaskTimestampRules.GetUpdatedTimestamp();
+            _context.SaveChanges();
+            return CreatedAtAction(
+                nameof(CreateProgressLogEntry), 
+                new { id = progressLogEntry.ProgressLogEntryId }, 
+                progressLogEntry);
+        }
+
+
         //GET returns only Active + InProgress tasks
         //Completed tasks are excluded
-                [HttpGet]
+        [HttpGet]
         public IActionResult GetTasks()
         {
             var tasks = _context.Tasks
@@ -47,6 +77,21 @@ namespace TaskAnchor.API.Controllers
                 DateTime.UtcNow
             );
             return Ok(sortedTasks);
+        }
+
+        [HttpGet("{id}/progress")]
+        public IActionResult GetProgressLogEntries(int id)
+        {
+            var existingTask = _context.Tasks.FirstOrDefault(t => t.TaskId == id);
+            if (existingTask == null)
+            {
+                return NotFound();
+            }
+            var entries = _context.ProgressLogEntries
+                .Where(e => e.TaskId == id)
+                .OrderByDescending(e => e.CreatedDate)
+                .ToList();
+            return Ok(entries);
         }
 
         [HttpPut("{id}")]
