@@ -7,7 +7,14 @@ import { Component } from '@angular/core';
 })
 
 export class RegisterComponent {
-  onSubmit(): void {
+  email: string = '';
+  password: string = '';
 
+  onSubmit(): void {
+    const emailInput = document.querySelector('input[name="email"]') as HTMLInputElement;
+    const passwordInput = document.querySelector('input[name="password"]') as HTMLInputElement;
+
+    this.email = emailInput.value;
+    this.password = passwordInput.value;
   }
 }
