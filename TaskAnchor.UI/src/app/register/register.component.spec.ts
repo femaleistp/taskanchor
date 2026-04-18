@@ -64,4 +64,10 @@ describe('RegisterComponent', () => {
     const emailInput = compiled.querySelector('input[type="email"]');
     expect(emailInput?.getAttribute('name')).toBe('email');
   });
+
+  it('should render a password input with name attribute', () => {
+    const compiled = fixture.nativeElement as HTMLElement;
+    const passwordInput = compiled.querySelector('input[type="password"]');
+    expect(passwordInput?.getAttribute('name')).toBe('password');
+  });
 });
