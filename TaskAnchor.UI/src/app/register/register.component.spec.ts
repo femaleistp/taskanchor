@@ -49,4 +49,13 @@ describe('RegisterComponent', () => {
     const form = compiled.querySelector('form');
     expect(form).not.toBeNull();
   });
+
+  it('should call onSubmit when form is submitted', () => {
+    spyOn(component, 'onSubmit');
+
+    const form = fixture.nativeElement.querySelector('form');
+    form.dispatchEvent(new Event('submit'));
+
+    expect(component.onSubmit).toHaveBeenCalled();
+  })
 });
