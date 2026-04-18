@@ -24,11 +24,17 @@ describe('RegisterComponent', () => {
   it('should render a Register heading', () => {
     const compiled = fixture.nativeElement as HTMLElement;
     expect(compiled.textContent).toContain('Register');
-  })
+  });
 
   it('should render an email input', () => {
     const compiled = fixture.nativeElement as HTMLElement;
     const emailInput = compiled.querySelector('input[type="email"]');
     expect(emailInput).not.toBeNull();
+  });
+
+  it('should render a password input', () => {
+    const compiled = fixture.nativeElement as HTMLElement;
+    const passwordInput = compiled.querySelector('input[type="password"]');
+    expect(passwordInput).not.toBeNull();
   })
 });
