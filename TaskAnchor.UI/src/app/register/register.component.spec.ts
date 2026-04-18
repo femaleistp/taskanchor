@@ -36,5 +36,11 @@ describe('RegisterComponent', () => {
     const compiled = fixture.nativeElement as HTMLElement;
     const passwordInput = compiled.querySelector('input[type="password"]');
     expect(passwordInput).not.toBeNull();
+  });
+
+  it('should render a submit button', () => {
+    const compiled = fixture.nativeElement as HTMLElement;
+    const button = compiled.querySelector('button[type="submit"]');
+    expect(button).not.toBeNull();
   })
 });
