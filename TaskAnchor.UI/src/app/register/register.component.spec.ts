@@ -42,5 +42,11 @@ describe('RegisterComponent', () => {
     const compiled = fixture.nativeElement as HTMLElement;
     const button = compiled.querySelector('button[type="submit"]');
     expect(button).not.toBeNull();
-  })
+  });
+
+  it('should render a form element', () => {
+    const compiled = fixture.nativeElement as HTMLElement;
+    const form = compiled.querySelector('form');
+    expect(form).not.toBeNull();
+  });
 });
