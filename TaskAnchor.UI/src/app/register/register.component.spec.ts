@@ -57,5 +57,11 @@ describe('RegisterComponent', () => {
     form.dispatchEvent(new Event('submit'));
 
     expect(component.onSubmit).toHaveBeenCalled();
-  })
+  });
+
+  it('should render an email input with name attribute', () => {
+    const compiled = fixture.nativeElement as HTMLElement;
+    const emailInput = compiled.querySelector('input[type="email"]');
+    expect(emailInput?.getAttribute('name')).toBe('email');
+  });
 });
