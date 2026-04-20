@@ -1,6 +1,8 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { RegisterComponent } from './register.component';
+import { AuthService } from '../services/auth.service';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 
 describe('RegisterComponent', () => {
   let component: RegisterComponent;
@@ -8,7 +10,8 @@ describe('RegisterComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [RegisterComponent]
+      declarations: [RegisterComponent],
+      imports: [HttpClientTestingModule]
     })
     .compileComponents();
     
@@ -87,6 +90,24 @@ describe('RegisterComponent', () => {
 
     expect(component.email).toBe('test@example.com');
     expect(component.password).toBe('password123');
-
   });
+
+  it('should call AuthService.register on submit', () => {
+    const authService = TestBed.inject(AuthService);
+    spyOn(authService, 'register').and.returnValue({ subscribe: () => { } } as any);
+
+    const compiled = fixture.nativeElement as HTMLElement;
+
+    const emailInput = compiled.querySelector('input[name="email"]') as HTMLInputElement;
+    const passwordInput = compiled.querySelector('input[name="password"]') as HTMLInputElement;
+
+    emailInput.value = 'test@example.com';
+    passwordInput.value = 'password123';
+
+    const form = compiled.querySelector('form');
+    form?.dispatchEvent(new Event('submit'));
+
+    expect(authService.register).toHaveBeenCalledWith('test@example.com', 'password123');
+
+  })
 });
