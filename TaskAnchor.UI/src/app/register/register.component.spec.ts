@@ -71,7 +71,7 @@ describe('RegisterComponent', () => {
     expect(passwordInput?.getAttribute('name')).toBe('password');
   });
 
-  it('should read email and password values on submit'), () => {
+  it('should read email and password values on submit', () => {
     const compiled = fixture.nativeElement as HTMLElement;
 
     const emailInput = compiled.querySelector('input[name="email"]') as HTMLInputElement;
@@ -88,5 +88,5 @@ describe('RegisterComponent', () => {
     expect(component.email).toBe('test@example.com');
     expect(component.password).toBe('password123');
 
-  }
+  });
 });
