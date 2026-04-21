@@ -37,4 +37,18 @@ describe('AuthService', () => {
 
     req.flush({});
   });
+
+  it('should POST to /api/auth/login with email and password', () => {
+    service.login('test@example.com', 'password123').subscribe();
+
+    const req = httpTestingController.expectOne('/api/auth/login');
+
+    expect(req.request.method).toBe('POST');
+    expect(req.request.body).toEqual({
+      email: 'test@example.com',
+      password: 'password123'
+    });
+
+    req.flush({});
+  });
 });
