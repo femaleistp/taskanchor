@@ -30,10 +30,10 @@ describe('AppComponent', () => {
     expect(app.title).toEqual('TaskAnchor.UI');
   });
 
-  it('should render RegisterComponent', () => {
+  it('should render a router outlet', () => {
     const fixture = TestBed.createComponent(AppComponent);
     fixture.detectChanges();
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.textContent).toContain('Register');
+    expect(compiled.innerHTML).toContain('router-outlet');
   });
 });

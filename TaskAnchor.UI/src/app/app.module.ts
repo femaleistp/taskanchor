@@ -6,12 +6,14 @@ import { AppComponent } from './app.component';
 import { RegisterComponent } from './register/register.component';
 import { LoginComponent } from './login/login.component';
 import { HttpClientModule } from '@angular/common/http';
+import { TaskListComponent } from './task-list/task-list.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     RegisterComponent,
-    LoginComponent
+    LoginComponent,
+    TaskListComponent
   ],
   imports: [
     BrowserModule,
