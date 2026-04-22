@@ -4,7 +4,7 @@ import { TaskService } from '../services/task.service';
 @Component({
   selector: 'app-task-list',
   templateUrl: './task-list.component.html',
-  styleUrl: './task-list.component.css'
+  styleUrls: ['./task-list.component.css']
 })
 export class TaskListComponent implements OnInit {
   tasks: any[] = [];

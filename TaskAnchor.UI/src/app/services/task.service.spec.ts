@@ -32,4 +32,14 @@ describe('TaskService', () => {
     req.flush([]);
   });
 
+  it('should POST to /api/tasks when creating a task', () => {
+    service.createTask({ title: 'New Task' }).subscribe();
+
+    const req = httpTestingController.expectOne('/api/tasks');
+
+    expect(req.request.method).toBe('POST');
+    expect(req.request.body).toEqual({ title: 'New Task' });
+
+    req.flush({});
+  });
 });

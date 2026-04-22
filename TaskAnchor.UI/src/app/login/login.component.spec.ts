@@ -3,6 +3,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { LoginComponent } from './login.component';
 import { AuthService } from '../services/auth.service';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { Router } from '@angular/router';
 
 describe('LoginComponent', () => {
   let component: LoginComponent;
@@ -13,8 +14,8 @@ describe('LoginComponent', () => {
       declarations: [LoginComponent],
       imports: [HttpClientTestingModule]
     })
-    .compileComponents();
-    
+      .compileComponents();
+
     fixture = TestBed.createComponent(LoginComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
@@ -107,5 +108,27 @@ describe('LoginComponent', () => {
     form?.dispatchEvent(new Event('submit'));
 
     expect(authService.login).toHaveBeenCalledWith('test@example.com', 'password123');
+  });
+
+  it('should navigate to /tasks after successful login', () => {
+    const authService = TestBed.inject(AuthService);
+    spyOn(authService, 'login').and.returnValue({
+      subscribe: (fn: any) => fn({})
+    } as any);
+
+    const router = TestBed.inject(Router);
+    spyOn(router, 'navigate');
+
+    const compiled = fixture.nativeElement as HTMLElement;
+    const emailInput = compiled.querySelector('input[name="email"]') as HTMLInputElement;
+    const passwordInput = compiled.querySelector('input[name="password"]') as HTMLInputElement;
+
+    emailInput.value = 'test@example.com';
+    passwordInput.value = 'password123';
+
+    const form = compiled.querySelector('form');
+    form?.dispatchEvent(new Event('submit'));
+
+    expect(router.navigate).toHaveBeenCalledWith(['/tasks']);
   });
 });
