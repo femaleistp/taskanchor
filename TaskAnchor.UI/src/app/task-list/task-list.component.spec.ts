@@ -1,6 +1,8 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { TaskListComponent } from './task-list.component';
+import { TaskService } from '../services/task.service';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 
 describe('TaskListComponent', () => {
   let component: TaskListComponent;
@@ -8,7 +10,8 @@ describe('TaskListComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [TaskListComponent]
+      declarations: [TaskListComponent],
+      imports: [HttpClientTestingModule]
     })
     .compileComponents();
     
@@ -73,5 +76,54 @@ describe('TaskListComponent', () => {
     const compiled = fixture.nativeElement as HTMLElement;
     expect(compiled.textContent).toContain('Pay bill');
     expect(compiled.textContent).toContain('Call doctor');
+  });
+
+  it('should load tasks from TaskService on init', () => {
+    const taskService = TestBed.inject(TaskService);
+    spyOn(taskService, 'getTasks').and.returnValue({
+      subscribe: (fn: any) => fn([{ title: 'Task 1' }])
+    } as any);
+
+    component.ngOnInit();
+
+    expect(taskService.getTasks).toHaveBeenCalled();
+    expect(component.tasks.length).toBe(1);
+  });
+
+  it('should render tasks returned from TaskService', () => {
+    const taskService = TestBed.inject(TaskService);
+    spyOn(taskService, 'getTasks').and.returnValue({
+      subscribe: (fn: any) => fn([{ title: 'Test Task' }])
+    } as any);
+
+    component.ngOnInit();
+    fixture.detectChanges();
+
+    const compiled = fixture.nativeElement as HTMLElement;
+    expect(compiled.textContent).toContain('Test Task');
+  });
+
+  it('should call TaskService.getTasks only once on init', () => {
+    const taskService = TestBed.inject(TaskService);
+    spyOn(taskService, 'getTasks').and.returnValue({
+      subscribe: (fn: any) => fn([])
+    } as any);
+
+    component.ngOnInit();
+
+    expect(taskService.getTasks).toHaveBeenCalledTimes(1);
+  });
+
+  it('should render empty state when TaskService returns no tasks', () => {
+    const taskService = TestBed.inject(TaskService);
+    spyOn(taskService, 'getTasks').and.returnValue({
+      subscribe: (fn: any) => fn([])
+    } as any);
+
+    component.ngOnInit();
+    fixture.detectChanges();
+
+    const compiled = fixture.nativeElement as HTMLElement;
+    expect(compiled.textContent).toContain('No active tasks');
   });
 });
