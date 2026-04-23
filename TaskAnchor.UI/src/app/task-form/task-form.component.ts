@@ -15,6 +15,8 @@ export class TaskFormComponent {
     this.title = input.value;
 
     this.taskService.createTask({ title: this.title }).subscribe(() => {
+      this.taskService.getTasks().subscribe();
+      this.taskService.refreshTasks();
       this.title = '';
     });
   }

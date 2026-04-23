@@ -101,4 +101,38 @@ describe('TaskFormComponent', () => {
 
     expect(component.title).toBe('');
   });
+
+  it('should call taskService.getTasks after successful task creation', () => {
+    const taskService = TestBed.inject(TaskService);
+
+    spyOn(taskService, 'createTask').and.returnValue({
+      subscribe: (fn: any) => fn({})
+    } as any);
+
+    spyOn(taskService, 'getTasks').and.returnValue({
+      subscribe: () => { }
+    } as any);
+
+    component.title = 'Test Task';
+
+    component.onSubmit();
+
+    expect(taskService.getTasks).toHaveBeenCalled();
+  });
+
+  it('should call taskService.refreshTasks after successful task creation', () => {
+    const taskService = TestBed.inject(TaskService);
+
+    spyOn(taskService, 'createTask').and.returnValue({
+      subscribe: (fn: any) => fn({})
+    } as any);
+
+    spyOn(taskService, 'refreshTasks');
+
+    component.title = 'Test Task';
+
+    component.onSubmit();
+
+    expect(taskService.refreshTasks).toHaveBeenCalled();
+  });
 });

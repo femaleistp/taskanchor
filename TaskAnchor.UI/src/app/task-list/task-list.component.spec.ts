@@ -13,8 +13,8 @@ describe('TaskListComponent', () => {
       declarations: [TaskListComponent],
       imports: [HttpClientTestingModule]
     })
-    .compileComponents();
-    
+      .compileComponents();
+
     fixture = TestBed.createComponent(TaskListComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
@@ -125,5 +125,74 @@ describe('TaskListComponent', () => {
 
     const compiled = fixture.nativeElement as HTMLElement;
     expect(compiled.textContent).toContain('No active tasks');
+  });
+
+  it('should update tasks when getTasks is called again', () => {
+    const taskService = TestBed.inject(TaskService);
+
+    const firstResponse = [{ title: 'Task 1' }];
+    const secondResponse = [{ title: 'Task1' }, { title: 'Task 2' }];
+
+    let callCount = 0;
+
+    spyOn(taskService, 'getTasks').and.callFake(() => {
+      return {
+        subscribe: (fn: any) => {
+          callCount++;
+          fn(callCount === 1 ? firstResponse : secondResponse);
+        }
+      } as any;
+    });
+
+    component.ngOnInit();
+    expect(component.tasks.length).toBe(1);
+
+    // simulate refresh
+    component.ngOnInit();
+
+    expect(component.tasks.length).toBe(2);
+  });
+
+  it('should render a newly created task after refresh is triggered', () => {
+    const taskService = TestBed.inject(TaskService);
+
+    const initialTasks = [{ title: 'Task 1' }];
+    const refreshedTasks = [{ title: 'Task 1' }, { title: 'Task 2' }];
+
+    let getTasksCallCount = 0;
+
+    spyOn(taskService, 'getTasks').and.callFake(() => {
+      return {
+        subscribe: (fn: any) => {
+          getTasksCallCount++;
+          fn(getTasksCallCount === 1 ? initialTasks : refreshedTasks);
+        }
+      } as any;
+    });
+
+    component.ngOnInit();
+    fixture.detectChanges();
+
+    let compiled = fixture.nativeElement as HTMLElement;
+    expect(compiled.textContent).toContain('Task 1');
+    expect(compiled.textContent).not.toContain('Task 2');
+
+    component.loadTasks();
+    fixture.detectChanges();
+
+    compiled = fixture.nativeElement as HTMLElement;
+    expect(compiled.textContent).toContain('Task 2');
+  });
+
+  it('should call loadTasks when taskService emits a refresh event', () => {
+    const taskService = TestBed.inject(TaskService);
+
+    const loadTasksSpy = spyOn(component, 'loadTasks');
+
+    loadTasksSpy.calls.reset();
+
+    taskService.refreshTasks();
+
+    expect(loadTasksSpy).toHaveBeenCalledTimes(1);
   });
 });

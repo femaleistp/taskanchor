@@ -42,4 +42,20 @@ describe('TaskService', () => {
 
     req.flush({});
   });
+
+  it('should expose a refreshTasks method', () => {
+    expect(service.refreshTasks).toBeTruthy();
+  });
+
+  it('should emit when refreshTasks is called', () => {
+    let wasCalled = false;
+
+    service.taskRefresh$.subscribe(() => {
+      wasCalled = true;
+    });
+
+    service.refreshTasks();
+
+    expect(wasCalled).toBeTrue();
+  });
 });
