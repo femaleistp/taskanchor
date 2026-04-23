@@ -69,13 +69,17 @@ Frontend MVP: In Progress
 - Empty state handling
 - Loads tasks from API via `TaskService`
 - Renders task titles
+- Extracted reusable `loadTasks()` method
+- Subscribes to refresh events to reload tasks
 
 #### Task Create UI
 - TaskFormComponent implemented using TDD
 - Captures task title
 - Submits form
 - Calls `TaskService.createTask()`
+- Calls `TaskService.refreshTasks()` after successful creation
 - Clears title after successful creation (component state)
+- Temporary direct `getTasks()` call still present for test stability
 
 #### Routing
 - `/` → LoginComponent
@@ -88,6 +92,8 @@ Frontend MVP: In Progress
 - `TaskService`
   - `getTasks()`
   - `createTask()`
+  - `refreshTasks()` (emits refresh signal)
+  - `taskRefresh$` observable for component subscription
 
 ---
 
@@ -151,7 +157,7 @@ Frontend MVP: In Progress
 3. On success → navigates to `/tasks`  
 4. Task list loads from API and renders  
 5. User creates a task → request sent to API  
-6. Task list does not yet refresh automatically (pending)
+6. Task list automatically refreshes and displays the new task  
 
 ---
 
@@ -164,6 +170,7 @@ Frontend MVP: In Progress
   - service integration
   - routing behavior (login → tasks)
   - task creation behavior
+  - refresh signaling between components
 
 ---
 
@@ -173,7 +180,7 @@ Frontend MVP: In Progress
 - [ ] Ensure README stays synchronized with implementation
 
 ### Frontend Integration
-- [ ] Refresh task list after creating a task (complete create → visible loop)
+- [ ] Remove temporary direct `getTasks()` call from TaskFormComponent
 - [ ] Add navigation from Register → TaskList after successful registration
 - [ ] Add Playwright test for login → task list navigation
 
@@ -185,7 +192,7 @@ Frontend MVP: In Progress
 
 ### Frontend Cleanup
 - [ ] Replace `document.querySelector(...)` with Angular binding
-- [ ] Change `LoginComponent` defaults from `'string'` → `''` (still present) :contentReference[oaicite:0]{index=0}
+- [ ] Change `LoginComponent` defaults from `'string'` → `''`
 - [ ] Clear visible input field after task creation (currently only component state resets)
 - [ ] Fix minor test typos
 
@@ -208,7 +215,7 @@ Frontend MVP: In Progress
 
 ## Next Steps
 
-1. Refresh task list after task creation  
+1. Remove temporary direct fetch in TaskFormComponent  
 2. Continue task lifecycle features:
    - Edit
    - Delete
@@ -225,6 +232,19 @@ Frontend MVP: In Progress
 ---
 
 ## Changelog
+
+### v1.6 (04/23/2026)
+- Implemented create → visible loop using TaskService refresh signaling
+- Added `taskRefresh$` observable and `refreshTasks()` method
+- Updated TaskFormComponent to emit refresh event after successful task creation
+- Refactored TaskListComponent:
+  - Extracted `loadTasks()` method
+  - Subscribed to refresh events to reload tasks
+- Added and refined unit tests for:
+  - refresh event emission
+  - TaskForm → TaskService interaction
+  - TaskList response to refresh events
+- Resolved test lifecycle issues with Angular component initialization
 
 ### v1.5 
 - Implemented TaskFormComponent (task creation UI)
