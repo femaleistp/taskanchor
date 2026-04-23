@@ -3,6 +3,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { RegisterComponent } from './register.component';
 import { AuthService } from '../services/auth.service';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { FormsModule } from '@angular/forms';
 
 describe('RegisterComponent', () => {
   let component: RegisterComponent;
@@ -11,7 +12,7 @@ describe('RegisterComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [RegisterComponent],
-      imports: [HttpClientTestingModule]
+      imports: [HttpClientTestingModule, FormsModule]
     })
     .compileComponents();
     
@@ -81,7 +82,12 @@ describe('RegisterComponent', () => {
     const passwordInput = compiled.querySelector('input[name="password"]') as HTMLInputElement;
 
     emailInput.value = 'test@example.com';
+    emailInput.dispatchEvent(new Event('input'));
+
     passwordInput.value = 'password123';
+    passwordInput.dispatchEvent(new Event('input'));
+
+    fixture.detectChanges();
 
     spyOn(component, 'onSubmit').and.callThrough();
 
@@ -102,12 +108,35 @@ describe('RegisterComponent', () => {
     const passwordInput = compiled.querySelector('input[name="password"]') as HTMLInputElement;
 
     emailInput.value = 'test@example.com';
+    emailInput.dispatchEvent(new Event('input'));
+
     passwordInput.value = 'password123';
+    passwordInput.dispatchEvent(new Event('input'));
+
+    fixture.detectChanges();
 
     const form = compiled.querySelector('form');
     form?.dispatchEvent(new Event('submit'));
 
     expect(authService.register).toHaveBeenCalledWith('test@example.com', 'password123');
+  });
 
-  })
+  it('should register from component email and password without relying on document.querySelector', () => {
+    const authService = TestBed.inject(AuthService);
+
+    spyOn(document, 'querySelector').and.callFake(() => {
+      throw new Error('document.querySelector should not be used here');
+    });
+
+    spyOn(authService, 'register').and.returnValue({
+      subscribe: () => { }
+    } as any);
+
+    component.email = 'test@example.com';
+    component.password = 'password123';
+
+    component.onSubmit();
+
+    expect(authService.register).toHaveBeenCalledWith('test@example.com', 'password123');
+  });
 });

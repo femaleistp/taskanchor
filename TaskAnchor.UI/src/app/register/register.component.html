@@ -1,8 +1,8 @@
 <h2>Register</h2>
 
 <form (submit)="onSubmit()">
-  <input type="email" name="email" />
-  <input type="password" name="password" />
+  <input type="email" name="email" [(ngModel)]="email" />
+  <input type="password" name="password" [(ngModel)]="password" />
   <button type="submit">Register</button>
 </form>
 

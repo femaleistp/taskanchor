@@ -3,6 +3,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { TaskFormComponent } from './task-form.component';
 import { TaskService } from '../services/task.service';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { FormsModule } from '@angular/forms';
 
 describe('TaskFormComponent', () => {
   let component: TaskFormComponent;
@@ -11,7 +12,7 @@ describe('TaskFormComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [TaskFormComponent],
-      imports: [HttpClientTestingModule]
+      imports: [HttpClientTestingModule, FormsModule]
     })
     .compileComponents();
     
@@ -61,6 +62,8 @@ describe('TaskFormComponent', () => {
 
     const input = compiled.querySelector('input[name="title"]') as HTMLInputElement;
     input.value = 'New Task';
+    input.dispatchEvent(new Event('input'));
+    fixture.detectChanges();
 
     spyOn(component, 'onSubmit').and.callThrough();
 
@@ -79,6 +82,8 @@ describe('TaskFormComponent', () => {
     const compiled = fixture.nativeElement as HTMLElement;
     const input = compiled.querySelector('input[name="title"]') as HTMLInputElement;
     input.value = 'New Task';
+    input.dispatchEvent(new Event('input'));
+    fixture.detectChanges();
 
     const form = compiled.querySelector('form');
     form?.dispatchEvent(new Event('submit'));
@@ -102,25 +107,7 @@ describe('TaskFormComponent', () => {
     expect(component.title).toBe('');
   });
 
-  it('should call taskService.getTasks after successful task creation', () => {
-    const taskService = TestBed.inject(TaskService);
-
-    spyOn(taskService, 'createTask').and.returnValue({
-      subscribe: (fn: any) => fn({})
-    } as any);
-
-    spyOn(taskService, 'getTasks').and.returnValue({
-      subscribe: () => { }
-    } as any);
-
-    component.title = 'Test Task';
-
-    component.onSubmit();
-
-    expect(taskService.getTasks).toHaveBeenCalled();
-  });
-
-  it('should call taskService.refreshTasks after successful task creation', () => {
+  it('should call refreshTasks and not call getTasks after successful task creation', () => {
     const taskService = TestBed.inject(TaskService);
 
     spyOn(taskService, 'createTask').and.returnValue({
@@ -128,11 +115,43 @@ describe('TaskFormComponent', () => {
     } as any);
 
     spyOn(taskService, 'refreshTasks');
+    spyOn(taskService, 'getTasks').and.returnValue({
+      subscribe: () => { }
+    } as any);
 
-    component.title = 'Test Task';
+    const compiled = fixture.nativeElement as HTMLElement;
+    const input = compiled.querySelector('input[name="title"]') as HTMLInputElement;
+    input.value = 'New Task';
+    input.dispatchEvent(new Event('input'));
+    fixture.detectChanges();
+
+    const form = compiled.querySelector('form');
+    form?.dispatchEvent(new Event('submit'));
+
+    expect(taskService.createTask).toHaveBeenCalledWith({ title: 'New Task' });
+    expect(taskService.refreshTasks).toHaveBeenCalled();
+    expect(taskService.getTasks).not.toHaveBeenCalled();
+  });
+
+  it('should create a task from component title without relying on document.querySelector', () => {
+    const taskService = TestBed.inject(TaskService);
+
+    spyOn(document, 'querySelector').and.callFake(() => {
+      throw new Error('document.querySelector should not be used here');
+    });
+
+    spyOn(taskService, 'createTask').and.returnValue({
+      subscribe: (fn: any) => fn({})
+    } as any);
+
+    spyOn(taskService, 'refreshTasks');
+
+    component.title = 'New Task';
 
     component.onSubmit();
 
+    expect(taskService.createTask).toHaveBeenCalledWith({ title: 'New Task' });
     expect(taskService.refreshTasks).toHaveBeenCalled();
+    expect(component.title).toBe('');
   });
 });

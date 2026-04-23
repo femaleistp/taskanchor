@@ -1,5 +1,6 @@
-<form (submit)="onSubmit()">
   <h2>Create Task</h2>
-  <input type="text" name="title" />
-  <button type="submit">Create Task</button>
-</form>
+
+  <form (submit)="onSubmit()">
+    <input type="text" name="title" [(ngModel)]="title" />
+    <button type="submit">Create Task</button>
+  </form>

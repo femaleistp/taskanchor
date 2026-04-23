@@ -195,4 +195,54 @@ describe('TaskListComponent', () => {
 
     expect(loadTasksSpy).toHaveBeenCalledTimes(1);
   });
+
+  it('should reload tasks when taskRefresh$ emits', () => {
+    const taskService = TestBed.inject(TaskService);
+
+    spyOn(taskService, 'getTasks').and.returnValues(
+      {
+        subscribe: (fn: any) => fn([{ title: 'Initial Load' }])
+      } as any,
+      {
+        subscribe: (fn: any) => fn([{ title: 'After Refresh' }])
+      } as any
+    );
+
+    component.loadTasks();
+
+    expect(component.tasks).toEqual([{ title: 'Initial Load' }]);
+    expect(taskService.getTasks).toHaveBeenCalledTimes(1);
+
+    taskService.refreshTasks();
+
+    expect(taskService.getTasks).toHaveBeenCalledTimes(2);
+    expect(component.tasks).toEqual([{ title: 'After Refresh' }]);
+  });
+
+  it('should keep tasks typed with title values from the service response', () => {
+    const taskService = TestBed.inject(TaskService);
+
+    spyOn(taskService, 'getTasks').and.returnValue({
+      subscribe: (fn: any) => fn([
+        { title: 'Task A' },
+        { title: 'Task B' }
+      ])
+    } as any);
+
+    component.loadTasks();
+
+    expect(component.tasks.length).toBe(2);
+    expect(component.tasks[0].title).toBe('Task A');
+    expect(component.tasks[1].title).toBe('Task B');
+  });
+
+  it('should accept a task list shaped as objects with title strings', () => {
+    component.tasks = [
+      { title: 'Task A' },
+      { title: 'Task B' }
+    ];
+
+    expect(component.tasks[0].title).toBe('Task A');
+    expect(component.tasks[1].title).toBe('Task B');
+  })
 });

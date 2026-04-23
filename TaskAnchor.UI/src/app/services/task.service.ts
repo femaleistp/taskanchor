@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
+import { Task } from '../models/task';
 
 @Injectable({
   providedIn: 'root'
@@ -11,8 +12,8 @@ export class TaskService {
 
   constructor(private http: HttpClient) { }
 
-  getTasks(): Observable<any> {
-    return this.http.get('/api/tasks');
+  getTasks(): Observable<Task[]> {
+    return this.http.get<Task[]>('/api/tasks');
   }
 
   createTask(task: any): Observable<any> {

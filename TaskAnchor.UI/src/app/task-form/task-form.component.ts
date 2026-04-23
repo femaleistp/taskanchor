@@ -10,14 +10,11 @@ export class TaskFormComponent {
   title: string = '';
 
   constructor(private taskService: TaskService) { }
-  onSubmit(): void {
-    const input = document.querySelector('input[name="title"]') as HTMLInputElement;
-    this.title = input.value;
 
+  onSubmit(): void {
     this.taskService.createTask({ title: this.title }).subscribe(() => {
-      this.taskService.getTasks().subscribe();
-      this.taskService.refreshTasks();
       this.title = '';
+      this.taskService.refreshTasks();
     });
   }
 }

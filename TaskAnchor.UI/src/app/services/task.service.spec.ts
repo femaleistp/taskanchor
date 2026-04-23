@@ -58,4 +58,25 @@ describe('TaskService', () => {
 
     expect(wasCalled).toBeTrue();
   });
+
+  it('should return task objects with title from /api/tasks', () => {
+    const expectedTasks = [
+      { title: 'Task A' },
+      { title: 'Task B' }
+    ];
+
+    let actualTasks: any[] = [];
+
+    service.getTasks().subscribe(tasks => {
+      actualTasks = tasks;
+    });
+
+    const req = httpTestingController.expectOne('/api/tasks');
+
+    req.flush(expectedTasks);
+
+    expect(actualTasks.length).toBe(2);
+    expect(actualTasks[0].title).toBe('Task A');
+    expect(actualTasks[1].title).toBe('Task B');
+  });
 });

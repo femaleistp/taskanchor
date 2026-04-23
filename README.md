@@ -16,7 +16,7 @@ The system ensures that tasks remain visible and actionable until they are compl
 ## Project Structure
 
 /docs
-- SRS_v1.4_042226.pdf
+- SRS_v1.5_042326.pdf
 - TaskAnchor_Test_Document.pdf
 - TaskAnchor_Component_Diagram.pdf
 - TaskAnchor_Class_Diagram.pdf
@@ -38,6 +38,7 @@ The system ensures that tasks remain visible and actionable until they are compl
   - login/
   - task-list/
   - task-form/
+  - models/
   - services/
 
 ---
@@ -45,7 +46,7 @@ The system ensures that tasks remain visible and actionable until they are compl
 ## Current Status
 
 Backend MVP: Complete  
-Frontend MVP: In Progress  
+Frontend MVP: Core Loop Complete (Create → Visible)  
 
 ---
 
@@ -54,12 +55,12 @@ Frontend MVP: In Progress
 ### Implemented
 
 #### Register UI
-- Email + password capture
+- Email + password capture via Angular binding
 - Submit handling
 - Calls `AuthService.register()`
 
 #### Login UI
-- Email + password capture
+- Email + password capture via Angular binding
 - Submit handling
 - Calls `AuthService.login()`
 - Navigates to `/tasks` after successful login
@@ -69,17 +70,17 @@ Frontend MVP: In Progress
 - Empty state handling
 - Loads tasks from API via `TaskService`
 - Renders task titles
+- Uses typed `Task[]`
 - Extracted reusable `loadTasks()` method
 - Subscribes to refresh events to reload tasks
 
 #### Task Create UI
-- TaskFormComponent implemented using TDD
-- Captures task title
+- Captures task title via Angular binding
 - Submits form
 - Calls `TaskService.createTask()`
-- Calls `TaskService.refreshTasks()` after successful creation
-- Clears title after successful creation (component state)
-- Temporary direct `getTasks()` call still present for test stability
+- Emits refresh signal via `TaskService.refreshTasks()`
+- Clears title after successful creation
+- No direct task reload calls
 
 #### Routing
 - `/` → LoginComponent
@@ -90,10 +91,20 @@ Frontend MVP: In Progress
   - `register()`
   - `login()`
 - `TaskService`
-  - `getTasks()`
+  - `getTasks(): Observable<Task[]>`
   - `createTask()`
   - `refreshTasks()` (emits refresh signal)
   - `taskRefresh$` observable for component subscription
+
+---
+
+## Frontend Architecture Notes
+
+- Form handling is state-driven using Angular `ngModel`
+- Components do not directly query the DOM
+- Task list updates are event-driven via `TaskService`
+- Create → visible loop is handled through refresh signaling
+- Shared `Task` interface enforces consistent typing
 
 ---
 
@@ -106,6 +117,13 @@ Frontend MVP: In Progress
 - TaskFormComponent
 - AuthService
 - TaskService
+
+Coverage includes:
+- UI rendering
+- Angular form binding behavior
+- service interaction
+- refresh signaling between components
+- routing behavior
 
 ### E2E (Playwright)
 - Register page loads
@@ -147,6 +165,7 @@ Frontend MVP: In Progress
   1. Overdue
   2. Due date
   3. Priority
+- Newly created tasks immediately appear in the list
 
 ---
 
@@ -157,7 +176,8 @@ Frontend MVP: In Progress
 3. On success → navigates to `/tasks`  
 4. Task list loads from API and renders  
 5. User creates a task → request sent to API  
-6. Task list automatically refreshes and displays the new task  
+6. Task list refreshes via event signaling  
+7. New task appears immediately  
 
 ---
 
@@ -166,7 +186,7 @@ Frontend MVP: In Progress
 - Backend: full coverage of business rules and API behavior
 - Frontend:
   - UI rendering
-  - form submission
+  - Angular form binding
   - service integration
   - routing behavior (login → tasks)
   - task creation behavior
@@ -176,25 +196,8 @@ Frontend MVP: In Progress
 
 ## Loose Ends
 
-### Code / Consistency
-- [ ] Ensure README stays synchronized with implementation
-
 ### Frontend Integration
-- [ ] Remove temporary direct `getTasks()` call from TaskFormComponent
 - [ ] Add navigation from Register → TaskList after successful registration
-- [ ] Add Playwright test for login → task list navigation
-
-### Frontend Typing
-- [ ] Replace `any[]` in TaskListComponent with typed model
-- [ ] Add return type for `TaskService.getTasks()`
-- [ ] Add type for `createTask()` request
-- [ ] Create shared Task interface
-
-### Frontend Cleanup
-- [ ] Replace `document.querySelector(...)` with Angular binding
-- [ ] Change `LoginComponent` defaults from `'string'` → `''`
-- [ ] Clear visible input field after task creation (currently only component state resets)
-- [ ] Fix minor test typos
 
 ### MVP Features Remaining (Frontend)
 - [ ] Edit Task UI
@@ -209,13 +212,12 @@ Frontend MVP: In Progress
 - [ ] Add Playwright test for TaskList page
 - [ ] Add Playwright test for login → task list navigation
 - [ ] Add Playwright test for task creation flow
-- [ ] Add integration-style test for routed task loading
 
 ---
 
 ## Next Steps
 
-1. Remove temporary direct fetch in TaskFormComponent  
+1. Implement NextAction display in TaskList  
 2. Continue task lifecycle features:
    - Edit
    - Delete
@@ -232,6 +234,16 @@ Frontend MVP: In Progress
 ---
 
 ## Changelog
+
+### v1.7 (04/23/2026)
+- Removed direct DOM querying from all frontend components
+- Implemented Angular `ngModel` binding for all forms
+- Completed create → visible loop using refresh signaling
+- Removed temporary direct task reload workaround
+- Introduced shared `Task` interface and typed service responses
+- Updated TaskListComponent to use typed data and event-driven refresh
+- Cleaned up frontend tests to align with Angular binding behavior
+- Updated documentation and removed outdated loose ends
 
 ### v1.6 (04/23/2026)
 - Implemented create → visible loop using TaskService refresh signaling
