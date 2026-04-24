@@ -210,13 +210,13 @@ describe('TaskListComponent', () => {
 
     component.loadTasks();
 
-    expect(component.tasks).toEqual([{ title: 'Initial Load' }]);
+    expect(component.tasks as any).toEqual([{ title: 'Initial Load' }]);
     expect(taskService.getTasks).toHaveBeenCalledTimes(1);
 
     taskService.refreshTasks();
 
     expect(taskService.getTasks).toHaveBeenCalledTimes(2);
-    expect(component.tasks).toEqual([{ title: 'After Refresh' }]);
+    expect(component.tasks as any).toEqual([{ title: 'After Refresh' }]);
   });
 
   it('should keep tasks typed with title values from the service response', () => {
@@ -240,9 +240,387 @@ describe('TaskListComponent', () => {
     component.tasks = [
       { title: 'Task A' },
       { title: 'Task B' }
-    ];
+    ] as any;
 
     expect(component.tasks[0].title).toBe('Task A');
     expect(component.tasks[1].title).toBe('Task B');
-  })
+  });
+
+  it('should render NextAction when present on a task', () => {
+    component.tasks = [
+      {
+        taskId: 1,
+        title: 'Test Task',
+        description: '',
+        status: 'Active',
+        priorityLevel: 'Medium',
+        dueDate: null,
+        nextAction: 'Do the next step',
+        lastUpdatedDate: new Date().toISOString()
+      }
+    ];
+
+    fixture.detectChanges();
+
+    const compiled = fixture.nativeElement as HTMLElement;
+
+    expect(compiled.textContent).toContain('Do the next step');
+  });
+
+  it('should render an Edit button for each task', () => {
+    component.tasks = [
+      {
+        taskId: 1,
+        title: 'Test Task',
+        description: '',
+        status: 'Active',
+        priorityLevel: 'Medium',
+        dueDate: null,
+        nextAction: null,
+        lastUpdatedDate: new Date().toISOString()
+      }
+    ];
+
+    fixture.detectChanges();
+
+    const compiled = fixture.nativeElement as HTMLElement;
+    const button = compiled.querySelector('button');
+
+    expect(button).not.toBeNull();
+    expect(button?.textContent).toContain('Edit');
+  });
+
+  it('should call onEdit when Edit button is clicked', () => {
+    component.tasks = [
+      {
+        taskId: 1,
+        title: 'Test Task',
+        description: '',
+        status: 'Active',
+        priorityLevel: 'Medium',
+        dueDate: null,
+        nextAction: null,
+        lastUpdatedDate: new Date().toISOString()
+      }
+    ];
+
+    spyOn(component, 'onEdit');
+
+    fixture.detectChanges();
+
+    const compiled = fixture.nativeElement as HTMLElement;
+    const button = compiled.querySelector('button');
+
+    button?.dispatchEvent(new Event('click'));
+
+    expect(component.onEdit).toHaveBeenCalledWith(component.tasks[0]);
+  });
+
+  it('should call onEdit with the correct task when multiple tasks exist', () => {
+    component.tasks = [
+      {
+        taskId: 1,
+        title: 'Test Task',
+        description: '',
+        status: 'Active',
+        priorityLevel: 'Medium',
+        dueDate: null,
+        nextAction: null,
+        lastUpdatedDate: new Date().toISOString()
+      },
+      {
+        taskId: 2,
+        title: 'Task 2',
+        description: '',
+        status: 'Active',
+        priorityLevel: 'Medium',
+        dueDate: null,
+        nextAction: null,
+        lastUpdatedDate: new Date().toISOString()
+      }
+    ];
+
+    spyOn(component, 'onEdit');
+
+    fixture.detectChanges();
+
+    const compiled = fixture.nativeElement as HTMLElement;
+    const items = compiled.querySelectorAll('li');
+    const secondItem = items[1];
+
+    const editButton = secondItem.querySelector('button');
+
+    editButton?.dispatchEvent(new Event('click'));
+
+    expect(component.onEdit).toHaveBeenCalledWith(component.tasks[1]);
+  });
+
+  it('should render a Delete button for each task', () => {
+    component.tasks = [
+      {
+        taskId: 1,
+        title: 'Test Task',
+        description: '',
+        status: 'Active',
+        priorityLevel: 'Medium',
+        dueDate: null,
+        nextAction: null,
+        lastUpdatedDate: new Date().toISOString()
+      }
+    ];
+
+    fixture.detectChanges();
+
+    const compiled = fixture.nativeElement as HTMLElement;
+    const buttons = compiled.querySelectorAll('button');
+
+    const deleteButton = Array.from(buttons).find(
+      b => b.textContent?.trim() === 'Delete'
+    );
+
+    expect(deleteButton).not.toBeNull();
+  });
+
+  it('should call onDelete when Delete button is clicked', () => {
+    component.tasks = [
+      {
+        taskId: 1,
+        title: 'Test Task',
+        description: '',
+        status: 'Active',
+        priorityLevel: 'Medium',
+        dueDate: null,
+        nextAction: null,
+        lastUpdatedDate: new Date().toISOString()
+      }
+    ];
+
+    spyOn(component, 'onDelete');
+
+    fixture.detectChanges();
+
+    const compiled = fixture.nativeElement as HTMLElement;
+    const buttons = compiled.querySelectorAll('button');
+
+    const deleteButton = Array.from(buttons).find(
+      b => b.textContent?.trim() === 'Delete'
+    );
+
+    deleteButton?.dispatchEvent(new Event('click'));
+
+    expect(component.onDelete).toHaveBeenCalledWith(component.tasks[0]);
+  });
+
+  it('should call onDelete with correct task when multiple tasks exist', () => {
+    component.tasks = [
+      {
+        taskId: 1,
+        title: 'Task 1',
+        description: '',
+        status: 'Active',
+        priorityLevel: 'Medium',
+        dueDate: null,
+        nextAction: null,
+        lastUpdatedDate: new Date().toISOString()
+      },
+      {
+        taskId: 2,
+        title: 'Task 2',
+        description: '',
+        status: 'Active',
+        priorityLevel: 'Medium',
+        dueDate: null,
+        nextAction: null,
+        lastUpdatedDate: new Date().toISOString()
+      }
+    ];
+
+    spyOn(component, 'onDelete');
+
+    fixture.detectChanges();
+
+    const compiled = fixture.nativeElement as HTMLElement;
+    const items = compiled.querySelectorAll('li');
+    const secondItem = items[1];
+
+    const buttons = secondItem.querySelectorAll('button');
+
+    const deleteButton = Array.from(buttons).find(
+      b => b.textContent?.trim() === 'Delete'
+    );
+
+    deleteButton?.dispatchEvent(new Event('click'));
+
+    expect(component.onDelete).toHaveBeenCalledWith(component.tasks[1]);
+  });
+
+  it('should call TaskService.deleteTask when onDelete is triggered', () => {
+    const taskService = TestBed.inject(TaskService);
+
+    spyOn(taskService, 'deleteTask').and.returnValue({
+      subscribe: () => { }
+    } as any);
+
+    const task = {
+      taskId: 1,
+      title: 'Test Task',
+      description: '',
+      status: 'Active',
+      priorityLevel: 'Medium',
+      dueDate: null,
+      nextAction: null,
+      lastUpdatedDate: new Date().toISOString()
+    };
+
+    component.onDelete(task);
+
+    expect(taskService.deleteTask).toHaveBeenCalledWith(task.taskId);
+  });
+
+  it('should trigger task refresh after delete', () => {
+    const taskService = TestBed.inject(TaskService);
+
+    spyOn(taskService, 'deleteTask').and.returnValue({
+      subscribe: (fn: any) => fn()
+    } as any);
+
+    spyOn(taskService, 'refreshTasks');
+
+    const task = {
+      taskId: 1,
+      title: 'Test Task',
+      description: '',
+      status: 'Active',
+      priorityLevel: 'Medium',
+      dueDate: null,
+      nextAction: null,
+      lastUpdatedDate: new Date().toISOString()
+    };
+
+    component.onDelete(task);
+
+    expect(taskService.refreshTasks).toHaveBeenCalled();
+  });
+
+  it('should render task status for each task', () => {
+    component.tasks = [
+      {
+        taskId: 1,
+        title: 'Test Task',
+        description: '',
+        status: 'InProgress',
+        priorityLevel: 'Medium',
+        dueDate: null,
+        nextAction: null,
+        lastUpdatedDate: new Date().toISOString()
+      }
+    ];
+
+    fixture.detectChanges();
+
+    const compiled = fixture.nativeElement as HTMLElement;
+
+    expect(compiled.textContent).toContain('InProgress');
+  });
+
+  it('should call onStatusChange when status is clicked', () => {
+    component.tasks = [
+      {
+        taskId: 1,
+        title: 'Test Task',
+        description: '',
+        status: 'Active',
+        priorityLevel: 'Medium',
+        dueDate: null,
+        nextAction: null,
+        lastUpdatedDate: new Date().toISOString()
+      }
+    ];
+
+    spyOn(component, 'onStatusChange');
+
+    fixture.detectChanges();
+
+    const compiled = fixture.nativeElement as HTMLElement;
+
+    const statusElement = Array.from(compiled.querySelectorAll('div')).find(d => d.textContent?.trim() === 'Active');
+
+    statusElement?.dispatchEvent(new Event('click'));
+
+    expect(component.onStatusChange).toHaveBeenCalledWith(component.tasks[0]);
+  });
+
+  it('should change status from Active to InProgress when clicked', () => {
+    const task = {
+      taskId: 1,
+      title: 'Test Task',
+      description: '',
+      status: 'Active',
+      priorityLevel: 'Medium',
+      dueDate: null,
+      nextAction: null,
+      lastUpdatedDate: new Date().toISOString()
+    };
+
+    component.onStatusChange(task);
+
+    expect(task.status).toBe('InProgress');
+  });
+
+  it('should change status from InProgress to Completed when clicked', () => {
+    const task = {
+      taskId: 1,
+      title: 'Test Task',
+      description: '',
+      status: 'InProgress',
+      priorityLevel: 'Medium',
+      dueDate: null,
+      nextAction: null,
+      lastUpdatedDate: new Date().toISOString()
+    };
+
+    component.onStatusChange(task);
+
+    expect(task.status).toBe('Completed');
+  });
+
+  it('should not change status when task is already Completed', () => {
+    const task = {
+      taskId: 1,
+      title: 'Test Task',
+      description: '',
+      status: 'Completed',
+      priorityLevel: 'Medium',
+      dueDate: null,
+      nextAction: null,
+      lastUpdatedDate: new Date().toISOString()
+    };
+
+    component.onStatusChange(task);
+
+    expect(task.status).toBe('Completed');
+  });
+
+  it('should call TaskService.updateTask when status changes', () => {
+    const taskService = TestBed.inject(TaskService);
+
+    spyOn(taskService, 'updateTask').and.returnValue({
+      subscribe: () => { }
+    } as any);
+
+    const task = {
+      taskId: 1,
+      title: 'Test Task',
+      description: '',
+      status: 'Active',
+      priorityLevel: 'Medium',
+      dueDate: null,
+      nextAction: null,
+      lastUpdatedDate: new Date().toISOString()
+    };
+
+    component.onStatusChange(task);
+
+    expect(taskService.updateTask).toHaveBeenCalled();
+  });
 });

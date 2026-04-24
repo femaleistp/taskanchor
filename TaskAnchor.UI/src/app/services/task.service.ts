@@ -23,4 +23,12 @@ export class TaskService {
   refreshTasks(): void {
     this.taskRefreshSource.next();
   }
+
+  deleteTask(taskId: number) {
+    return this.http.delete(`/api/tasks/${taskId}`);
+  }
+
+  updateTask(task: any) {
+    return this.http.put(`/api/tasks/${task.taskId}`, task);
+  }
 }

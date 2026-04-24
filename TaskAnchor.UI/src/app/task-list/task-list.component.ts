@@ -25,4 +25,24 @@ export class TaskListComponent implements OnInit {
       this.tasks = tasks;
     });
   }
+
+  onEdit(task: any): void {
+
+  }
+
+  onDelete(task: any): void {
+    this.taskService.deleteTask(task.taskId).subscribe(() => {
+      this.taskService.refreshTasks();
+    });
+  }
+
+  onStatusChange(task: any): void {
+    if (task.status === 'Active') {
+      task.status = 'InProgress';
+    } else if (task.status === 'InProgress') {
+      task.status = 'Completed';
+    }
+
+    this.taskService.updateTask(task).subscribe();
+  }
 }
