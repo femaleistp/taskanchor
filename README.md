@@ -16,7 +16,7 @@ The system ensures that tasks remain visible and actionable until they are compl
 ## Project Structure
 
 /docs
-- SRS_v1.5_042326.pdf
+- SRS_v1.8_042526.pdf
 - TaskAnchor_Test_Document.pdf
 - TaskAnchor_Component_Diagram.pdf
 - TaskAnchor_Class_Diagram.pdf
@@ -46,7 +46,7 @@ The system ensures that tasks remain visible and actionable until they are compl
 ## Current Status
 
 Backend MVP: Complete  
-Frontend MVP: Core Loop + Status + Delete Complete  
+Frontend MVP: COMPLETE (All core features implemented)
 
 ---
 
@@ -73,38 +73,76 @@ Frontend MVP: Core Loop + Status + Delete Complete
   - Title
   - Status
   - NextAction (conditional)
-- Status interaction:
-  - Active → InProgress
-  - InProgress → Completed
-  - Completed is terminal
-- Delete button:
-  - Calls API
-  - Triggers refresh
-- Uses typed `Task[]`
-- Subscribes to refresh events
+  - Progress Logs (list per task)
+
+#### Task Interactions
+
+##### Status
+- Active → InProgress
+- InProgress → Completed
+- Completed is terminal
+- Calls `updateTask()`
+- Triggers `refreshTasks()`
+
+##### Edit Task
+- Enter edit mode
+- Inline title editing via `ngModel`
+- Save button:
+  - Calls `updateTask()`
+  - Triggers `refreshTasks()`
+  - Exits edit mode
+
+##### Delete Task
+- Calls `deleteTask()`
+- Triggers `refreshTasks()`
+
+##### Progress Log
+- Add Progress Log button per task
+- Conditional input rendering
+- Input bound via `ngModel`
+- Save Progress Log button:
+  - Calls `addProgressLog(taskId, text)`
+  - Triggers `refreshTasks()`
+  - Clears input + exits mode
+- Existing logs displayed per task:
+  - `task.progressLogs[]`
+  - Rendered as text entries
+
+---
 
 #### Task Create UI
-- Captures task title via Angular binding
-- Calls `TaskService.createTask()`
-- Emits refresh signal via `refreshTasks()`
-- Clears input after success
+- Captures:
+  - title
+  - priorityLevel
+  - dueDate
+  - nextAction
+- Uses `ngModel`
+- Calls `createTask()`
+- Triggers `refreshTasks()`
+- Clears inputs after success
+
+---
 
 #### Routing
 - `/` → LoginComponent
 - `/tasks` → TaskListComponent
 
-#### Services
-- `AuthService`
-  - `register()`
-  - `login()`
+---
 
-- `TaskService`
-  - `getTasks()`
-  - `createTask()`
-  - `updateTask()`
-  - `deleteTask()`
-  - `refreshTasks()`
-  - `taskRefresh$`
+#### Services
+
+**AuthService**
+- `register()`
+- `login()`
+
+**TaskService**
+- `getTasks()`
+- `createTask()`
+- `updateTask()`
+- `deleteTask()`
+- `addProgressLog()`
+- `refreshTasks()`
+- `taskRefresh$`
 
 ---
 
@@ -116,6 +154,8 @@ Frontend MVP: Core Loop + Status + Delete Complete
   - Create → refresh
   - Delete → refresh
   - Status update → refresh
+  - Edit → refresh
+  - Progress Log → refresh
 - Components do NOT mutate shared state directly
 - `Task` interface used across UI
 
@@ -136,7 +176,9 @@ Coverage includes:
 - Angular binding behavior
 - Service interaction
 - Status transitions
+- Edit/save flow
 - Delete behavior
+- Progress Log full flow
 - Refresh signaling
 
 ### E2E (Playwright)
@@ -188,11 +230,15 @@ Coverage includes:
 1. User logs in  
 2. Navigates to `/tasks`  
 3. Task list loads  
-4. User actions:
-   - Create → refresh → visible
-   - Delete → refresh → removed
-   - Status change → refresh → updated  
-5. Tasks remain visible until completed  
+
+User actions:
+- Create → refresh → visible
+- Edit → save → refresh → updated
+- Delete → refresh → removed
+- Status change → refresh → updated  
+- Add Progress Log → save → refresh → visible  
+
+Tasks remain visible until completed  
 
 ---
 
@@ -205,19 +251,13 @@ Coverage includes:
   - Service calls
   - Refresh signaling
   - Status transitions
+  - Edit flow
   - Delete flow
+  - Progress Log flow (full)
 
 ---
 
 ## Loose Ends (STRICT MVP)
-
-### Frontend Features Remaining
-- [ ] Edit Task (UI + API integration)
-- [ ] Progress Log UI (add + view)
-- [ ] DueDate input + display
-- [ ] PriorityLevel input + display
-
----
 
 ### Test Integrity (CRITICAL)
 - [ ] Normalize Task object shape across ALL tests  
@@ -244,15 +284,15 @@ Coverage includes:
 - [ ] Login → TaskList navigation test
 - [ ] Task creation flow test
 - [ ] Status update flow test
+- [ ] Progress Log flow test
 
 ---
 
 ## Next Steps (Execution Order)
 
-1. Edit Task (TDD: RED → GREEN)
-2. Progress Log UI
-3. DueDate + PriorityLevel UI
-4. Test object normalization pass
+1. Normalize Task object shapes across all tests (TDD enforcement)
+2. Expand Playwright coverage for core flows
+3. Final documentation alignment (SRS, Test Plan, Context)
 
 ---
 
@@ -268,12 +308,22 @@ Coverage includes:
 
 ## Changelog
 
+### v1.9 (04/25/2026)
+- Implemented full Progress Log feature (UI + API + display)
+- Added Progress Log input binding and save flow
+- Integrated `addProgressLog()` into TaskService
+- Implemented rendering of existing progress logs per task
+- Completed task edit flow with inline editing and save behavior
+- Added Save button interaction tests for edit and progress log
+- Ensured all update flows trigger `refreshTasks()`
+- Updated README to reflect full MVP completion
+- Identified test object shape inconsistency for next phase
+
 ### v1.8 (04/25/2026)
 - Implemented status update refresh behavior
 - Ensured consistency across create/delete/status flows
 - Updated TaskList UI to reflect status transitions
 - Added unit test for refresh after status update
-- Updated README to reflect current system state and remaining work
 
 ### v1.7 (04/23/2026)
 - Removed direct DOM querying
