@@ -46,7 +46,7 @@ The system ensures that tasks remain visible and actionable until they are compl
 ## Current Status
 
 Backend MVP: Complete  
-Frontend MVP: Core Loop Complete (Create → Visible)  
+Frontend MVP: Core Loop + Status + Delete Complete  
 
 ---
 
@@ -69,18 +69,25 @@ Frontend MVP: Core Loop Complete (Create → Visible)
 - Displays active tasks
 - Empty state handling
 - Loads tasks from API via `TaskService`
-- Renders task titles
+- Renders:
+  - Title
+  - Status
+  - NextAction (conditional)
+- Status interaction:
+  - Active → InProgress
+  - InProgress → Completed
+  - Completed is terminal
+- Delete button:
+  - Calls API
+  - Triggers refresh
 - Uses typed `Task[]`
-- Extracted reusable `loadTasks()` method
-- Subscribes to refresh events to reload tasks
+- Subscribes to refresh events
 
 #### Task Create UI
 - Captures task title via Angular binding
-- Submits form
 - Calls `TaskService.createTask()`
-- Emits refresh signal via `TaskService.refreshTasks()`
-- Clears title after successful creation
-- No direct task reload calls
+- Emits refresh signal via `refreshTasks()`
+- Clears input after success
 
 #### Routing
 - `/` → LoginComponent
@@ -90,21 +97,27 @@ Frontend MVP: Core Loop Complete (Create → Visible)
 - `AuthService`
   - `register()`
   - `login()`
+
 - `TaskService`
-  - `getTasks(): Observable<Task[]>`
+  - `getTasks()`
   - `createTask()`
-  - `refreshTasks()` (emits refresh signal)
-  - `taskRefresh$` observable for component subscription
+  - `updateTask()`
+  - `deleteTask()`
+  - `refreshTasks()`
+  - `taskRefresh$`
 
 ---
 
 ## Frontend Architecture Notes
 
-- Form handling is state-driven using Angular `ngModel`
-- Components do not directly query the DOM
-- Task list updates are event-driven via `TaskService`
-- Create → visible loop is handled through refresh signaling
-- Shared `Task` interface enforces consistent typing
+- Strict state-driven UI (`ngModel`)
+- No direct DOM access
+- Refresh signaling pattern enforced:
+  - Create → refresh
+  - Delete → refresh
+  - Status update → refresh
+- Components do NOT mutate shared state directly
+- `Task` interface used across UI
 
 ---
 
@@ -120,10 +133,11 @@ Frontend MVP: Core Loop Complete (Create → Visible)
 
 Coverage includes:
 - UI rendering
-- Angular form binding behavior
-- service interaction
-- refresh signaling between components
-- routing behavior
+- Angular binding behavior
+- Service interaction
+- Status transitions
+- Delete behavior
+- Refresh signaling
 
 ### E2E (Playwright)
 - Register page loads
@@ -158,125 +172,130 @@ Coverage includes:
 
 ## Behavior
 
-- Tasks remain visible until completed
-- Completed tasks are excluded from main list
+- Tasks persist until completed (Revisit Rule)
+- Completed tasks excluded from active list
 - Overdue is derived (not stored)
-- Tasks sorted by:
+- Sorting:
   1. Overdue
-  2. Due date
-  3. Priority
-- Newly created tasks immediately appear in the list
+  2. Due date ascending
+  3. No due date → priority High → Low
+- All UI updates use refresh signaling
 
 ---
 
 ## User Flow (Current)
 
-1. User opens app → Login page  
-2. User submits credentials  
-3. On success → navigates to `/tasks`  
-4. Task list loads from API and renders  
-5. User creates a task → request sent to API  
-6. Task list refreshes via event signaling  
-7. New task appears immediately  
+1. User logs in  
+2. Navigates to `/tasks`  
+3. Task list loads  
+4. User actions:
+   - Create → refresh → visible
+   - Delete → refresh → removed
+   - Status change → refresh → updated  
+5. Tasks remain visible until completed  
 
 ---
 
 ## Test Coverage
 
-- Backend: full coverage of business rules and API behavior
+- Backend: full rule coverage
 - Frontend:
-  - UI rendering
-  - Angular form binding
-  - service integration
-  - routing behavior (login → tasks)
-  - task creation behavior
-  - refresh signaling between components
+  - Rendering
+  - Binding
+  - Service calls
+  - Refresh signaling
+  - Status transitions
+  - Delete flow
 
 ---
 
-## Loose Ends
+## Loose Ends (STRICT MVP)
 
-### Frontend Integration
-- [ ] Add navigation from Register → TaskList after successful registration
-
-### MVP Features Remaining (Frontend)
-- [ ] Edit Task UI
-- [ ] Delete Task UI
-- [ ] Status update UI (Active / InProgress / Completed)
-- [ ] Progress Log UI
-- [ ] NextAction UI
-- [ ] DueDate UI
-- [ ] PriorityLevel UI
-
-### Testing
-- [ ] Add Playwright test for TaskList page
-- [ ] Add Playwright test for login → task list navigation
-- [ ] Add Playwright test for task creation flow
+### Frontend Features Remaining
+- [ ] Edit Task (UI + API integration)
+- [ ] Progress Log UI (add + view)
+- [ ] DueDate input + display
+- [ ] PriorityLevel input + display
 
 ---
 
-## Next Steps
+### Test Integrity (CRITICAL)
+- [ ] Normalize Task object shape across ALL tests  
+  - Must match full structure:
+    - taskId
+    - title
+    - description
+    - status
+    - priorityLevel
+    - dueDate
+    - nextAction
+    - lastUpdatedDate
+  - Remove partial `{ title }` test objects
 
-1. Implement NextAction display in TaskList  
-2. Continue task lifecycle features:
-   - Edit
-   - Delete
-   - Status updates  
+---
+
+### Integration Gaps
+- [ ] Register → navigate to `/tasks` after success
+
+---
+
+### E2E Coverage
+- [ ] TaskList page load test
+- [ ] Login → TaskList navigation test
+- [ ] Task creation flow test
+- [ ] Status update flow test
+
+---
+
+## Next Steps (Execution Order)
+
+1. Edit Task (TDD: RED → GREEN)
+2. Progress Log UI
+3. DueDate + PriorityLevel UI
+4. Test object normalization pass
 
 ---
 
 ## Notes
 
-- Strict MVP scope enforced
+- Strict MVP scope enforced (no expansion)
 - Single-user system
-- No notifications, roles, or advanced features included
+- No notifications, roles, or advanced features
+- Refresh pattern is mandatory for UI consistency
+- Status logic enforced by backend rules (no UI overrides)
 
 ---
 
 ## Changelog
 
+### v1.8 (04/25/2026)
+- Implemented status update refresh behavior
+- Ensured consistency across create/delete/status flows
+- Updated TaskList UI to reflect status transitions
+- Added unit test for refresh after status update
+- Updated README to reflect current system state and remaining work
+
 ### v1.7 (04/23/2026)
-- Removed direct DOM querying from all frontend components
-- Implemented Angular `ngModel` binding for all forms
-- Completed create → visible loop using refresh signaling
-- Removed temporary direct task reload workaround
-- Introduced shared `Task` interface and typed service responses
-- Updated TaskListComponent to use typed data and event-driven refresh
-- Cleaned up frontend tests to align with Angular binding behavior
-- Updated documentation and removed outdated loose ends
+- Removed direct DOM querying
+- Implemented ngModel binding
+- Completed create → visible loop
+- Introduced refresh signaling architecture
 
 ### v1.6 (04/23/2026)
-- Implemented create → visible loop using TaskService refresh signaling
-- Added `taskRefresh$` observable and `refreshTasks()` method
-- Updated TaskFormComponent to emit refresh event after successful task creation
-- Refactored TaskListComponent:
-  - Extracted `loadTasks()` method
-  - Subscribed to refresh events to reload tasks
-- Added and refined unit tests for:
-  - refresh event emission
-  - TaskForm → TaskService interaction
-  - TaskList response to refresh events
-- Resolved test lifecycle issues with Angular component initialization
+- Implemented TaskService refresh system
+- Connected TaskForm → TaskList via observable
 
-### v1.5 
-- Implemented TaskFormComponent (task creation UI)
-- Integrated TaskService.createTask()
-- Added tests for form behavior, submission, and service call
-- Implemented clearing title after successful creation
+### v1.5
+- Task creation UI complete
 
-### v1.4 (04/22/2026)
-- Implemented Login UI and AuthService login
-- Implemented TaskService GET `/api/tasks`
-- Added TaskListComponent tests
+### v1.4
+- Login + Task list integration
 
-### v1.3 (04/18/2026)
-- Angular project setup
-- RegisterComponent implemented with TDD
+### v1.3
+- Angular setup + Register UI
 
-### v1.2 (04/16/2026)
-- Backend authentication
-- Progress Log endpoints
-- Status update endpoint
+### v1.2
+- Backend auth + progress log
 
 ### v1.1
-- Core backend logic and models
+- Core backend logic

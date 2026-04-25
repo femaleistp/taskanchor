@@ -27,7 +27,9 @@ export class TaskListComponent implements OnInit {
   }
 
   onEdit(task: any): void {
-
+    this.taskService.updateTask(task).subscribe(() => {
+      this.taskService.refreshTasks();
+    });
   }
 
   onDelete(task: any): void {
@@ -43,6 +45,8 @@ export class TaskListComponent implements OnInit {
       task.status = 'Completed';
     }
 
-    this.taskService.updateTask(task).subscribe();
+    this.taskService.updateTask(task).subscribe(() => {
+      this.taskService.refreshTasks();
+    });
   }
 }

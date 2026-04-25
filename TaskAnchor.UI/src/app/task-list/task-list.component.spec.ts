@@ -623,4 +623,143 @@ describe('TaskListComponent', () => {
 
     expect(taskService.updateTask).toHaveBeenCalled();
   });
+
+  it('should call refreshTasks after successful status update', () => {
+    const taskService = TestBed.inject(TaskService);
+
+    const task = {
+      taskId: 1,
+      userId: 1,
+      title: 'Test Task',
+      description: 'desc',
+      priorityLevel: 'High',
+      status: 'Active',
+      dueDate: null,
+      nextAction: 'Next step',
+      lastUpdatedDate: new Date().toISOString()
+    } as any;
+
+    spyOn(taskService, 'updateTask').and.returnValue({
+      subscribe: (fn?: any) => {
+        if (fn) {
+          fn({})
+        }
+      }
+    } as any);
+
+    spyOn(taskService, 'refreshTasks');
+
+    component.onStatusChange(task);
+
+    expect(taskService.refreshTasks).toHaveBeenCalled();
+  });
+
+  it('should call TaskService.updateTask when onEdit is triggered', () => {
+    const taskService = TestBed.inject(TaskService);
+
+    const task = {
+      taskId: 1,
+      title: 'Test Task',
+      description: 'desc',
+      status: 'Active',
+      priorityLevel: 'Medium',
+      dueDate: null,
+      nextAction: 'Next step',
+      lastUpdatedDate: new Date().toISOString()
+    };
+
+    spyOn(taskService, 'updateTask').and.returnValue({
+      subscribe: () => { }
+    } as any);
+
+    component.onEdit(task);
+
+    expect(taskService.updateTask).toHaveBeenCalledWith(task);
+  });
+
+  it('should call refreshTasks after successful edit', () => {
+    const taskService = TestBed.inject(TaskService);
+
+    const task = {
+      taskId: 1,
+      title: 'Test Task',
+      description: 'desc',
+      status: 'Active',
+      priorityLevel: 'Medium',
+      dueDate: null,
+      nextAction: 'Next step',
+      lastUpdatedDate: new Date().toISOString()
+    };
+
+    spyOn(taskService, 'updateTask').and.returnValue({
+      subscribe: (fn?: any) => {
+        if (fn) fn({});
+      }
+    } as any);
+
+    spyOn(taskService, 'refreshTasks');
+
+    component.onEdit(task);
+
+    expect(taskService.refreshTasks).toHaveBeenCalled();
+  });
+
+  it('should NOT call refreshTasks if updateTask fails', () => {
+    const taskService = TestBed.inject(TaskService);
+
+    const task = {
+      taskId: 1,
+      title: 'Test Task',
+      description: 'desc',
+      status: 'Active',
+      priorityLevel: 'Medium',
+      dueDate: null,
+      nextAction: 'Next step',
+      lastUpdatedDate: new Date().toISOString()
+    };
+
+    spyOn(taskService, 'updateTask').and.returnValue({
+      subscribe: (_success?: any, error?: any) => {
+        if (error) {
+          error({});
+        }
+      }
+    } as any);
+
+    spyOn(taskService, 'refreshTasks');
+
+    component.onEdit(task);
+
+    expect(taskService.refreshTasks).not.toHaveBeenCalled();
+  });
+
+  it('should send updated task data when editing', () => {
+    const taskService = TestBed.inject(TaskService);
+
+    const task = {
+      taskId: 1,
+      title: 'Original Title',
+      description: 'desc',
+      status: 'Active',
+      priorityLevel: 'Medium',
+      dueDate: null,
+      nextAction: 'Next step',
+      lastUpdatedDate: new Date().toISOString()
+    };
+
+    spyOn(taskService, 'updateTask').and.returnValue({
+      subscribe: () => { }
+    } as any);
+
+    // simulate edit
+    task.title = 'Updated Title';
+
+    component.onEdit(task);
+
+    expect(taskService.updateTask).toHaveBeenCalledWith(
+      jasmine.objectContaining({
+        title: 'Updated Title'
+      })
+    );
+  });
 });
