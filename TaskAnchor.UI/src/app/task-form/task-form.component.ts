@@ -8,12 +8,18 @@ import { TaskService } from '../services/task.service';
 })
 export class TaskFormComponent {
   title: string = '';
+  priorityLevel: string = 'Medium';
+  dueDate: string = '';
+  nextAction: string = '';
 
   constructor(private taskService: TaskService) { }
 
   onSubmit(): void {
-    this.taskService.createTask({ title: this.title }).subscribe(() => {
+    this.taskService.createTask({ title: this.title, priorityLevel: this.priorityLevel, dueDate: this.dueDate, nextAction: this.nextAction }).subscribe(() => {
       this.title = '';
+      this.priorityLevel = 'Medium ';
+      this.dueDate = '';
+      this.nextAction = '';
       this.taskService.refreshTasks();
     });
   }

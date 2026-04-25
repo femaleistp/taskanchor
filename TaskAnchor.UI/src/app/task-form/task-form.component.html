@@ -2,5 +2,13 @@
 
   <form (submit)="onSubmit()">
     <input type="text" name="title" [(ngModel)]="title" />
+    <select name="priorityLevel" [(ngModel)]="priorityLevel">
+      <option value="Low">Low</option>
+      <option value="Medium">Medium</option>
+      <option value="High">High</option>
+    </select>
+    <input type="text" name="dueDate" [(ngModel)]="dueDate" />
+    <input type="text" name="nextAction" [(ngModel)]="nextAction" />
+
     <button type="submit">Create Task</button>
   </form>

@@ -88,7 +88,7 @@ describe('TaskFormComponent', () => {
     const form = compiled.querySelector('form');
     form?.dispatchEvent(new Event('submit'));
 
-    expect(taskService.createTask).toHaveBeenCalledWith({ title: 'New Task' });
+    expect(taskService.createTask).toHaveBeenCalledWith({ title: 'New Task', priorityLevel: 'Medium', dueDate: '', nextAction: '' });
   });
 
   it('should clear title after successful task creation', () => {
@@ -128,7 +128,7 @@ describe('TaskFormComponent', () => {
     const form = compiled.querySelector('form');
     form?.dispatchEvent(new Event('submit'));
 
-    expect(taskService.createTask).toHaveBeenCalledWith({ title: 'New Task' });
+    expect(taskService.createTask).toHaveBeenCalledWith({ title: 'New Task', priorityLevel: 'Medium', dueDate: '', nextAction: '' });
     expect(taskService.refreshTasks).toHaveBeenCalled();
     expect(taskService.getTasks).not.toHaveBeenCalled();
   });
@@ -150,8 +150,136 @@ describe('TaskFormComponent', () => {
 
     component.onSubmit();
 
-    expect(taskService.createTask).toHaveBeenCalledWith({ title: 'New Task' });
+    expect(taskService.createTask).toHaveBeenCalledWith({ title: 'New Task', priorityLevel: 'Medium', dueDate: '', nextAction: '' });
     expect(taskService.refreshTasks).toHaveBeenCalled();
     expect(component.title).toBe('');
+  });
+
+  it('should render a NextAction input field', () => {
+    const compiled = fixture.nativeElement as HTMLElement;
+
+    const input = compiled.querySelector('input[name="nextAction"]');
+
+    expect(input).not.toBeNull();
+  });
+
+  it('should bind NextAction input to component property', () => {
+    const compiled = fixture.nativeElement as HTMLElement;
+
+    const input = compiled.querySelector('input[name="nextAction"]') as HTMLInputElement;
+
+    input.value = 'Test next step';
+    input.dispatchEvent(new Event('input'));
+
+    fixture.detectChanges();
+
+    expect(component.nextAction).toBe('Test next step');
+  });
+
+  it('should include nextAction when creating a task', () => {
+    const taskService = TestBed.inject(TaskService);
+
+    spyOn(taskService, 'createTask').and.returnValue({
+      subscribe: () => { }
+    } as any);
+
+    component.title = 'Test Task';
+    component.nextAction = 'Do something next';
+
+    component.onSubmit();
+
+    expect(taskService.createTask).toHaveBeenCalledWith(
+      jasmine.objectContaining({
+        title: 'Test Task',
+        nextAction: 'Do something next'
+      })
+    );
+  });
+
+  it('should render a DueDate input field', () => {
+    const compiled = fixture.nativeElement as HTMLElement;
+
+    const input = compiled.querySelector('input[name="dueDate"]');
+
+    expect(input).not.toBeNull();
+  });
+
+  it('should bind DueDate input to component property', () => {
+    const compiled = fixture.nativeElement as HTMLElement;
+
+    const input = compiled.querySelector('input[name="dueDate"]') as HTMLInputElement;
+
+    input.value = '2026-04-30';
+    input.dispatchEvent(new Event('input'));
+
+    fixture.detectChanges();
+
+    expect(component.dueDate).toBe('2026-04-30');
+  });
+  it('should include dueDate when creating a task', () => {
+    const taskService = TestBed.inject(TaskService);
+
+    spyOn(taskService, 'createTask').and.returnValue({
+      subscribe: () => { }
+    } as any);
+
+    component.title = 'Test Task';
+    component.dueDate = '2026-04-30';
+    component.nextAction = 'Next step';
+
+    component.onSubmit();
+
+    expect(taskService.createTask).toHaveBeenCalledWith(
+      jasmine.objectContaining({
+        title: 'Test Task',
+        dueDate: '2026-04-30',
+        nextAction: 'Next step'
+      })
+    );
+  });
+
+  it('should render a PriorityLevel select input', () => {
+    const compiled = fixture.nativeElement as HTMLElement;
+
+    const select = compiled.querySelector('select[name="priorityLevel"]');
+
+    expect(select).not.toBeNull();
+  });
+
+  it('should bind PriorityLevel select to component property', () => {
+    const compiled = fixture.nativeElement as HTMLElement;
+
+    const select = compiled.querySelector('select[name="priorityLevel"]') as HTMLInputElement;
+
+    select.value = "High";
+    select.dispatchEvent(new Event('change'));
+
+    fixture.detectChanges();
+
+    expect(component.priorityLevel).toBe('High');
+  });
+
+  it('should include priorityLevel when creating a task', () => {
+    const taskService = TestBed.inject(TaskService);
+
+    spyOn(taskService, 'createTask').and.returnValue({
+      subscribe: () => { }
+    } as any);
+
+    component.title = 'Test Task';
+    component.priorityLevel = 'High';
+    component.dueDate = '2026-04-30';
+    component.nextAction = 'Next step';
+
+    component.onSubmit();
+
+    expect(taskService.createTask).toHaveBeenCalledWith(
+      jasmine.objectContaining({
+        title: 'Test Task',
+        priorityLevel: 'High',
+        dueDate: '2026-04-30',
+        nextAction: 'Next step'
+      })
+    );
   });
 });
