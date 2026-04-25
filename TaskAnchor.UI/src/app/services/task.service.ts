@@ -31,4 +31,8 @@ export class TaskService {
   updateTask(task: any) {
     return this.http.put(`/api/tasks/${task.taskId}`, task);
   }
+
+  addProgressLog(taskId: number, text: string) {
+    return this.http.post(`/api/tasks/${taskId}/progress-log`, { text });
+  }
 }

@@ -10,6 +10,8 @@ import { Task } from '../models/task';
 export class TaskListComponent implements OnInit {
   tasks: Task[] = [];
   editingTaskId: number | null = null
+  progressLogTaskId: number | null = null
+  progressLogText: string = '';
 
   constructor(private taskService: TaskService) { }
 
@@ -53,6 +55,18 @@ export class TaskListComponent implements OnInit {
     this.taskService.updateTask(task).subscribe(() => {
       this.taskService.refreshTasks();
       this.editingTaskId = null;
+    });
+  }
+
+  onAddProgressLog(task: any): void {
+    this.progressLogTaskId = task.taskId;
+  }
+
+  onSaveProgressLog(task: any): void {
+    this.taskService.addProgressLog(task.taskId, this.progressLogText).subscribe(() => {
+      this.taskService.refreshTasks();
+      this.progressLogText = '';
+      this.progressLogTaskId = null;
     });
   }
 }

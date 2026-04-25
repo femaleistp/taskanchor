@@ -865,4 +865,186 @@ describe('TaskListComponent', () => {
 
     expect(component.onSave).toHaveBeenCalledWith(component.tasks[0]);
   });
+
+  it('should render an Add Progress Log button for each task', () => {
+    component.tasks = [
+      {
+        taskId: 1,
+        title: 'Test Task',
+        description: '',
+        status: 'Active',
+        priorityLevel: 'Medium',
+        dueDate: null,
+        nextAction: null,
+        lastUpdatedDate: new Date().toISOString()
+      }
+    ];
+
+    fixture.detectChanges();
+
+    const compiled = fixture.nativeElement as HTMLElement;
+
+    const button = compiled.querySelector('button[name="addProgressLogButton"]') as HTMLButtonElement;
+
+    expect(button).not.toBeNull();
+  });
+
+  it('should call onAddProgressLog when Add Progress Log button is clicked', () => {
+    component.tasks = [
+      {
+        taskId: 1,
+        title: 'Test Task',
+        description: '',
+        status: 'Active',
+        priorityLevel: 'Medium',
+        dueDate: null,
+        nextAction: null,
+        lastUpdatedDate: new Date().toISOString()
+      }
+    ];
+
+    spyOn(component, 'onAddProgressLog');
+
+    fixture.detectChanges();
+
+    const compiled = fixture.nativeElement as HTMLElement;
+
+    const button = compiled.querySelector('button[name="addProgressLogButton"]') as HTMLButtonElement;
+
+    button.click();
+
+    expect(component.onAddProgressLog).toHaveBeenCalledWith(component.tasks[0]);
+  });
+
+  it('should render a Progress Log input when Add Progress Log is triggered', () => {
+    component.tasks = [
+      {
+        taskId: 1,
+        title: 'Test Task',
+        description: '',
+        status: 'Active',
+        priorityLevel: 'Medium',
+        dueDate: null,
+        nextAction: null,
+        lastUpdatedDate: new Date().toISOString()
+      }
+    ];
+
+    component.onAddProgressLog(component.tasks[0]);
+    fixture.detectChanges();
+
+    const compiled = fixture.nativeElement as HTMLElement;
+
+    const input = compiled.querySelector('input[name="progressLogInput"]');
+
+    expect(input).not.toBeNull();
+  });
+
+  it('should bind Progress Log input to component property', () => {
+    component.tasks = [
+      {
+        taskId: 1,
+        title: 'Test Task',
+        description: '',
+        status: 'Active',
+        priorityLevel: 'Medium',
+        dueDate: null,
+        nextAction: null,
+        lastUpdatedDate: new Date().toISOString()
+      }
+    ];
+
+    component.onAddProgressLog(component.tasks[0]);
+    fixture.detectChanges();
+
+    const compiled = fixture.nativeElement as HTMLElement;
+
+    const input = compiled.querySelector('input[name="progressLogInput"]') as HTMLInputElement;
+
+    input.value = 'Worked on task';
+    input.dispatchEvent(new Event('input'));
+
+    fixture.detectChanges();
+
+    expect(component.progressLogText).toBe('Worked on task');
+  });
+
+  it('should call TaskService to save progress log and refresh tasks', () => {
+    const taskService = TestBed.inject(TaskService);
+
+    const task = {
+      taskId: 1,
+      title: 'Test Task',
+      description: '',
+      status: 'Active',
+      priorityLevel: 'Medium',
+      dueDate: null,
+      nextAction: null,
+      lastUpdatedDate: new Date().toISOString()
+    };
+
+    spyOn(taskService, 'addProgressLog').and.returnValue({
+      subscribe: (fn?: any) => { if (fn) fn({}); }
+    } as any);
+
+    spyOn(taskService, 'refreshTasks');
+
+    component.progressLogTaskId = 1;
+    component.progressLogText = 'Worked on task';
+
+    component.onSaveProgressLog(task);
+
+    expect(taskService.addProgressLog).toHaveBeenCalledWith(task.taskId, 'Worked on task');
+    expect(taskService.refreshTasks).toHaveBeenCalled();
+  });
+
+  it('should render a Save Progress Log button when adding a progress log,', () => {
+    component.tasks = [
+      {
+        taskId: 1,
+        title: 'Test Task',
+        description: '',
+        status: 'Active',
+        priorityLevel: 'Medium',
+        dueDate: null,
+        nextAction: null,
+        lastUpdatedDate: new Date().toISOString()
+      }
+    ];
+
+    component.progressLogTaskId = 1;
+    fixture.detectChanges();
+
+    const compiled = fixture.nativeElement as HTMLElement;
+
+    const button = compiled.querySelector('button[name="saveProgressLogButton"]');
+
+    expect(button).not.toBeNull();
+  });
+
+  it('should render progress logs for a task when present', () => {
+      component.tasks = [
+        {
+          taskId: 1,
+          title: 'Test Task',
+          description: '',
+          status: 'Active',
+          priorityLevel: 'Medium',
+          dueDate: null,
+          nextAction: null,
+          lastUpdatedDate: new Date().toISOString(),
+          progressLogs: [
+            { text: 'Worked on task' },
+            { text: 'Made more progress' }
+          ]
+        } as any
+      ];
+
+      fixture.detectChanges();
+
+      const compiled = fixture.nativeElement as HTMLElement;
+
+      expect(compiled.textContent).toContain('Worked on task');
+      expect(compiled.textContent).toContain('Made more progress');
+  })
 });

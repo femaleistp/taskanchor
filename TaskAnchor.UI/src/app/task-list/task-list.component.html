@@ -17,8 +17,19 @@
       {{ task.nextAction }}
     </div>
 
+    <div *ngIf="task.progressLogs && task.progressLogs.length > 0">
+      <div *ngFor="let log of task.progressLogs">
+        {{ log.text }}
+      </div>
+    </div>
+
     <button (click)="onEdit(task)">Edit</button>
     <button (click)="onDelete(task)">Delete</button>
+
+    <button name="addProgressLogButton" (click)="onAddProgressLog(task)">Add Progress Log</button>
+    <input *ngIf="progressLogTaskId === task.taskId" name="progressLogInput" [(ngModel)]="progressLogText" />
+
+    <button *ngIf="progressLogTaskId === task.taskId" name="saveProgressLogButton" (click)="onSaveProgressLog(task)">Save Progress Log</button>
 
   </li>
 
