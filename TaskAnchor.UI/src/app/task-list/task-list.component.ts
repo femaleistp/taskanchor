@@ -9,6 +9,7 @@ import { Task } from '../models/task';
 })
 export class TaskListComponent implements OnInit {
   tasks: Task[] = [];
+  editingTaskId: number | null = null
 
   constructor(private taskService: TaskService) { }
 
@@ -27,9 +28,7 @@ export class TaskListComponent implements OnInit {
   }
 
   onEdit(task: any): void {
-    this.taskService.updateTask(task).subscribe(() => {
-      this.taskService.refreshTasks();
-    });
+    this.editingTaskId = task.taskId;
   }
 
   onDelete(task: any): void {
@@ -47,6 +46,13 @@ export class TaskListComponent implements OnInit {
 
     this.taskService.updateTask(task).subscribe(() => {
       this.taskService.refreshTasks();
+    });
+  }
+
+  onSave(task: any): void {
+    this.taskService.updateTask(task).subscribe(() => {
+      this.taskService.refreshTasks();
+      this.editingTaskId = null;
     });
   }
 }

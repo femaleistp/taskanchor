@@ -3,6 +3,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { TaskListComponent } from './task-list.component';
 import { TaskService } from '../services/task.service';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { FormsModule } from '@angular/forms';
 
 describe('TaskListComponent', () => {
   let component: TaskListComponent;
@@ -11,7 +12,7 @@ describe('TaskListComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [TaskListComponent],
-      imports: [HttpClientTestingModule]
+      imports: [FormsModule, HttpClientTestingModule]
     })
       .compileComponents();
 
@@ -674,7 +675,7 @@ describe('TaskListComponent', () => {
 
     component.onEdit(task);
 
-    expect(taskService.updateTask).toHaveBeenCalledWith(task);
+    expect(component.editingTaskId).toBe(task.taskId);
   });
 
   it('should call refreshTasks after successful edit', () => {
@@ -701,7 +702,7 @@ describe('TaskListComponent', () => {
 
     component.onEdit(task);
 
-    expect(taskService.refreshTasks).toHaveBeenCalled();
+    expect(taskService.refreshTasks).not.toHaveBeenCalled();
   });
 
   it('should NOT call refreshTasks if updateTask fails', () => {
@@ -756,10 +757,112 @@ describe('TaskListComponent', () => {
 
     component.onEdit(task);
 
-    expect(taskService.updateTask).toHaveBeenCalledWith(
-      jasmine.objectContaining({
-        title: 'Updated Title'
-      })
-    );
+    expect(component.editingTaskId).toBe(task.taskId);
+  });
+
+  it('should render an input for editing task title when edit is triggered', () => {
+    component.tasks = [
+      {
+        taskId: 1,
+        title: 'Test Task',
+        description: '',
+        status: 'Active',
+        priorityLevel: 'Medium',
+        dueDate: null,
+        nextAction: null,
+        lastUpdatedDate: new Date().toISOString()
+      }
+    ];
+
+    component.onEdit(component.tasks[0]);
+    fixture.detectChanges();
+
+    const compiled = fixture.nativeElement as HTMLElement;
+
+    const input = compiled.querySelector('input[name="editTitle"]');
+
+    expect(input).not.toBeNull();
+  });
+
+  it('should call updateTask when edited task is saved', () => {
+    const taskService = TestBed.inject(TaskService);
+
+    const task = {
+      taskId: 1,
+      title: 'Test Task',
+      description: 'desc',
+      status: 'Active',
+      priorityLevel: 'Medium',
+      dueDate: null,
+      nextAction: 'Next step',
+      lastUpdatedDate: new Date().toISOString()
+    };
+
+    spyOn(taskService, 'updateTask').and.returnValue({
+      subscribe: (fn?: any) => { if (fn) fn({}); }
+    } as any);
+
+    spyOn(taskService, 'refreshTasks');
+
+    component.editingTaskId = 1;
+    task.title = 'Updated Title';
+
+    component.onSave(task);
+
+    expect(taskService.updateTask).toHaveBeenCalledWith(task);
+    expect(taskService.refreshTasks).toHaveBeenCalled();
+  });
+
+  it('should render a Save button when editing a task', () => {
+    component.tasks = [
+      {
+        taskId: 1,
+        title: 'Test Task',
+        description: '',
+        status: 'Active',
+        priorityLevel: 'Medium',
+        dueDate: null,
+        nextAction: null,
+        lastUpdatedDate: new Date().toISOString()
+      }
+    ];
+
+    component.editingTaskId = 1;
+    fixture.detectChanges();
+
+    const compiled = fixture.nativeElement as HTMLElement;
+
+    const button = compiled.querySelector('button[name="saveButton"]');
+
+    expect(button).not.toBeNull();
+  });
+
+  it('should call onSave when Save button is clicked', () => {
+    component.tasks = [
+      {
+        taskId: 1,
+        title: 'Test Task',
+        description: '',
+        status: 'Active',
+        priorityLevel: 'Medium',
+        dueDate: null,
+        nextAction: null,
+        lastUpdatedDate: new Date().toISOString()
+      }
+    ];
+
+    component.editingTaskId = 1;
+
+    spyOn(component, 'onSave');
+
+    fixture.detectChanges();
+
+    const compiled = fixture.nativeElement as HTMLElement;
+
+    const button = compiled.querySelector('button[name="saveButton"]') as HTMLButtonElement;
+
+    button.click();
+
+    expect(component.onSave).toHaveBeenCalledWith(component.tasks[0]);
   });
 });
