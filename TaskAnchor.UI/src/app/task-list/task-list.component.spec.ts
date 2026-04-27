@@ -43,9 +43,27 @@ describe('TaskListComponent', () => {
 
   it('should render task items when tasks exist', () => {
     component.tasks = [
-      { title: 'Test Task 1' },
-      { title: 'Test Task 2' }
-    ] as any;
+      {
+        taskId: 1,
+        title: 'Test Task 1',
+        description: '',
+        status: 'Active',
+        priorityLevel: 'Medium',
+        dueDate: null,
+        nextAction: null,
+        lastUpdatedDate: new Date().toISOString()
+      },
+      {
+        taskId: 2,
+        title: 'Test Task 2',
+        description: '',
+        status: 'Active',
+        priorityLevel: 'Medium',
+        dueDate: null,
+        nextAction: null,
+        lastUpdatedDate: new Date().toISOString()
+      }
+    ];
 
     fixture.detectChanges();
 
@@ -57,8 +75,17 @@ describe('TaskListComponent', () => {
 
   it('should not render empty state when tasks exist', () => {
     component.tasks = [
-      { title: 'Task 1' }
-    ] as any;
+      {
+        taskId: 1,
+        title: 'Task 1',
+        description: '',
+        status: 'Active',
+        priorityLevel: 'Medium',
+        dueDate: null,
+        nextAction: null,
+        lastUpdatedDate: new Date().toISOString()
+      }
+    ];
 
     fixture.detectChanges();
 
@@ -66,11 +93,29 @@ describe('TaskListComponent', () => {
     expect(compiled.textContent).not.toContain('No active tasks');
   });
 
-  it('should render task title text for each taks item', () => {
+  it('should render task title text for each task item', () => {
     component.tasks = [
-      { title: 'Pay bill' },
-      { title: 'Call doctor' }
-    ] as any;
+      {
+        taskId: 1,
+        title: 'Pay bill',
+        description: '',
+        status: 'Active',
+        priorityLevel: 'Medium',
+        dueDate: null,
+        nextAction: null,
+        lastUpdatedDate: new Date().toISOString()
+      },
+      {
+        taskId: 2,
+        title: 'Call doctor',
+        description: '',
+        status: 'Active',
+        priorityLevel: 'Medium',
+        dueDate: null,
+        nextAction: null,
+        lastUpdatedDate: new Date().toISOString()
+      }
+    ];
 
     fixture.detectChanges();
 
@@ -82,7 +127,18 @@ describe('TaskListComponent', () => {
   it('should load tasks from TaskService on init', () => {
     const taskService = TestBed.inject(TaskService);
     spyOn(taskService, 'getTasks').and.returnValue({
-      subscribe: (fn: any) => fn([{ title: 'Task 1' }])
+      subscribe: (fn: any) => fn([
+        {
+          taskId: 1,
+          title: 'Task 1',
+          description: '',
+          status: 'Active',
+          priorityLevel: 'Medium',
+          dueDate: null,
+          nextAction: null,
+          lastUpdatedDate: new Date().toISOString()
+        }
+      ])
     } as any);
 
     component.ngOnInit();
@@ -94,7 +150,18 @@ describe('TaskListComponent', () => {
   it('should render tasks returned from TaskService', () => {
     const taskService = TestBed.inject(TaskService);
     spyOn(taskService, 'getTasks').and.returnValue({
-      subscribe: (fn: any) => fn([{ title: 'Test Task' }])
+      subscribe: (fn: any) => fn([
+        {
+          taskId: 1,
+          title: 'Test Task',
+          description: '',
+          status: 'Active',
+          priorityLevel: 'Medium',
+          dueDate: null,
+          nextAction: null,
+          lastUpdatedDate: new Date().toISOString()
+        }
+      ])
     } as any);
 
     component.ngOnInit();
@@ -131,8 +198,41 @@ describe('TaskListComponent', () => {
   it('should update tasks when getTasks is called again', () => {
     const taskService = TestBed.inject(TaskService);
 
-    const firstResponse = [{ title: 'Task 1' }];
-    const secondResponse = [{ title: 'Task1' }, { title: 'Task 2' }];
+    const firstResponse = [
+      {
+        taskId: 1,
+        title: 'Task 1',
+        description: '',
+        status: 'Active',
+        priorityLevel: 'Medium',
+        dueDate: null,
+        nextAction: null,
+        lastUpdatedDate: new Date().toISOString()
+      }
+    ];
+
+    const secondResponse = [
+      {
+        taskId: 1,
+        title: 'Task 1',
+        description: '',
+        status: 'Active',
+        priorityLevel: 'Medium',
+        dueDate: null,
+        nextAction: null,
+        lastUpdatedDate: new Date().toISOString()
+      },
+      {
+        taskId: 2,
+        title: 'Task 2',
+        description: '',
+        status: 'Active',
+        priorityLevel: 'Medium',
+        dueDate: null,
+        nextAction: null,
+        lastUpdatedDate: new Date().toISOString()
+      }
+    ];
 
     let callCount = 0;
 
@@ -157,8 +257,41 @@ describe('TaskListComponent', () => {
   it('should render a newly created task after refresh is triggered', () => {
     const taskService = TestBed.inject(TaskService);
 
-    const initialTasks = [{ title: 'Task 1' }];
-    const refreshedTasks = [{ title: 'Task 1' }, { title: 'Task 2' }];
+    const initialTasks = [
+      {
+        taskId: 1,
+        title: 'Task 1',
+        description: '',
+        status: 'Active',
+        priorityLevel: 'Medium',
+        dueDate: null,
+        nextAction: null,
+        lastUpdatedDate: new Date().toISOString()
+      }
+    ];
+
+    const refreshedTasks = [
+      {
+        taskId: 1,
+        title: 'Task 1',
+        description: '',
+        status: 'Active',
+        priorityLevel: 'Medium',
+        dueDate: null,
+        nextAction: null,
+        lastUpdatedDate: new Date().toISOString()
+      },
+      {
+        taskId: 2,
+        title: 'Task 2',
+        description: '',
+        status: 'Active',
+        priorityLevel: 'Medium',
+        dueDate: null,
+        nextAction: null,
+        lastUpdatedDate: new Date().toISOString()
+      }
+    ];
 
     let getTasksCallCount = 0;
 
@@ -200,24 +333,50 @@ describe('TaskListComponent', () => {
   it('should reload tasks when taskRefresh$ emits', () => {
     const taskService = TestBed.inject(TaskService);
 
+    const initialLoadTasks = [
+      {
+        taskId: 1,
+        title: 'Initial Load',
+        description: '',
+        status: 'Active',
+        priorityLevel: 'Medium',
+        dueDate: null,
+        nextAction: null,
+        lastUpdatedDate: new Date().toISOString()
+      }
+    ];
+
+    const afterRefreshTasks = [
+      {
+        taskId: 1,
+        title: 'After Refresh',
+        description: '',
+        status: 'Active',
+        priorityLevel: 'Medium',
+        dueDate: null,
+        nextAction: null,
+        lastUpdatedDate: new Date().toISOString()
+      }
+    ];
+
     spyOn(taskService, 'getTasks').and.returnValues(
       {
-        subscribe: (fn: any) => fn([{ title: 'Initial Load' }])
+        subscribe: (fn: any) => fn(initialLoadTasks)
       } as any,
       {
-        subscribe: (fn: any) => fn([{ title: 'After Refresh' }])
+        subscribe: (fn: any) => fn(afterRefreshTasks)
       } as any
     );
 
     component.loadTasks();
 
-    expect(component.tasks as any).toEqual([{ title: 'Initial Load' }]);
+    expect(component.tasks).toEqual(initialLoadTasks);
     expect(taskService.getTasks).toHaveBeenCalledTimes(1);
 
     taskService.refreshTasks();
 
     expect(taskService.getTasks).toHaveBeenCalledTimes(2);
-    expect(component.tasks as any).toEqual([{ title: 'After Refresh' }]);
+    expect(component.tasks).toEqual(afterRefreshTasks);
   });
 
   it('should keep tasks typed with title values from the service response', () => {
@@ -225,8 +384,26 @@ describe('TaskListComponent', () => {
 
     spyOn(taskService, 'getTasks').and.returnValue({
       subscribe: (fn: any) => fn([
-        { title: 'Task A' },
-        { title: 'Task B' }
+        {
+          taskId: 1,
+          title: 'Task A',
+          description: '',
+          status: 'Active',
+          priorityLevel: 'Medium',
+          dueDate: null,
+          nextAction: null,
+          lastUpdatedDate: new Date().toISOString()
+        },
+        {
+          taskId: 2,
+          title: 'Task B',
+          description: '',
+          status: 'Active',
+          priorityLevel: 'Medium',
+          dueDate: null,
+          nextAction: null,
+          lastUpdatedDate: new Date().toISOString()
+        }
       ])
     } as any);
 
@@ -237,11 +414,29 @@ describe('TaskListComponent', () => {
     expect(component.tasks[1].title).toBe('Task B');
   });
 
-  it('should accept a task list shaped as objects with title strings', () => {
+  it('should accept a full task list shaped with title strings', () => {
     component.tasks = [
-      { title: 'Task A' },
-      { title: 'Task B' }
-    ] as any;
+      {
+        taskId: 1,
+        title: 'Task A',
+        description: '',
+        status: 'Active',
+        priorityLevel: 'Medium',
+        dueDate: null,
+        nextAction: null,
+        lastUpdatedDate: new Date().toISOString()
+      },
+      {
+        taskId: 2,
+        title: 'Task B',
+        description: '',
+        status: 'Active',
+        priorityLevel: 'Medium',
+        dueDate: null,
+        nextAction: null,
+        lastUpdatedDate: new Date().toISOString()
+      }
+    ];
 
     expect(component.tasks[0].title).toBe('Task A');
     expect(component.tasks[1].title).toBe('Task B');
@@ -630,7 +825,6 @@ describe('TaskListComponent', () => {
 
     const task = {
       taskId: 1,
-      userId: 1,
       title: 'Test Task',
       description: 'desc',
       priorityLevel: 'High',
@@ -638,7 +832,7 @@ describe('TaskListComponent', () => {
       dueDate: null,
       nextAction: 'Next step',
       lastUpdatedDate: new Date().toISOString()
-    } as any;
+    };
 
     spyOn(taskService, 'updateTask').and.returnValue({
       subscribe: (fn?: any) => {
@@ -1023,28 +1217,28 @@ describe('TaskListComponent', () => {
   });
 
   it('should render progress logs for a task when present', () => {
-      component.tasks = [
-        {
-          taskId: 1,
-          title: 'Test Task',
-          description: '',
-          status: 'Active',
-          priorityLevel: 'Medium',
-          dueDate: null,
-          nextAction: null,
-          lastUpdatedDate: new Date().toISOString(),
-          progressLogs: [
-            { text: 'Worked on task' },
-            { text: 'Made more progress' }
-          ]
-        } as any
-      ];
+    component.tasks = [
+      {
+        taskId: 1,
+        title: 'Test Task',
+        description: '',
+        status: 'Active',
+        priorityLevel: 'Medium',
+        dueDate: null,
+        nextAction: null,
+        lastUpdatedDate: new Date().toISOString(),
+        progressLogs: [
+          { text: 'Worked on task' },
+          { text: 'Made more progress' }
+        ]
+      }
+    ];
 
-      fixture.detectChanges();
+    fixture.detectChanges();
 
-      const compiled = fixture.nativeElement as HTMLElement;
+    const compiled = fixture.nativeElement as HTMLElement;
 
-      expect(compiled.textContent).toContain('Worked on task');
-      expect(compiled.textContent).toContain('Made more progress');
-  })
+    expect(compiled.textContent).toContain('Worked on task');
+    expect(compiled.textContent).toContain('Made more progress');
+  });
 });

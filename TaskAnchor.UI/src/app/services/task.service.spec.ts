@@ -59,10 +59,28 @@ describe('TaskService', () => {
     expect(wasCalled).toBeTrue();
   });
 
-  it('should return task objects with title from /api/tasks', () => {
+  it('should return full task objects with title from /api/tasks', () => {
     const expectedTasks = [
-      { title: 'Task A' },
-      { title: 'Task B' }
+      {
+        taskId: 1,
+        title: 'Task A',
+        description: '',
+        status: 'Active',
+        priorityLevel: 'Medium',
+        dueDate: null,
+        nextAction: null,
+        lastUpdatedDate: new Date().toISOString()
+      },
+      {
+        taskId: 2,
+        title: 'Task B',
+        description: '',
+        status: 'Active',
+        priorityLevel: 'Medium',
+        dueDate: null,
+        nextAction: null,
+        lastUpdatedDate: new Date().toISOString()
+      }
     ];
 
     let actualTasks: any[] = [];
