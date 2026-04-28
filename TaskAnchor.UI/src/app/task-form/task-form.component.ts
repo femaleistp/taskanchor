@@ -17,7 +17,7 @@ export class TaskFormComponent {
   onSubmit(): void {
     this.taskService.createTask({ title: this.title, priorityLevel: this.priorityLevel, dueDate: this.dueDate, nextAction: this.nextAction }).subscribe(() => {
       this.title = '';
-      this.priorityLevel = 'Medium ';
+      this.priorityLevel = 'Medium';
       this.dueDate = '';
       this.nextAction = '';
       this.taskService.refreshTasks();
