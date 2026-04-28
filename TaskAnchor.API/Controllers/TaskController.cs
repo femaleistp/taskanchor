@@ -66,6 +66,7 @@ namespace TaskAnchor.API.Controllers
             var tasks = _context.Tasks
                 .Where(t => t.UserId == 1 && t.Status != TaskStatus.Completed) // Temporary hardcoded user ID for testing purposes, exclude completed tasks
                 .ToList();
+
             var sortedTasks = TaskSortRules.SortTasks(
                 tasks,
                 t => t.Status,
@@ -73,7 +74,29 @@ namespace TaskAnchor.API.Controllers
                 t => t.PriorityLevel,
                 DateTime.UtcNow
             );
-            return Ok(sortedTasks);
+
+            var taskResponses = sortedTasks.Select(t => new
+            {
+                taskId = t.TaskId,
+                userId = t.UserId,
+                title = t.Title,
+                description = t.Description,
+                status = t.Status,
+                priorityLevel = t.PriorityLevel,
+                dueDate = t.DueDate,
+                nextAction = t.NextAction,
+                lastUpdatedDate = t.LastUpdatedDate,
+                progressLogs = _context.ProgressLogEntries
+            .Where(e => e.TaskId == t.TaskId)
+            .OrderByDescending(e => e.CreatedDate)
+            .Select(e => new
+            {
+                text = e.EntryText
+            })
+            .ToList()
+            });
+
+            return Ok(taskResponses);
         }
 
         [HttpGet("{id}/progress")]

@@ -15,12 +15,23 @@ export class TaskFormComponent {
   constructor(private taskService: TaskService) { }
 
   onSubmit(): void {
-    this.taskService.createTask({ title: this.title, priorityLevel: this.priorityLevel, dueDate: this.dueDate, nextAction: this.nextAction }).subscribe(() => {
+    const priorityMap: Record<string, number> = {
+      Low: 0,
+      Medium: 1,
+      High: 2
+    };
+
+    this.taskService.createTask({
+      title: this.title,
+      priorityLevel: priorityMap[this.priorityLevel],
+      dueDate: this.dueDate || null,
+      nextAction: this.nextAction
+    }).subscribe(() => {
+      this.taskService.refreshTasks();
       this.title = '';
       this.priorityLevel = 'Medium';
       this.dueDate = '';
       this.nextAction = '';
-      this.taskService.refreshTasks();
     });
   }
 }

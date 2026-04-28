@@ -11,5 +11,6 @@ export interface Task {
 }
 
 export interface ProgressLog {
-  text: string;
+  text?: string;
+  entryText?: string;
 }

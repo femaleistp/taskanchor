@@ -29,6 +29,38 @@ export class TaskListComponent implements OnInit {
     });
   }
 
+  getStatusLabel(status: any): string {
+    if (status === 0 || status === 'Active') {
+      return 'Active';
+    }
+
+    if (status === 1 || status === 'InProgress') {
+      return 'InProgress';
+    }
+
+    if (status === 2 || status === 'Completed') {
+      return 'Completed';
+    }
+
+    return String(status);
+  }
+
+  getPriorityLabel(priorityLevel: any): string {
+    if (priorityLevel === 0 || priorityLevel === 'Low') {
+      return 'Low';
+    }
+
+    if (priorityLevel === 1 || priorityLevel === 'Medium') {
+      return 'Medium';
+    }
+
+    if (priorityLevel === 2 || priorityLevel === 'High') {
+      return 'High';
+    }
+
+    return String(priorityLevel);
+  }
+
   onEdit(task: any): void {
     this.editingTaskId = task.taskId;
   }
@@ -40,13 +72,17 @@ export class TaskListComponent implements OnInit {
   }
 
   onStatusChange(task: any): void {
-    if (task.status === 'Active') {
-      task.status = 'InProgress';
-    } else if (task.status === 'InProgress') {
-      task.status = 'Completed';
+    let newStatus: number;
+
+    if (task.status === 0 || task.status === 'Active') {
+      newStatus = 1;
+    } else if (task.status === 1 || task.status === 'InProgress') {
+      newStatus = 2;
+    } else {
+      return;
     }
 
-    this.taskService.updateTask(task).subscribe(() => {
+    this.taskService.updateTaskStatus(task.taskId, newStatus).subscribe(() => {
       this.taskService.refreshTasks();
     });
   }

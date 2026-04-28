@@ -70,7 +70,8 @@
               "buildTarget": "TaskAnchor.UI:build:production"
             },
             "development": {
-              "buildTarget": "TaskAnchor.UI:build:development"
+              "buildTarget": "TaskAnchor.UI:build:development",
+              "proxyConfig": "proxy.conf.json"
             }
           },
           "defaultConfiguration": "development",
