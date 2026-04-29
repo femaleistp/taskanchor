@@ -170,4 +170,11 @@ describe('LoginComponent', () => {
     expect(authService.login).toHaveBeenCalledWith('test@example.com', 'password123');
     expect(router.navigate).toHaveBeenCalledWith(['/tasks']);
   });
+
+  it('should render login form inside a login card container', () => {
+    const compiled = fixture.nativeElement as HTMLElement;
+    const loginCard = compiled.querySelector('.login-card');
+
+    expect(loginCard).not.toBeNull();
+  });
 });

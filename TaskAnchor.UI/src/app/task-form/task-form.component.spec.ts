@@ -4,6 +4,7 @@ import { TaskFormComponent } from './task-form.component';
 import { TaskService } from '../services/task.service';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { FormsModule } from '@angular/forms';
+import { TaskListComponent } from '../task-list/task-list.component';
 
 describe('TaskFormComponent', () => {
   let component: TaskFormComponent;
@@ -11,7 +12,7 @@ describe('TaskFormComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [TaskFormComponent],
+      declarations: [TaskFormComponent, TaskListComponent],
       imports: [HttpClientTestingModule, FormsModule]
     })
     .compileComponents();
@@ -88,7 +89,7 @@ describe('TaskFormComponent', () => {
     const form = compiled.querySelector('form');
     form?.dispatchEvent(new Event('submit'));
 
-    expect(taskService.createTask).toHaveBeenCalledWith({ title: 'New Task', priorityLevel: 'Medium', dueDate: '', nextAction: '' });
+    expect(taskService.createTask).toHaveBeenCalledWith({ title: 'New Task', priorityLevel: 1, dueDate: null, nextAction: '' });
   });
 
   it('should clear title after successful task creation', () => {
@@ -128,7 +129,7 @@ describe('TaskFormComponent', () => {
     const form = compiled.querySelector('form');
     form?.dispatchEvent(new Event('submit'));
 
-    expect(taskService.createTask).toHaveBeenCalledWith({ title: 'New Task', priorityLevel: 'Medium', dueDate: '', nextAction: '' });
+    expect(taskService.createTask).toHaveBeenCalledWith({ title: 'New Task', priorityLevel: 1, dueDate: null, nextAction: '' });
     expect(taskService.refreshTasks).toHaveBeenCalled();
     expect(taskService.getTasks).not.toHaveBeenCalled();
   });
@@ -150,7 +151,7 @@ describe('TaskFormComponent', () => {
 
     component.onSubmit();
 
-    expect(taskService.createTask).toHaveBeenCalledWith({ title: 'New Task', priorityLevel: 'Medium', dueDate: '', nextAction: '' });
+    expect(taskService.createTask).toHaveBeenCalledWith({ title: 'New Task', priorityLevel: 1, dueDate: null, nextAction: '' });
     expect(taskService.refreshTasks).toHaveBeenCalled();
     expect(component.title).toBe('');
   });
@@ -276,10 +277,17 @@ describe('TaskFormComponent', () => {
     expect(taskService.createTask).toHaveBeenCalledWith(
       jasmine.objectContaining({
         title: 'Test Task',
-        priorityLevel: 'High',
+        priorityLevel: 2,
         dueDate: '2026-04-30',
         nextAction: 'Next step'
       })
     );
+  });
+
+  it('should render create task form inside a task form card container', () => {
+    const compiled = fixture.nativeElement as HTMLElement;
+    const taskFormCard = compiled.querySelector('.task-form-card');
+
+    expect(taskFormCard).not.toBeNull();
   });
 });

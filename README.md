@@ -22,8 +22,8 @@ Do not add new MVP features during this phase.
 ## Project Structure
 
 /docs
-- SRS_v1.8_042526.pdf
-- TaskAnchor_Test_Document.pdf
+- SRS_v1.7_042726.pdf
+- TaskAnchor_Test_Planning_Document_v1.7_042726.pdf
 - TaskAnchor_Component_Diagram.pdf
 - TaskAnchor_Class_Diagram.pdf
 - TaskAnchor_Use_Case_Diagram.pdf
@@ -59,6 +59,10 @@ Current capstone work remains focused on test normalization, test integrity enfo
 
 No new MVP features are being added. Out-of-scope items include subtasks, archiving/restoring, reactivation of completed tasks, categories/tags, multi-user features, notifications/reminders, AI features, payments, and advanced prioritization.
 
+Manual MVP Workflow Testing is partially complete and documented in the Test Planning Document. Browser verification has confirmed Login, Task List, Create Task, Edit Task, status transitions, Completed task exclusion, NextAction display, Progress Log save/display after refresh, Delete Task, and refresh behavior.
+
+Practical UX Review remains pending unless separately confirmed.
+
 ---
 
 ## Capstone Work Remaining
@@ -66,16 +70,15 @@ No new MVP features are being added. Out-of-scope items include subtasks, archiv
 MVP feature development is complete, but capstone work is still ongoing.
 
 Remaining work includes:
-- Test integrity review
-- Expanded Playwright coverage for existing MVP flows
 - Documentation alignment
 - Practical UX Review
 - Practical structure/access review for existing MVP screens
-- Manual MVP Workflow Testing
+- Remaining Manual MVP Workflow Testing documentation cleanup
 - Bug/limitation documentation
 - Demo preparation
 - Presentation/poster preparation
 - Work log completion toward the 100-hour requirement
+- Optional Playwright expansion for existing MVP flows only
 
 ---
 
@@ -154,6 +157,7 @@ Not allowed:
 - Renders:
   - Title
   - Status
+  - Priority
   - NextAction (conditional)
   - Progress Logs (list per task)
 
@@ -164,7 +168,7 @@ Not allowed:
 - InProgress → Completed
 - Completed is terminal
 - Uses exact status value `InProgress`
-- Calls `updateTask()`
+- Calls `updateTaskStatus()`
 - Triggers `refreshTasks()`
 
 ##### Edit Task
@@ -178,6 +182,7 @@ Not allowed:
 ##### Delete Task
 - Calls `deleteTask()`
 - Triggers `refreshTasks()`
+- Manual browser verification confirmed deleted tasks are removed after refresh
 
 ##### Progress Log
 - Add Progress Log button per task
@@ -190,6 +195,7 @@ Not allowed:
 - Existing Progress Log entries displayed per task:
   - `task.progressLogs[]`
   - Rendered as text entries
+- Manual browser verification confirmed Progress Log entries display after refresh
 
 ---
 
@@ -201,6 +207,11 @@ Not allowed:
   - nextAction (`NextAction` in SRS/API terminology)
 - Uses `ngModel`
 - Calls `createTask()`
+- Sends backend-compatible create payload values:
+  - Low = 0
+  - Medium = 1
+  - High = 2
+  - Blank dueDate = null
 - Triggers `refreshTasks()`
 - Clears inputs after success
 
@@ -222,6 +233,7 @@ Not allowed:
 - `getTasks()`
 - `createTask()`
 - `updateTask()`
+- `updateTaskStatus()`
 - `deleteTask()`
 - `addProgressLog()`
 - `refreshTasks()`
@@ -269,6 +281,14 @@ Coverage includes:
 - Progress Log full flow
 - Refresh signaling
 - Task object shape normalization
+- Create payload normalization for backend-compatible priorityLevel and dueDate values
+
+Latest Angular Karma run:
+- Date: 04/29/2026
+- Command: `ng test --watch=false`
+- Result: 108 of 108 tests passed
+- Failed: 0
+- Browser: Chrome 147.0.0.0 on Windows 10
 
 ### Test Normalization Completed
 - `task-list.component.spec.ts`
@@ -276,12 +296,16 @@ Coverage includes:
   - Returned/rendered Task fixtures now use the full Task shape
   - Extra backend-only `userId` removed from frontend Task fixture
   - Progress Log test fixture typed without `as any`
+  - TaskList template tests updated for embedded `TaskFormComponent`
+  - Status tests normalized to use `updateTaskStatus()` and refresh behavior
 - `task.service.spec.ts`
   - GET `/api/tasks` response fixtures normalized to full Task shape
   - POST `/api/tasks` create payload intentionally remains create-payload shaped
 - `task-form.component.spec.ts`
   - Checked
-  - No full Task object normalization required because tests validate create payloads
+  - Create payload expectations normalized to backend-compatible values:
+    - `priorityLevel: 0 | 1 | 2`
+    - `dueDate: null` when blank
 - `app.component.spec.ts`
   - Checked
   - No Task objects
@@ -307,7 +331,7 @@ Current Playwright results:
 - Full run: 3 passed, 6 skipped across Chromium, Firefox, and WebKit
 - Filtered active run excluding skipped Register test: 3 passed
 
-Current E2E coverage is limited to routed page-load smoke tests. MVP feature behavior is covered by backend xUnit tests and Angular Karma unit/component tests. Skipped Playwright checks are documented as E2E gaps and do not count as completed Manual MVP Workflow Testing.
+Current E2E coverage is limited to routed page-load smoke tests. MVP feature behavior is covered by backend xUnit tests, Angular Karma unit/component tests, and manual browser workflow testing. Skipped Playwright checks are documented as E2E gaps and do not count as completed Manual MVP Workflow Testing.
 
 ---
 
@@ -323,12 +347,13 @@ Current E2E coverage is limited to routed page-load smoke tests. MVP feature beh
 - PUT `/api/tasks/{id}`
 - PUT `/api/tasks/{id}/status`
 - DELETE `/api/tasks/{id}`
-- Frontend status changes persist through `TaskService.updateTask()` and then trigger `refreshTasks()`
+- Frontend status changes persist through `TaskService.updateTaskStatus()` and then trigger `refreshTasks()`
 
 ### Progress Log
 - POST `/api/tasks/{id}/progress`
 - GET `/api/tasks/{id}/progress`
 - Frontend uses `TaskService.addProgressLog(taskId, text)` to persist Progress Log entries
+- Task list responses include Progress Log data for UI display
 
 ### Business Rules
 - TaskRules
@@ -343,6 +368,14 @@ Current E2E coverage is limited to routed page-load smoke tests. MVP feature beh
   1. Overdue tasks
   2. Due date ascending
   3. No due date → priority High → Low
+
+Latest backend xUnit run:
+- Date: 04/29/2026
+- Command: `dotnet test`
+- Result: 25 of 25 tests passed
+- Failed: 0
+- Skipped: 0
+- Build: succeeded
 
 ---
 
@@ -376,9 +409,40 @@ Tasks remain visible until completed.
 
 ---
 
+## Manual MVP Workflow Testing
+
+Manual MVP Workflow Testing is tracked in the Test Planning Document.
+
+Current browser verification confirms:
+- Login page loads and login succeeds
+- Login navigates to Task List
+- Task List displays active tasks
+- Create Task form is visible on `/tasks`
+- Create Task workflow succeeds after create payload normalization
+- Created tasks appear after refresh
+- Edit Task workflow succeeds
+- Status Active → InProgress succeeds
+- Status InProgress → Completed succeeds
+- Completed task disappears from active task list
+- NextAction displays when present
+- Progress Log saves through backend
+- Progress Log entries display in the browser after refresh
+- Delete Task removes the selected task after refresh
+- Refresh behavior works after create, edit, status change, Progress Log save, and delete
+
+Manual MVP Workflow Testing is documented as partially complete until the Test Planning Document checklist is fully reconciled.
+
+Practical UX Review remains pending unless separately confirmed.
+
+---
+
 ## Test Coverage
 
-- Backend: full rule coverage
+- Backend:
+  - Rule coverage
+  - API behavior coverage
+  - Progress Log persistence behavior
+  - Status transition behavior
 - Frontend:
   - Rendering
   - Binding
@@ -387,8 +451,9 @@ Tasks remain visible until completed.
   - Status transitions
   - Edit flow
   - Delete flow
-  - Progress Log flow (full)
+  - Progress Log flow
   - Task object shape normalization
+  - Backend-compatible create payload normalization
 
 Latest test runs:
 - Backend xUnit: 25 of 25 tests passed using `dotnet test`
@@ -418,7 +483,7 @@ Returned or rendered frontend Task objects must use the full shape:
 
 Create payload tests should not be forced into the full Task shape.
 
-Valid create payload shape:
+Valid frontend create payload source shape before backend mapping:
 
     {
       title: string;
@@ -426,6 +491,22 @@ Valid create payload shape:
       dueDate: string;
       nextAction: string;
     }
+
+Valid backend-compatible create payload sent by `TaskFormComponent`:
+
+    {
+      title: string;
+      priorityLevel: number;
+      dueDate: string | null;
+      nextAction: string;
+    }
+
+PriorityLevel mapping:
+- Low = 0
+- Medium = 1
+- High = 2
+
+Blank dueDate is sent as `null`.
 
 ---
 
@@ -443,6 +524,17 @@ Valid create payload shape:
     - nextAction
     - lastUpdatedDate
   - Partial create payload tests remain valid where they test request payload behavior only
+- [x] Normalize create payload test expectations for backend-compatible priorityLevel and dueDate values
+- [x] Normalize TaskList tests after rendering `TaskFormComponent` inside the Task List page
+- [x] Normalize status tests to use `updateTaskStatus()` and `refreshTasks()`
+
+---
+
+### Manual Validation
+- [x] Confirm Progress Log entries display after refresh
+- [x] Confirm Delete Task removes task after refresh
+- [ ] Reconcile remaining Manual MVP Workflow Testing checklist items in the Test Planning Document if not already checked
+- [ ] Complete Practical UX Review only after manual screen review is confirmed
 
 ---
 
@@ -463,17 +555,14 @@ Valid create payload shape:
 ## Next Steps (Execution Order)
 
 1. Check Known Scope Boundaries before continuing work
-2. Continue test integrity review across frontend and backend test files
-3. Expand Playwright coverage for existing MVP flows only
-4. Align README, SRS, Test Plan, and TaskAnchor Context documentation
-5. Validate implemented behavior against the SRS requirements
-6. Complete Practical UX Review for clarity, access, and usability of existing MVP flows
-7. Run full backend and frontend test suites
-8. Complete Manual MVP Workflow Testing checklist
-9. Document remaining bugs, limitations, and known gaps
-10. Prepare demo notes for the implemented MVP
-11. Prepare capstone presentation and poster materials
-12. Continue work logging toward the 100-hour capstone requirement
+2. Reconcile TaskAnchor Context documentation against the current README and Test Planning Document
+3. Complete Practical UX Review for clarity, access, and usability of existing MVP flows only after manual screen review is confirmed
+4. Reconcile remaining Manual MVP Workflow Testing checklist items in the Test Planning Document
+5. Document remaining bugs, limitations, and known gaps
+6. Prepare demo notes for the implemented MVP
+7. Prepare capstone presentation and poster materials
+8. Continue work logging toward the 100-hour capstone requirement
+9. Optionally expand Playwright coverage for existing MVP flows only
 
 ---
 
@@ -488,6 +577,7 @@ Valid create payload shape:
 - No notifications, roles, or advanced features
 - Refresh pattern is mandatory for UI consistency
 - Status logic enforced by backend rules (no UI overrides)
+- PriorityLevel changes after creation are not documented as a current MVP edit workflow unless already implemented and tested
 - Create payloads are intentionally smaller than full returned Task objects
 - Returned/rendered Task test fixtures must use the full frontend Task shape
 - Continue work logging toward the 100-hour capstone requirement
@@ -495,6 +585,16 @@ Valid create payload shape:
 ---
 
 ## Changelog
+
+### v2.4 (04/29/2026)
+- Updated README with final 04/29 regression test results
+- Recorded backend xUnit result: 25 of 25 tests passed using `dotnet test`
+- Recorded Angular Karma result: 108 of 108 tests passed using `ng test --watch=false`
+- Documented Manual MVP Workflow Testing confirmations for Progress Log display after refresh and Delete Task removal after refresh
+- Updated frontend status behavior wording from `updateTask()` to `updateTaskStatus()`
+- Documented backend-compatible create payload mapping for `priorityLevel` and blank `dueDate`
+- Added note that Practical UX Review remains pending unless separately confirmed
+- Updated remaining work and next steps for post-MVP validation and documentation alignment
 
 ### v2.3 (04/27/2026)
 - Updated README testing status to match latest Test Plan validation results

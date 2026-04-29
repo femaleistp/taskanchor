@@ -1,21 +1,23 @@
-<h2>Create Task</h2>
+<div class="task-form-card">
+  <h2>Create Task</h2>
 
-<form (submit)="onSubmit()">
-  <label for="title">Title</label>
-  <input id="title" name="title" [(ngModel)]="title" />
+  <form (submit)="onSubmit()">
+    <label for="title">Title</label>
+    <input id="title" name="title" [(ngModel)]="title" />
 
-  <label for="priorityLevel">Priority</label>
-  <select id="priorityLevel" name="priorityLevel" [(ngModel)]="priorityLevel">
-    <option value="Low">Low</option>
-    <option value="Medium">Medium</option>
-    <option value="High">High</option>
-  </select>
+    <label for="priorityLevel">Priority</label>
+    <select id="priorityLevel" name="priorityLevel" [(ngModel)]="priorityLevel">
+      <option value="Low">Low</option>
+      <option value="Medium">Medium</option>
+      <option value="High">High</option>
+    </select>
 
-  <label for="dueDate">Due Date</label>
-  <input id="dueDate" type="date" name="dueDate" [(ngModel)]="dueDate" />
+    <label for="dueDate">Due Date</label>
+    <input id="dueDate" type="date" name="dueDate" [(ngModel)]="dueDate" />
 
-  <label for="nextAction">NextAction</label>
-  <input id="nextAction" name="nextAction" [(ngModel)]="nextAction" />
+    <label for="nextAction">NextAction</label>
+    <input id="nextAction" name="nextAction" [(ngModel)]="nextAction" />
 
-  <button type="submit">Create Task</button>
-</form>
+    <button type="submit">Create Task</button>
+  </form>
+</div>

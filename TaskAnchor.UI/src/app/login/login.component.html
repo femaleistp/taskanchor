@@ -1,11 +1,14 @@
-<form (submit)="onSubmit()">
-  <h2>Login</h2>
+<div class="login-card">
+  <form (submit)="onSubmit()">
+    <h2>Login</h2>
 
-  <label for="email">Email</label>
-  <input id="email" type="email" name="email" [(ngModel)]="email" />
+    <label for="email">Email</label>
+    <input id="email" type="email" name="email" [(ngModel)]="email" />
 
-  <label for="password">Password</label>
-  <input id="password" type="password" name="password" [(ngModel)]="password" />
+    <label for="password">Password</label>
+    <input id="password" type="password" name="password" [(ngModel)]="password" />
 
-  <button type="submit">Login</button>
-</form>
+    <button type="submit">Login</button>
+  </form>
+</div>
+

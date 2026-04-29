@@ -1,0 +1,60 @@
+.task-form-card {
+  max-width: 720px;
+  margin: 2rem auto;
+  padding: 1.5rem;
+  border: 1px solid #d4af37;
+  border-radius: 12px;
+  background: #ffffff;
+  color: #111111;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.14);
+}
+
+  .task-form-card form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .task-form-card h2,
+  .task-form-card h3 {
+    margin-top: 0;
+    margin-bottom: 1rem;
+    color: #111111;
+    border-bottom: 3px solid #d4af37;
+    padding-bottom: 0.5rem;
+  }
+
+  .task-form-card label {
+    font-weight: 600;
+  }
+
+  .task-form-card input,
+  .task-form-card select,
+  .task-form-card textarea {
+    padding: 0.55rem;
+    border: 1px solid #555555;
+    border-radius: 6px;
+  }
+
+    .task-form-card input:focus,
+    .task-form-card select:focus,
+    .task-form-card textarea:focus {
+      outline: 2px solid #d4af37;
+      border-color: #111111;
+    }
+
+  .task-form-card button {
+    margin-top: 1rem;
+    padding: 0.65rem;
+    border: none;
+    border-radius: 6px;
+    background: #111111;
+    color: #ffffff;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+    .task-form-card button:hover {
+      background: #d4af37;
+      color: #111111;
+    }

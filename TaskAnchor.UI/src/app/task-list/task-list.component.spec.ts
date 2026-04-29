@@ -4,6 +4,7 @@ import { TaskListComponent } from './task-list.component';
 import { TaskService } from '../services/task.service';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { FormsModule } from '@angular/forms';
+import { TaskFormComponent } from '../task-form/task-form.component';
 
 describe('TaskListComponent', () => {
   let component: TaskListComponent;
@@ -11,7 +12,7 @@ describe('TaskListComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [TaskListComponent],
+      declarations: [TaskListComponent, TaskFormComponent],
       imports: [FormsModule, HttpClientTestingModule]
     })
       .compileComponents();
@@ -480,10 +481,10 @@ describe('TaskListComponent', () => {
     fixture.detectChanges();
 
     const compiled = fixture.nativeElement as HTMLElement;
-    const button = compiled.querySelector('button');
+    const buttons = Array.from(compiled.querySelectorAll('button'));
+    const editButton = buttons.find(button => button.textContent?.trim() === 'Edit');
 
-    expect(button).not.toBeNull();
-    expect(button?.textContent).toContain('Edit');
+    expect(editButton).toBeTruthy();
   });
 
   it('should call onEdit when Edit button is clicked', () => {
@@ -505,9 +506,10 @@ describe('TaskListComponent', () => {
     fixture.detectChanges();
 
     const compiled = fixture.nativeElement as HTMLElement;
-    const button = compiled.querySelector('button');
+    const buttons = Array.from(compiled.querySelectorAll('button'));
+    const editButton = buttons.find(button => button.textContent?.trim() === 'Edit') as HTMLButtonElement;
 
-    button?.dispatchEvent(new Event('click'));
+    editButton.dispatchEvent(new Event('click'));
 
     expect(component.onEdit).toHaveBeenCalledWith(component.tasks[0]);
   });
@@ -544,7 +546,7 @@ describe('TaskListComponent', () => {
     const items = compiled.querySelectorAll('li');
     const secondItem = items[1];
 
-    const editButton = secondItem.querySelector('button');
+    const editButton = Array.from(secondItem.querySelectorAll('button')).find(button => button.textContent?.trim() === 'Edit') as HTMLButtonElement;
 
     editButton?.dispatchEvent(new Event('click'));
 
@@ -739,9 +741,9 @@ describe('TaskListComponent', () => {
 
     const compiled = fixture.nativeElement as HTMLElement;
 
-    const statusElement = Array.from(compiled.querySelectorAll('div')).find(d => d.textContent?.trim() === 'Active');
+    const statusButton = Array.from(compiled.querySelectorAll('button')).find(button => button.textContent?.trim() === 'Status: Active') as HTMLButtonElement;
 
-    statusElement?.dispatchEvent(new Event('click'));
+    statusButton.dispatchEvent(new Event('click'));
 
     expect(component.onStatusChange).toHaveBeenCalledWith(component.tasks[0]);
   });
@@ -758,10 +760,21 @@ describe('TaskListComponent', () => {
       lastUpdatedDate: new Date().toISOString()
     };
 
+    const taskService = TestBed.inject(TaskService);
+
+    spyOn(taskService, 'updateTaskStatus').and.returnValue({
+      subscribe: (fn: any) => fn({})
+    } as any);
+
+    spyOn(taskService, 'refreshTasks');
+
     component.onStatusChange(task);
 
-    expect(task.status).toBe('InProgress');
+    expect(taskService.updateTaskStatus).toHaveBeenCalledWith(1, 1);
+    expect(taskService.refreshTasks).toHaveBeenCalled();
   });
+
+  
 
   it('should change status from InProgress to Completed when clicked', () => {
     const task = {
@@ -775,9 +788,18 @@ describe('TaskListComponent', () => {
       lastUpdatedDate: new Date().toISOString()
     };
 
+    const taskService = TestBed.inject(TaskService);
+
+    spyOn(taskService, 'updateTaskStatus').and.returnValue({
+      subscribe: (fn: any) => fn({})
+    } as any);
+
+    spyOn(taskService, 'refreshTasks');
+
     component.onStatusChange(task);
 
-    expect(task.status).toBe('Completed');
+    expect(taskService.updateTaskStatus).toHaveBeenCalledWith(1, 2);
+    expect(taskService.refreshTasks).toHaveBeenCalled();
   });
 
   it('should not change status when task is already Completed', () => {
@@ -800,7 +822,7 @@ describe('TaskListComponent', () => {
   it('should call TaskService.updateTask when status changes', () => {
     const taskService = TestBed.inject(TaskService);
 
-    spyOn(taskService, 'updateTask').and.returnValue({
+    spyOn(taskService, 'updateTaskStatus').and.returnValue({
       subscribe: () => { }
     } as any);
 
@@ -817,7 +839,7 @@ describe('TaskListComponent', () => {
 
     component.onStatusChange(task);
 
-    expect(taskService.updateTask).toHaveBeenCalled();
+    expect(taskService.updateTaskStatus).toHaveBeenCalled();
   });
 
   it('should call refreshTasks after successful status update', () => {
@@ -834,7 +856,7 @@ describe('TaskListComponent', () => {
       lastUpdatedDate: new Date().toISOString()
     };
 
-    spyOn(taskService, 'updateTask').and.returnValue({
+    spyOn(taskService, 'updateTaskStatus').and.returnValue({
       subscribe: (fn?: any) => {
         if (fn) {
           fn({})
