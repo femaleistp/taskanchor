@@ -54,3 +54,25 @@
       background: #d4af37;
       color: #111111;
     }
+
+  .login-card .login-error {
+    margin: 0.25rem 0 0;
+    color: #8b0000;
+    font-weight: 600;
+  }
+
+  .login-card .register-link {
+    margin: 0.75rem 0 0;
+    text-align: center;
+    font-size: 0.95rem;
+  }
+
+    .login-card .register-link a {
+      color: #111111;
+      font-weight: 700;
+      text-decoration-color: #d4af37;
+    }
+
+      .login-card .register-link a:hover {
+        color: #d4af37;
+      }

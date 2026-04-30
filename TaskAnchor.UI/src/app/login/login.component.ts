@@ -10,6 +10,7 @@ import { Router } from '@angular/router';
 export class LoginComponent {
   email = '';
   password = '';
+  loginError: string = '';
 
   constructor(
     private authService: AuthService,
@@ -17,8 +18,15 @@ export class LoginComponent {
   ) { }
 
   onSubmit(): void {
-    this.authService.login(this.email, this.password).subscribe(() => {
+    this.loginError = '';
+
+    this.authService.login(this.email, this.password).subscribe(
+      () => {
       this.router.navigate(['/tasks']);
-    });
+      },
+      () => {
+        this.loginError = 'Login failed. Please check your email and password.'
+      }
+    );
   }
 }

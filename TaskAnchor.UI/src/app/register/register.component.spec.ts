@@ -4,6 +4,9 @@ import { RegisterComponent } from './register.component';
 import { AuthService } from '../services/auth.service';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
+import { RouterTestingModule } from '@angular/router/testing';
+import { of } from 'rxjs';
 
 describe('RegisterComponent', () => {
   let component: RegisterComponent;
@@ -12,7 +15,7 @@ describe('RegisterComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [RegisterComponent],
-      imports: [HttpClientTestingModule, FormsModule]
+      imports: [HttpClientTestingModule, FormsModule, RouterTestingModule]
     })
     .compileComponents();
     
@@ -138,5 +141,59 @@ describe('RegisterComponent', () => {
     component.onSubmit();
 
     expect(authService.register).toHaveBeenCalledWith('test@example.com', 'password123');
+  });
+
+  it('should navigate to login after successful registration', () => {
+    const authService = TestBed.inject(AuthService);
+    spyOn(authService, 'register').and.returnValue(of('Registered'));
+
+    const router = TestBed.inject(Router);
+    spyOn(router, 'navigate');
+
+    component.email = 'test@example.com';
+    component.password = 'password123';
+
+    component.onSubmit();
+
+    expect(router.navigate).toHaveBeenCalledWith(['/']);
+  });
+
+  it('should render register form inside a register card container', () => {
+    const compiled = fixture.nativeElement as HTMLElement;
+    const registerCard = compiled.querySelector('.register-card');
+
+    expect(registerCard).not.toBeNull();
+  });
+
+  it('should show a register error message when registration fails', () => {
+    const authService = TestBed.inject(AuthService);
+
+    spyOn(authService, 'register').and.returnValue({
+      subscribe: (_success: any, error?: any) => {
+        if (error) {
+          error({ error: 'Email is already registered.' })
+        }
+      }
+    } as any);
+
+    component.email = 'test@example.com';
+    component.password = 'password123';
+
+    component.onSubmit();
+    fixture.detectChanges();
+
+    const compiled = fixture.nativeElement as HTMLElement;
+    const errorMessage = compiled.querySelector('.register-error');
+
+    expect(errorMessage).not.toBeNull();
+    expect(errorMessage?.textContent).toContain('Email is already registered.');
+  });
+
+  it('should render a login link for users who already have an account', () => {
+    const compiled = fixture.nativeElement as HTMLElement;
+    const loginLink = compiled.querySelector('a[routerLink="/"]');
+
+    expect(loginLink).not.toBeNull();
+    expect(loginLink?.textContent).toContain('Login');
   });
 });

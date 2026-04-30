@@ -6,6 +6,7 @@ import { HttpClientTestingModule } from "@angular/common/http/testing";
 import { AppComponent } from "./app.component";
 import { LoginComponent } from "./login/login.component";
 import { TaskListComponent } from "./task-list/task-list.component";
+import { RegisterComponent } from "./register/register.component";
 
 describe('AppRoutingModule', () => {
   let router: Router;
@@ -20,7 +21,8 @@ describe('AppRoutingModule', () => {
       declarations: [
         AppComponent,
         LoginComponent,
-        TaskListComponent
+        TaskListComponent,
+        RegisterComponent
       ]
     }).compileComponents();
 
@@ -39,5 +41,12 @@ describe('AppRoutingModule', () => {
 
     expect(defaultRoute).toBeDefined();
     expect(defaultRoute?.component).toBe(LoginComponent);
+  });
+
+  it('should define a register route that uses RegisterComponent', () => {
+    const registerRoute = router.config.find(route => route.path === 'register');
+
+    expect(registerRoute).toBeDefined();
+    expect(registerRoute?.component).toBe(RegisterComponent);
   });
 });

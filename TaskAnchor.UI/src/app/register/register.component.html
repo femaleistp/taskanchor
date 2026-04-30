@@ -1,8 +1,23 @@
-<h2>Register</h2>
+<div class="register-card">
+  <form (submit)="onSubmit()">
+    <h2>Register</h2>
+    <label for="email">Email</label>
+    <input type="email" name="email" [(ngModel)]="email" />
 
-<form (submit)="onSubmit()">
-  <input type="email" name="email" [(ngModel)]="email" />
-  <input type="password" name="password" [(ngModel)]="password" />
-  <button type="submit">Register</button>
-</form>
+    <label for="password">Password</label>
+    <input type="password" name="password" [(ngModel)]="password" />
+
+    <p class="register-error" *ngIf="registerError">
+      {{ registerError }}
+    </p>
+
+    <button type="submit">Register</button>
+
+    <p class="login-link">
+      Already have an account?
+      <a routerLink="/">Login</a>
+    </p>
+  </form>
+</div>
+
 

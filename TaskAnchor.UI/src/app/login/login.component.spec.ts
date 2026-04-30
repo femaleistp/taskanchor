@@ -177,4 +177,36 @@ describe('LoginComponent', () => {
 
     expect(loginCard).not.toBeNull();
   });
+
+  it('should render a Register link for users without an account', () => {
+    const compiled = fixture.nativeElement as HTMLElement;
+    const registerLink = compiled.querySelector('a[routerLink="/register"]');
+
+    expect(registerLink).not.toBeNull();
+    expect(registerLink?.textContent).toContain('Register');
+  });
+
+  it('should show a login error message when login fails', () => {
+    const authService = TestBed.inject(AuthService);
+
+    spyOn(authService, 'login').and.returnValue({
+      subscribe: (_success: any, error?: any) => {
+        if (error) {
+          error({});
+        }
+      }
+    } as any);
+
+    component.email = 'wrong@example.com';
+    component.password = 'wrongpassword';
+
+    component.onSubmit();
+    fixture.detectChanges();
+
+    const compiled = fixture.nativeElement as HTMLElement;
+    const errorMessage = compiled.querySelector('.login-error');
+
+    expect(errorMessage).not.toBeNull();
+    expect(errorMessage?.textContent).toContain('Login failed');
+  });
 });
