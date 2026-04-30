@@ -37,6 +37,13 @@ describe('TaskListComponent', () => {
     expect(list).not.toBeNull();
   });
 
+  it('should render task list content inside a task list card container', () => {
+    const compiled = fixture.nativeElement as HTMLElement;
+    const taskListCard = compiled.querySelector('.task-list-card');
+
+    expect(taskListCard).not.toBeNull();
+  });
+
   it('should render empty state text where there are no tasks', () => {
     const compiled = fixture.nativeElement as HTMLElement;
     expect(compiled.textContent).toContain('No active tasks');
