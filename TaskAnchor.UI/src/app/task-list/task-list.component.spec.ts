@@ -1333,4 +1333,151 @@ describe('TaskListComponent', () => {
     expect(taskService.updateTaskStatus).toHaveBeenCalledWith(1, 2);
     expect(taskService.refreshTasks).toHaveBeenCalled();
   });
+
+  it('should render a NextAction label when a task has nextAction', () => {
+    component.tasks = [
+      {
+        taskId: 1,
+        title: 'Test Task',
+        description: '',
+        status: 'Active',
+        priorityLevel: 'Medium',
+        dueDate: null,
+        nextAction: 'Call pharmacy',
+        lastUpdatedDate: new Date().toISOString()
+      }
+    ];
+
+    fixture.detectChanges();
+
+    const compiled = fixture.nativeElement as HTMLElement;
+    const taskCard = compiled.querySelector('li');
+
+    expect(taskCard).not.toBeNull();
+    expect(taskCard?.textContent).toContain('Next Action: ');
+    expect(taskCard?.textContent).toContain('Call pharmacy');
+  });
+
+  it('should render a Progress Log label inside the task card when a task has progress logs', () => {
+    component.tasks = [
+      {
+        taskId: 1,
+        title: 'Test Task',
+        description: '',
+        status: 'Active',
+        priorityLevel: 'Medium',
+        dueDate: null,
+        nextAction: null,
+        lastUpdatedDate: new Date().toISOString(),
+        progressLogs: [
+          { text: 'Worked on task' }
+        ]
+      }
+    ];
+
+    fixture.detectChanges();
+
+    const compiled = fixture.nativeElement as HTMLElement;
+    const taskCard = compiled.querySelector('li');
+
+    expect(taskCard).not.toBeNull();
+    expect(taskCard?.textContent).toContain('Progress Log: ');
+    expect(taskCard?.textContent).toContain('Worked on task');
+  });
+
+  it('should render task details using consistent task-detail rows', () => {
+    component.tasks = [
+      {
+        taskId: 1,
+        title: 'Test Task',
+        description: '',
+        status: 'Active',
+        priorityLevel: 'Medium',
+        dueDate: null,
+        nextAction: 'Call pharmacy',
+        lastUpdatedDate: new Date().toISOString(),
+        progressLogs: [
+          { text: 'Worked on task' }
+        ]
+      }
+    ];
+
+    fixture.detectChanges();
+
+    const compiled = fixture.nativeElement as HTMLElement;
+    const taskCard = compiled.querySelector('li');
+    const detailedRows = taskCard?.querySelectorAll('.task-detail');
+
+    expect(taskCard).not.toBeNull();
+    expect(detailedRows?.length).toBe(3);
+  });
+
+  it('should render task title with a task-title class for scanability', () => {
+    component.tasks = [
+      {
+        taskId: 1,
+        title: 'Test Task',
+        description: '',
+        status: 'Active',
+        priorityLevel: 'Medium',
+        dueDate: null,
+        nextAction: null,
+        lastUpdatedDate: new Date().toISOString()
+      }
+    ];
+
+    fixture.detectChanges();
+
+    const compiled = fixture.nativeElement as HTMLElement;
+    const taskTitle = compiled.querySelector('.task-title');
+
+    expect(taskTitle).not.toBeNull();
+    expect(taskTitle?.textContent).toContain('Test Task');
+  });
+
+  it('should apply an active status class when task status is Active', () => {
+    component.tasks = [
+      {
+        taskId: 1,
+        title: 'Active Task',
+        description: '',
+        status: 'Active',
+        priorityLevel: 'Medium',
+        dueDate: null,
+        nextAction: null,
+        lastUpdatedDate: new Date().toISOString()
+      }
+    ];
+
+    fixture.detectChanges();
+
+    const compiled = fixture.nativeElement as HTMLElement;
+    const statusButton = compiled.querySelector('li .status-button');
+
+    expect(statusButton).not.toBeNull();
+    expect(statusButton?.classList).toContain('status-active');
+  });
+
+  it('should apply in-progress status class when task status is InProgress', () => {
+    component.tasks = [
+      {
+        taskId: 1,
+        title: 'InProgress Task',
+        description: '',
+        status: 'InProgress',
+        priorityLevel: 'Medium',
+        dueDate: null,
+        nextAction: null,
+        lastUpdatedDate: new Date().toISOString()
+      }
+    ];
+
+    fixture.detectChanges();
+
+    const compiled = fixture.nativeElement as HTMLElement;
+    const statusButton = compiled.querySelector('li .status-button');
+
+    expect(statusButton).not.toBeNull();
+    expect(statusButton?.classList).toContain('status-in-progress');
+  });
 });
