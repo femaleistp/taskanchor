@@ -82,6 +82,16 @@ export class TaskListComponent implements OnInit {
       return;
     }
 
+    if (newStatus === 2) {
+      const confirmed = window.confirm(
+        'Mark this task Completed? Completed tasks leave the active list and cannot be reactivated in the MVP.'
+      );
+
+      if (!confirmed) {
+        return;
+      }
+    }
+
     this.taskService.updateTaskStatus(task.taskId, newStatus).subscribe(() => {
       this.taskService.refreshTasks();
     });

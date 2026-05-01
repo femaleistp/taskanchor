@@ -802,6 +802,7 @@ describe('TaskListComponent', () => {
     } as any);
 
     spyOn(taskService, 'refreshTasks');
+    spyOn(window, 'confirm').and.returnValue(true);
 
     component.onStatusChange(task);
 
@@ -1269,5 +1270,67 @@ describe('TaskListComponent', () => {
 
     expect(compiled.textContent).toContain('Worked on task');
     expect(compiled.textContent).toContain('Made more progress');
+  });
+
+  it('should not update status to Completed when completion confirmation is cancelled', () => {
+    const taskService = TestBed.inject(TaskService);
+
+    const task = {
+      taskId: 1,
+      title: 'Test Task',
+      description: '',
+      status: 'InProgress',
+      priorityLevel: 'Medium',
+      dueDate: null,
+      nextAction: null,
+      lastUpdatedDate: new Date().toISOString()
+    };
+
+    spyOn(window, 'confirm').and.returnValue(false);
+    spyOn(taskService, 'updateTaskStatus').and.callThrough();
+    spyOn(taskService, 'refreshTasks');
+
+    component.onStatusChange(task);
+
+    expect(window.confirm).toHaveBeenCalledWith(
+      'Mark this task Completed? Completed tasks leave the active list and cannot be reactivated in the MVP.'
+    );
+    expect(taskService.updateTaskStatus).not.toHaveBeenCalled();
+    expect(taskService.refreshTasks).not.toHaveBeenCalled();
+  });
+
+  it('should update status to Completed when completion confirmation is accepted', () => {
+    const taskService = TestBed.inject(TaskService);
+
+    const task = {
+      taskId: 1,
+      title: 'Test Task',
+      description: '',
+      status: 'InProgress',
+      priorityLevel: 'Medium',
+      dueDate: null,
+      nextAction: null,
+      lastUpdatedDate: new Date().toISOString()
+    };
+
+    spyOn(window, 'confirm').and.returnValue(true);
+
+    spyOn(taskService, 'updateTaskStatus').and.returnValue({
+      subscribe: (fn?: any) => {
+        if (fn) {
+          fn({});
+        }
+      }
+    } as any);
+
+    spyOn(taskService, 'refreshTasks');
+
+    component.onStatusChange(task);
+
+    expect(window.confirm).toHaveBeenCalledWith(
+      'Mark this task Completed? Completed tasks leave the active list and cannot be reactivated in the MVP.'
+    );
+    expect(taskService.updateTaskStatus).toHaveBeenCalledWith(1, 2);
+    expect(taskService.refreshTasks).toHaveBeenCalled();
   });
 });
