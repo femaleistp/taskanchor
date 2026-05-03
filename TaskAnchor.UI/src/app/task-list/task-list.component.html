@@ -13,22 +13,37 @@
         <button type="button"
                 class="status-button"
                 [ngClass]="{
-  'status-active': getStatusLabel(task.status) === 'Active',
-  'status-in-progress': getStatusLabel(task.status) === 'InProgress'
-}"
+            'status-active': getStatusLabel(task.status) === 'Active',
+            'status-in-progress': getStatusLabel(task.status) === 'InProgress'
+          }"
                 (click)="onStatusChange(task)">
           Status: {{ getStatusLabel(task.status) }}
         </button>
+
       </div>
 
       <div *ngIf="editingTaskId === task.taskId" class="edit-task-fields">
-        <label for="editTitle" class="task-detail-label">Title</label>
+        <label for="editTitle" class="task-detail-label">Title: </label>
         <input id="editTitle" name="editTitle" [(ngModel)]="task.title" />
 
-        <label for="editDescription" class="task-detail-label">Description</label>
+        <label for="editDescription" class="task-detail-label">Description: </label>
         <textarea id="editDescription" name="editDescription" [(ngModel)]="task.description"></textarea>
 
-        <label for="editNextAction" class="task-detail-label">Next Action</label>
+        <label for="editPriorityLevel" class="task-detail-label">Priority: </label>
+        <select id="editPriorityLevel" name="editPriorityLevel" [(ngModel)]="task.priorityLevel">
+          <option [ngValue]="0">Low</option>
+          <option [ngValue]="1">Medium</option>
+          <option [ngValue]="2">High</option>
+        </select>
+
+        <label for="editDueDate" class="task-detail-label">Due Date: </label>
+        <input id="editDueDate"
+               name="editDueDate"
+               type="date"
+               [value]="task.dueDate ? task.dueDate.substring(0, 10) : ''"
+               (input)="task.dueDate = ($any($event.target).value || null)" />
+
+        <label for="editNextAction" class="task-detail-label">Next Action: </label>
         <input id="editNextAction" name="editNextAction" [(ngModel)]="task.nextAction" />
 
         <div class="edit-action-row">
@@ -37,12 +52,13 @@
           <button type="button"
                   class="status-button edit-status-button"
                   [ngClass]="{
-      'status-active': getStatusLabel(task.status) === 'Active',
-      'status-in-progress': getStatusLabel(task.status) === 'InProgress'
-    }"
+              'status-active': getStatusLabel(task.status) === 'Active',
+              'status-in-progress': getStatusLabel(task.status) === 'InProgress'
+            }"
                   (click)="onStatusChange(task)">
             Status: {{ getStatusLabel(task.status) }}
           </button>
+
         </div>
       </div>
       <div *ngIf="editingTaskId !== task.taskId" class="task-detail">
@@ -51,12 +67,17 @@
         <span *ngIf="!task.description" class="task-detail-value empty-task-detail">No description added. Use Edit to add one.</span>
       </div>
 
-      <div *ngIf="task.dueDate" class="task-detail">
+      <div *ngIf="editingTaskId !== task.taskId && task.priorityLevel" class="task-detail">
+        <span class="task-detail-label">Priority: </span>
+        <span class="task-detail-value">{{ getPriorityLabel(task.priorityLevel) }}</span>
+      </div>
+
+      <div *ngIf="editingTaskId !== task.taskId && task.dueDate" class="task-detail">
         <span class="task-detail-label">Due Date: </span>
         <span class="task-detail-value">{{ task.dueDate | date:'shortDate' }}</span>
       </div>
 
-      <div *ngIf="task.nextAction" class="task-detail">
+      <div *ngIf="editingTaskId !== task.taskId && task.nextAction" class="task-detail">
         <span class="task-detail-label">Next Action: </span>
         <span class="task-detail-value">{{ task.nextAction }}</span>
       </div>

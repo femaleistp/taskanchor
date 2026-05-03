@@ -61,11 +61,11 @@ export class TaskListComponent implements OnInit {
     return String(priorityLevel);
   }
 
-  onEdit(task: any): void {
+  onEdit(task: Task): void {
     this.editingTaskId = task.taskId;
   }
 
-  onDelete(task: any): void {
+  onDelete(task: Task): void {
     this.taskService.deleteTask(task.taskId).subscribe(() => {
       this.taskService.refreshTasks();
     });
@@ -97,18 +97,24 @@ export class TaskListComponent implements OnInit {
     });
   }
 
-  onSave(task: any): void {
+  onSave(task: Task): void {
     this.taskService.updateTask(task).subscribe(() => {
       this.taskService.refreshTasks();
       this.editingTaskId = null;
     });
   }
 
-  onAddProgressLog(task: any): void {
+  onAddProgressLog(task: Task): void {
     this.progressLogTaskId = task.taskId;
   }
 
-  onSaveProgressLog(task: any): void {
+  onSaveProgressLog(task: Task): void {
+    if (!this.progressLogText.trim()) {
+      this.progressLogText = '';
+      this.progressLogTaskId = null;
+      return;
+    }
+
     this.taskService.addProgressLog(task.taskId, this.progressLogText).subscribe(() => {
       this.taskService.refreshTasks();
       this.progressLogText = '';

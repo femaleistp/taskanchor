@@ -1036,6 +1036,133 @@ describe('TaskListComponent', () => {
     expect(descriptionTextarea).not.toBeNull();
   });
 
+  it('should render a priority select inside edit mode when editing a task', () => {
+    component.tasks = [
+      {
+        taskId: 1,
+        title: 'Test Task',
+        description: 'Test description',
+        status: 'Active',
+        priorityLevel: 'High',
+        dueDate: '2026-05-01',
+        nextAction: 'Original next action',
+        lastUpdatedDate: new Date().toISOString()
+      }
+    ];
+
+    component.editingTaskId = 1;
+
+    fixture.detectChanges();
+
+    const compiled = fixture.nativeElement as HTMLElement;
+    const editFields = compiled.querySelector('.edit-task-fields');
+    const prioritySelect = editFields?.querySelector('select[name="editPriorityLevel"]');
+
+    expect(editFields).not.toBeNull();
+    expect(prioritySelect).not.toBeNull();
+  });
+
+  it('should render a DueDate input inside edit mode when editing a task', () => {
+    component.tasks = [
+      {
+        taskId: 1,
+        title: 'Test Task',
+        description: 'Test description',
+        status: 'Active',
+        priorityLevel: 'Medium',
+        dueDate: '2026-05-01',
+        nextAction: 'Original next action',
+        lastUpdatedDate: new Date().toISOString()
+      }
+    ];
+
+    component.editingTaskId = 1;
+
+    fixture.detectChanges();
+
+    const compiled = fixture.nativeElement as HTMLElement;
+    const editFields = compiled.querySelector('.edit-task-fields');
+    const dueDateInput = editFields?.querySelector('input[name="editDueDate"]');
+
+    expect(editFields).not.toBeNull();
+    expect(dueDateInput).not.toBeNull();
+  });
+
+  it('should hide read-only Due Date display while editing a task', () => {
+    component.tasks = [
+      {
+        taskId: 1,
+        title: 'Test Task',
+        description: 'Test description',
+        status: 'Active',
+        priorityLevel: 'Medium',
+        dueDate: '2026-05-01',
+        nextAction: 'Original next action',
+        lastUpdatedDate: new Date().toISOString()
+      }
+    ];
+
+    component.editingTaskId = 1;
+
+    fixture.detectChanges();
+
+    const compiled = fixture.nativeElement as HTMLElement;
+    const readOnlyDetails = Array.from(compiled.querySelectorAll('.task-detail')) as HTMLElement[];
+    const readOnlyDueDateDisplay = readOnlyDetails.find(detail =>
+      detail.textContent?.includes('Due Date:')
+    );
+
+    expect(readOnlyDueDateDisplay).toBeUndefined();
+  });
+
+  it('should render edit dueDate as a date-only input value', () => {
+    component.tasks = [
+      {
+        taskId: 1,
+        title: 'Test Task',
+        description: 'Test description',
+        status: 'Active',
+        priorityLevel: 'Medium',
+        dueDate: '2026-05-01T00:00:00',
+        nextAction: 'Original next action',
+        lastUpdatedDate: new Date().toISOString()
+      }
+    ];
+
+    component.editingTaskId = 1;
+
+    fixture.detectChanges();
+
+    const compiled = fixture.nativeElement as HTMLElement;
+    const editFields = compiled.querySelector('.edit-task-fields');
+    const dueDateInput = editFields?.querySelector('input[name="editDueDate"]') as HTMLInputElement;
+
+    expect(dueDateInput.type).toBe('date');
+    expect(dueDateInput.value).toBe('2026-05-01');
+  });
+
+  it('should render Priority when a task has priorityLevel', () => {
+    component.tasks = [
+      {
+        taskId: 1,
+        title: 'Test Task',
+        description: 'Test description',
+        status: 'Active',
+        priorityLevel: 'High',
+        dueDate: '2026-05-01',
+        nextAction: 'Original next action',
+        lastUpdatedDate: new Date().toISOString()
+      }
+    ];
+
+    fixture.detectChanges();
+
+    const compiled = fixture.nativeElement as HTMLElement;
+
+    expect(compiled.textContent).toContain('Priority:');
+    expect(compiled.textContent).toContain('High');
+  });
+
   it('should render a nextAction input inside edit mode when editing a task', () => {
     component.tasks = [
       {
@@ -1060,6 +1187,33 @@ describe('TaskListComponent', () => {
 
     expect(editFields).not.toBeNull();
     expect(nextActionInput).not.toBeNull();
+  });
+
+  it('should hide read-only NextAction display while editing a task', () => {
+    component.tasks = [
+      {
+        taskId: 1,
+        title: 'Test Task',
+        description: 'Test description',
+        status: 'Active',
+        priorityLevel: 'Medium',
+        dueDate: null,
+        nextAction: 'Original next action',
+        lastUpdatedDate: new Date().toISOString()
+      }
+    ];
+
+    component.editingTaskId = 1;
+
+    fixture.detectChanges();
+
+    const compiled = fixture.nativeElement as HTMLElement;
+    const readOnlyDetails = Array.from(compiled.querySelectorAll('.task-detail')) as HTMLElement[];
+    const readOnlyNextActionDisplay = readOnlyDetails.find(detail =>
+      detail.textContent?.includes('Next Action')
+    );
+
+    expect(readOnlyNextActionDisplay).toBeUndefined();
   });
 
   it('should call updateTask when edited task is saved', () => {
@@ -1274,6 +1428,37 @@ describe('TaskListComponent', () => {
 
     expect(taskService.addProgressLog).toHaveBeenCalledWith(task.taskId, 'Worked on task');
     expect(taskService.refreshTasks).toHaveBeenCalled();
+  });
+
+  it('should not save Progress Log when text is blank or whitespace', () => {
+    const taskService = TestBed.inject(TaskService);
+
+    const task = {
+      taskId: 1,
+      title: 'Test Task',
+      description: '',
+      status: 'Active',
+      priorityLevel: 'Medium',
+      dueDate: null,
+      nextAction: null,
+      lastUpdatedDate: new Date().toISOString()
+    };
+
+    spyOn(taskService, 'addProgressLog').and.returnValue({
+      subscribe: () => { }
+    } as any);
+
+    spyOn(taskService, 'refreshTasks');
+
+    component.progressLogTaskId = 1;
+    component.progressLogText = '   ';
+
+    component.onSaveProgressLog(task);
+
+    expect(taskService.addProgressLog).not.toHaveBeenCalled();
+    expect(taskService.refreshTasks).not.toHaveBeenCalled();
+    expect(component.progressLogTaskId).toBeNull();
+    expect(component.progressLogText).toBe('');
   });
 
   it('should render a Save Progress Log button when adding a progress log,', () => {
@@ -1516,7 +1701,7 @@ describe('TaskListComponent', () => {
     const detailedRows = taskCard?.querySelectorAll('.task-detail');
 
     expect(taskCard).not.toBeNull();
-    expect(detailedRows?.length).toBe(4);
+    expect(detailedRows?.length).toBe(5);
   });
 
   it('should render task title with a task-title class for scanability', () => {
