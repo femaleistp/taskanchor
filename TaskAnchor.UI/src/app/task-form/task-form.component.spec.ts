@@ -5,6 +5,7 @@ import { TaskService } from '../services/task.service';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { FormsModule } from '@angular/forms';
 import { TaskListComponent } from '../task-list/task-list.component';
+import { of } from 'rxjs';
 
 describe('TaskFormComponent', () => {
   let component: TaskFormComponent;
@@ -40,6 +41,13 @@ describe('TaskFormComponent', () => {
   it('should render a title input', () => {
     const compiled = fixture.nativeElement as HTMLElement;
     const input = compiled.querySelector('input[name="title"]');
+    expect(input).not.toBeNull();
+  });
+
+  it('should render a description input', () => {
+    const compiled = fixture.nativeElement as HTMLElement;
+    const input = compiled.querySelector('input[name="description"]');
+
     expect(input).not.toBeNull();
   });
 
@@ -89,7 +97,28 @@ describe('TaskFormComponent', () => {
     const form = compiled.querySelector('form');
     form?.dispatchEvent(new Event('submit'));
 
-    expect(taskService.createTask).toHaveBeenCalledWith({ title: 'New Task', priorityLevel: 1, dueDate: null, nextAction: '' });
+    expect(taskService.createTask).toHaveBeenCalledWith({ title: 'New Task', description: '', priorityLevel: 1, dueDate: null, nextAction: '' });
+  });
+
+  it('should include description in the create task payload', () => {
+    const taskService = TestBed.inject(TaskService);
+    spyOn(taskService, 'createTask').and.returnValue(of({}));
+
+    component.title = 'Test Task';
+    component.description = 'Task description details';
+    component.priorityLevel = 'Medium';
+    component.dueDate = '';
+    component.nextAction = 'Call pharmacy';
+
+    component.onSubmit();
+
+    expect(taskService.createTask).toHaveBeenCalledWith({
+      title: 'Test Task',
+      description: 'Task description details',
+      priorityLevel: 1,
+      dueDate: null,
+      nextAction: 'Call pharmacy'
+    });
   });
 
   it('should clear title after successful task creation', () => {
@@ -129,7 +158,7 @@ describe('TaskFormComponent', () => {
     const form = compiled.querySelector('form');
     form?.dispatchEvent(new Event('submit'));
 
-    expect(taskService.createTask).toHaveBeenCalledWith({ title: 'New Task', priorityLevel: 1, dueDate: null, nextAction: '' });
+    expect(taskService.createTask).toHaveBeenCalledWith({ title: 'New Task', description: '', priorityLevel: 1, dueDate: null, nextAction: '' });
     expect(taskService.refreshTasks).toHaveBeenCalled();
     expect(taskService.getTasks).not.toHaveBeenCalled();
   });
@@ -151,7 +180,7 @@ describe('TaskFormComponent', () => {
 
     component.onSubmit();
 
-    expect(taskService.createTask).toHaveBeenCalledWith({ title: 'New Task', priorityLevel: 1, dueDate: null, nextAction: '' });
+    expect(taskService.createTask).toHaveBeenCalledWith({ title: 'New Task', description: '', priorityLevel: 1, dueDate: null, nextAction: '' });
     expect(taskService.refreshTasks).toHaveBeenCalled();
     expect(component.title).toBe('');
   });

@@ -998,14 +998,68 @@ describe('TaskListComponent', () => {
       }
     ];
 
-    component.onEdit(component.tasks[0]);
+    component.editingTaskId = 1;
+
     fixture.detectChanges();
 
     const compiled = fixture.nativeElement as HTMLElement;
+    const editFields = compiled.querySelector('.edit-task-fields');
+    const titleInput = editFields?.querySelector('input[name="editTitle"]');
 
-    const input = compiled.querySelector('input[name="editTitle"]');
+    expect(editFields).not.toBeNull();
+    expect(titleInput).not.toBeNull();
+  });
 
-    expect(input).not.toBeNull();
+  it('should render a description textarea when editing a task', () => {
+    component.tasks = [
+      {
+        taskId: 1,
+        title: 'Test Task',
+        description: 'Original description',
+        status: 'Active',
+        priorityLevel: 'Medium',
+        dueDate: null,
+        nextAction: null,
+        lastUpdatedDate: new Date().toISOString()
+      }
+    ];
+
+    component.editingTaskId = 1;
+
+    fixture.detectChanges();
+
+    const compiled = fixture.nativeElement as HTMLElement;
+    const editFields = compiled.querySelector('.edit-task-fields');
+    const descriptionTextarea = editFields?.querySelector('textarea[name="editDescription"]');
+
+    expect(editFields).not.toBeNull();
+    expect(descriptionTextarea).not.toBeNull();
+  });
+
+  it('should render a nextAction input inside edit mode when editing a task', () => {
+    component.tasks = [
+      {
+        taskId: 1,
+        title: 'Test Task',
+        description: 'Test description',
+        status: 'Active',
+        priorityLevel: 'Medium',
+        dueDate: null,
+        nextAction: 'Original next action',
+        lastUpdatedDate: new Date().toISOString()
+      }
+    ];
+
+    component.editingTaskId = 1;
+
+    fixture.detectChanges();
+
+    const compiled = fixture.nativeElement as HTMLElement;
+    const editFields = compiled.querySelector('.edit-task-fields');
+    const nextActionInput = editFields?.querySelector('input[name="editNextAction"]');
+
+    expect(editFields).not.toBeNull();
+    expect(nextActionInput).not.toBeNull();
   });
 
   it('should call updateTask when edited task is saved', () => {
@@ -1272,6 +1326,59 @@ describe('TaskListComponent', () => {
     expect(compiled.textContent).toContain('Made more progress');
   });
 
+  it('should mark a single Progress Log entry as the latest progress log entry', () => {
+    component.tasks = [
+      {
+        taskId: 1,
+        title: 'Test Task',
+        description: '',
+        status: 'Active',
+        priorityLevel: 'Medium',
+        dueDate: null,
+        nextAction: null,
+        lastUpdatedDate: new Date().toISOString(),
+        progressLogs: [
+          { text: 'Only progress log entry' }
+        ]
+      }
+    ];
+
+    fixture.detectChanges();
+
+    const compiled = fixture.nativeElement as HTMLElement;
+    const progressLogEntry = compiled.querySelector('.progress-log-entry');
+
+    expect(progressLogEntry).not.toBeNull();
+    expect(progressLogEntry?.classList).toContain('latest-progress-log-entry');
+  });
+
+  it('should apply latest-progress-log-entry class when a task has exactly one Progress Log entry', () => {
+    component.tasks = [
+      {
+        taskId: 1,
+        title: 'Single Progress Log Task',
+        description: '',
+        status: 'Active',
+        priorityLevel: 'Medium',
+        dueDate: null,
+        nextAction: null,
+        lastUpdatedDate: new Date().toISOString(),
+        progressLogs: [
+          { text: 'Only progress log entry' }
+        ]
+      }
+    ];
+
+    fixture.detectChanges();
+
+    const compiled = fixture.nativeElement as HTMLElement;
+    const progressLogEntry = compiled.querySelector('.progress-log-entry');
+
+    expect(progressLogEntry).not.toBeNull();
+    expect(progressLogEntry?.textContent).toContain('Only progress log entry');
+    expect(progressLogEntry?.classList).toContain('latest-progress-log-entry');
+  });
+
   it('should not update status to Completed when completion confirmation is cancelled', () => {
     const taskService = TestBed.inject(TaskService);
 
@@ -1409,7 +1516,7 @@ describe('TaskListComponent', () => {
     const detailedRows = taskCard?.querySelectorAll('.task-detail');
 
     expect(taskCard).not.toBeNull();
-    expect(detailedRows?.length).toBe(3);
+    expect(detailedRows?.length).toBe(4);
   });
 
   it('should render task title with a task-title class for scanability', () => {
@@ -1479,5 +1586,77 @@ describe('TaskListComponent', () => {
 
     expect(statusButton).not.toBeNull();
     expect(statusButton?.classList).toContain('status-in-progress');
+  });
+
+  it('should render a Description label when a task has description', () => {
+    component.tasks = [
+      {
+        taskId: 1,
+        title: 'Test Task',
+        description: 'Pick up refill before Friday',
+        status: 'Active',
+        priorityLevel: 'Medium',
+        dueDate: null,
+        nextAction: null,
+        lastUpdatedDate: new Date().toISOString()
+      }
+    ];
+
+    fixture.detectChanges();
+
+    const compiled = fixture.nativeElement as HTMLElement;
+    const taskCard = compiled.querySelector('li');
+
+    expect(taskCard).not.toBeNull();
+    expect(taskCard?.textContent).toContain('Description: ');
+    expect(taskCard?.textContent).toContain('Pick up refill before Friday');
+  });
+
+  it('should show a description empty-state message when a task has no description', () => {
+    component.tasks = [
+      {
+        taskId: 1,
+        title: 'Test Task',
+        description: '',
+        status: 'Active',
+        priorityLevel: 'Medium',
+        dueDate: null,
+        nextAction: null,
+        lastUpdatedDate: new Date().toISOString()
+      }
+    ];
+
+    fixture.detectChanges();
+
+    const compiled = fixture.nativeElement as HTMLElement;
+    const taskCard = compiled.querySelector('li');
+
+    expect(taskCard).not.toBeNull();
+    expect(taskCard?.textContent).toContain('Description: ');
+    expect(taskCard?.textContent).toContain('No description added. Use Edit to add one.');
+  });
+
+  it('should render a Due Date label when a task has dueDate', () => {
+    component.tasks = [
+      {
+        taskId: 1,
+        title: 'Test Task',
+        description: 'Test Task',
+        status: 'Active',
+        priorityLevel: 'Medium',
+        dueDate: '2026-05-03',
+        nextAction: null,
+        lastUpdatedDate: new Date().toISOString()
+      }
+    ];
+
+    fixture.detectChanges();
+
+    const compiled = fixture.nativeElement as HTMLElement;
+    const taskCard = compiled.querySelector('li');
+
+    expect(taskCard).not.toBeNull();
+    expect(taskCard?.textContent).toContain('Due Date: ');
+    expect(taskCard?.textContent).toContain('5/3/26');
   });
 });

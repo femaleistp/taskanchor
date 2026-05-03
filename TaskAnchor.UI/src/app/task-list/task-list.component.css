@@ -25,18 +25,17 @@
   }
 
   .task-list-card li {
-    padding: 1rem;
-    margin-bottom: 1rem;
-    border: 1px solid #dddddd;
+    padding: 0.75rem 0.9rem;
+    margin-bottom: 0.65rem;
     border-left: 5px solid #d4af37;
-    border-radius: 8px;
+    border-radius: 6px;
     background: #fafafa;
   }
 
   .task-list-card button {
-    margin-top: 0.5rem;
-    margin-right: 0.5rem;
-    padding: 0.45rem 0.7rem;
+    margin-top: 0.4rem;
+    margin-right: 0.4rem;
+    padding: 0.35rem 0.6rem;
     border: none;
     border-radius: 6px;
     background: #111111;
@@ -61,33 +60,154 @@
       border-color: #111111;
     }
 
-  .task-list-card .task-detail {
-    margin-top: 0.5rem;
+  .task-list-card .task-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.75rem;
+    margin-bottom: 0.05rem;
   }
 
+  .task-list-card .task-detail {
+    display: grid;
+    grid-template-columns: 125px minmax(0, 1fr);
+    column-gap: 0.5rem;
+    margin-top: 0.25rem;
+    font-size: 0.98rem;
+    line-height: 1.25;
+  }
   .task-list-card .task-detail-label {
     font-weight: 700;
+    white-space: nowrap;
   }
 
-  .task-list-card .progress-log-entry {
-    margin-top: 0.15rem;
+  .task-list-card .task-detail-value {
+    min-width: 0;
+  }
+
+  .task-list-card .task-title-row {
+    margin-top: 0;
+    font-size: 1.05rem;
+    line-height: 1.2;
   }
 
   .task-list-card .task-title {
-    font-size: 1.1rem;
-    font-weight: 600;
+    font-weight: 700;
+  }
+
+  .task-list-card .edit-task-fields {
+    display: grid;
+    grid-template-columns: 125px minmax(0, 1fr);
+    column-gap: 0.5rem;
+    row-gap: 0.45rem;
+    align-items: center;
+    max-width: 100%;
+  }
+
+    .task-list-card .edit-task-fields label {
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .task-list-card .edit-task-fields input,
+    .task-list-card .edit-task-fields textarea {
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+  .task-list-card .edit-action-row {
+    grid-column: 2;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 0.35rem;
+  }
+
+    .task-list-card .edit-action-row button {
+      margin-top: 0;
+    }
+
+  .task-list-card .edit-status-button {
+    margin-right: 0;
+  }
+  .task-list-card .progress-log-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+  }
+
+  .task-list-card .progress-log-entry {
+    display: inline-block;
+    padding: 0.08rem 0.35rem;
+    border-left: 3px solid #d4af37;
+    background: #ffffff;
+    font-size: 0.95rem;
+    line-height: 1.25;
+  }
+
+  /*
+    Progress Log display note:
+    The first rendered Progress Log entry is visually highlighted as the most recent
+    only if the API returns progressLogs in newest-first order.
+  */
+  .task-list-card .progress-log-list .progress-log-entry.latest-progress-log-entry {
+    background-color: #fff3b0;
   }
 
   .task-list-card .status-button {
+    margin-top: 0;
     border: 2px solid #111111;
+    white-space: nowrap;
   }
 
   .task-list-card .status-active {
-    background: #ffffff;
-    color: #111111;
+    background: #2e7d32;
+    color: #ffffff;
   }
+
+    .task-list-card .status-active:hover {
+      background: #256628;
+      color: #ffffff;
+    }
 
   .task-list-card .status-in-progress {
     background: #d4af37;
     color: #111111;
+  }
+
+    .task-list-card .status-in-progress:hover {
+      background: #c19a2e;
+      color: #111111;
+    }
+
+/*
+    Future status color note only:
+    Completed is terminal and excluded from the active list in the MVP.
+    If a Completed status button is ever displayed later, use:
+
+    .task-list-card .status-completed {
+      background: #6c757d;
+      color: #ffffff;
+    }
+
+    .task-list-card .status-completed:hover {
+      background: #5c636a;
+      color: #ffffff;
+    }
+  */
+
+  .task-list-card textarea {
+    display: block;
+    width: 100%;
+    min-height: 3rem;
+    padding: 0.5rem;
+    border: 1px solid #555555;
+    border-radius: 6px;
+    font-family: Arial, Helvetica, sans-serif;
+    resize: vertical;
+  }
+
+  .task-list-card .empty-task-detail {
+    color: #555555;
   }

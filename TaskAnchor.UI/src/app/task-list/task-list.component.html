@@ -1,46 +1,76 @@
-<app-task-form></app-task-form>
 <div class="task-list-card">
+  <app-task-form></app-task-form>
+
   <h2>Task List</h2>
   <ul>
     <li *ngFor="let task of tasks">
-      <span *ngIf="editingTaskId !== task.taskId" class="task-title">
-        {{ task.title }}
-      </span>
+      <div *ngIf="editingTaskId !== task.taskId" class="task-header">
+        <div class="task-detail task-title-row">
+          <span class="task-detail-label">Title: </span>
+          <span class="task-detail-value task-title">{{ task.title }}</span>
+        </div>
 
-      <input *ngIf="editingTaskId === task.taskId" name="editTitle" [(ngModel)]="task.title" />
-
-      <button *ngIf="editingTaskId === task.taskId" name="saveButton" (click)="onSave(task)">Save</button>
-
-      <button
-          type="button"
-          class="status-button"
-          [ngClass]="{
-            'status-active': getStatusLabel(task.status) === 'Active',
-            'status-in-progress': getStatusLabel(task.status) === 'InProgress'
-          }"
-          (click)="onStatusChange(task)">
+        <button type="button"
+                class="status-button"
+                [ngClass]="{
+  'status-active': getStatusLabel(task.status) === 'Active',
+  'status-in-progress': getStatusLabel(task.status) === 'InProgress'
+}"
+                (click)="onStatusChange(task)">
           Status: {{ getStatusLabel(task.status) }}
-      </button>
+        </button>
+      </div>
 
-      <div class="task-detail">
-        <span class="task-detail-label">Priority: </span>
-        <span>{{ getPriorityLabel(task.priorityLevel) }}</span>
+      <div *ngIf="editingTaskId === task.taskId" class="edit-task-fields">
+        <label for="editTitle" class="task-detail-label">Title</label>
+        <input id="editTitle" name="editTitle" [(ngModel)]="task.title" />
+
+        <label for="editDescription" class="task-detail-label">Description</label>
+        <textarea id="editDescription" name="editDescription" [(ngModel)]="task.description"></textarea>
+
+        <label for="editNextAction" class="task-detail-label">Next Action</label>
+        <input id="editNextAction" name="editNextAction" [(ngModel)]="task.nextAction" />
+
+        <div class="edit-action-row">
+          <button name="saveButton" (click)="onSave(task)">Save</button>
+
+          <button type="button"
+                  class="status-button edit-status-button"
+                  [ngClass]="{
+      'status-active': getStatusLabel(task.status) === 'Active',
+      'status-in-progress': getStatusLabel(task.status) === 'InProgress'
+    }"
+                  (click)="onStatusChange(task)">
+            Status: {{ getStatusLabel(task.status) }}
+          </button>
+        </div>
+      </div>
+      <div *ngIf="editingTaskId !== task.taskId" class="task-detail">
+        <span class="task-detail-label">Description: </span>
+        <span *ngIf="task.description" class="task-detail-value">{{ task.description }}</span>
+        <span *ngIf="!task.description" class="task-detail-value empty-task-detail">No description added. Use Edit to add one.</span>
+      </div>
+
+      <div *ngIf="task.dueDate" class="task-detail">
+        <span class="task-detail-label">Due Date: </span>
+        <span class="task-detail-value">{{ task.dueDate | date:'shortDate' }}</span>
       </div>
 
       <div *ngIf="task.nextAction" class="task-detail">
         <span class="task-detail-label">Next Action: </span>
-        <span>{{ task.nextAction }}</span>
+        <span class="task-detail-value">{{ task.nextAction }}</span>
       </div>
 
-      <div *ngIf="task.progressLogs && task.progressLogs.length > 0" class="task-detail">
-        <div>
-          <span class="task-detail-label">Progress Log: </span>
-        </div>
-        <div *ngFor="let log of task.progressLogs" class="progress-log-entry">
-          {{ log.text || log.entryText }}
-        </div>
+      <div *ngIf="task.progressLogs && task.progressLogs.length > 0" class="task-detail progress-log-detail">
+        <span class="task-detail-label">Progress Log: </span>
+        <span class="task-detail-value progress-log-list">
+          <span *ngFor="let log of task.progressLogs; let first = first"
+                class="progress-log-entry"
+                [class.latest-progress-log-entry]="first || task.progressLogs.length === 1">
+            {{ log.text || log.entryText }}
+          </span>
+        </span>
       </div>
-
       <button (click)="onEdit(task)">Edit</button>
       <button (click)="onDelete(task)">Delete</button>
 
