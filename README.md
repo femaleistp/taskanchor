@@ -6,7 +6,7 @@ TaskAnchor is a personal task system focused on follow-through, visibility, and 
 
 The system ensures that tasks remain visible and actionable until they are completed, reducing the likelihood of forgotten or abandoned work.
 
-Current working phase: post-MVP capstone validation, documentation alignment, Practical UX Review, Manual MVP Workflow Testing, demo preparation, presentation/poster preparation, and work log completion.
+Current working phase: post-MVP capstone validation, documentation alignment, Practical UX Review, Manual MVP Workflow Testing documentation, demo preparation, presentation/poster preparation, and work log completion.
 
 Do not add new MVP features during this phase.
 
@@ -22,8 +22,8 @@ Do not add new MVP features during this phase.
 ## Project Structure
 
 /docs
-- SRS_v1.9_050126.pdf
-- Test_Planning_Document_v1.11_050126.pdf
+- SRS_v1.10_050326.pdf
+- Test_Planning_Document_v1.12_050326.pdf
 - TaskAnchor_Component_Diagram.pdf
 - TaskAnchor_Class_Diagram.pdf
 - TaskAnchor_Use_Case_Diagram.pdf
@@ -57,7 +57,11 @@ MVP feature development is complete.
 
 Current capstone work remains focused on test normalization, test integrity enforcement, documentation alignment, MVP behavior validation, Practical UX Review, demo preparation, presentation/poster preparation, and work log completion.
 
-No new MVP features are being added. Out-of-scope items include subtasks, archiving/restoring, reactivation of completed tasks, categories/tags, multi-user features, notifications/reminders, AI features, payments, advanced prioritization, navbar/logout/session guard behavior, completed-task restore, completed-task undo behavior, and Progress Log edit/delete/revision-history workflows.
+No new MVP features are being added. Out-of-scope items include subtasks, archiving/restoring, reactivation of completed tasks, categories/tags, multi-user features, notifications/reminders, AI features, payments, advanced prioritization, navbar/logout/session guard behavior, completed-task restore, completed-task undo behavior, time-specific due dates or due times, and Progress Log edit/delete/revision-history workflows.
+
+Current work log status:
+- 52 hours logged
+- 48 hours remaining toward the 100-hour capstone requirement
 
 Manual MVP Workflow Testing is documented in the Test Planning Document. Browser verification has confirmed Register, Login, Task List, Create Task, Edit Task, status transitions, confirmation before terminal Completed status, Completed task exclusion, NextAction display, Progress Log save/display after refresh, Delete Task, deleted task removal after refresh, refresh behavior, Login/Register navigation links, Register success return to Login, duplicate Register error display, invalid Login error display, and Task List clarity/access improvements.
 
@@ -114,6 +118,8 @@ Not allowed:
 - AI features
 - Payments
 - Advanced prioritization
+- Time-specific due dates or due times
+- Date/time deadline behavior
 - Navbar/logout/session guard behavior
 - UX redesign or polish beyond basic clarity and access
 - Editing existing Progress Log entries
@@ -133,11 +139,16 @@ Not allowed:
 - [x] README documents Completed status confirmation
 - [x] README documents Task List clarity/access updates
 - [x] README documents Description and Due Date display in Task List
+- [x] README documents NextAction edit-mode support
+- [x] README documents DueDate date-only MVP boundary
 - [x] README documents current frontend test result
+- [x] README documents current work log hour status
 - [x] SRS reviewed against current README
   - [x] MVP completion status aligned
   - [x] Known Scope Boundaries checked
   - [x] Product requirements aligned
+  - [x] DueDate date-only boundary aligned
+  - [x] NextAction edit behavior aligned
 - [x] Test Plan reviewed against current README
   - [x] Existing automated test coverage aligned
   - [x] Manual MVP Workflow Testing documented in Test Plan
@@ -145,6 +156,8 @@ Not allowed:
   - [x] E2E coverage gaps documented in Test Plan
   - [x] Authentication access/error corrections documented in Test Plan
   - [x] Completed status confirmation documented in Test Plan
+  - [x] DueDate date-only boundary documented in Test Plan
+  - [x] NextAction edit-mode coverage documented in Test Plan
 - [ ] TaskAnchor Context reviewed against current README
   - [ ] MVP completion status aligned
   - [ ] Practical UX Review scope checked
@@ -154,6 +167,9 @@ Not allowed:
   - [ ] Login/Register access and error-feedback corrections checked
   - [ ] Completed status confirmation checked
   - [ ] Task List clarity/access updates checked
+  - [ ] NextAction edit-mode support checked
+  - [ ] DueDate date-only boundary checked
+  - [ ] Work log hour status checked
 
 ---
 
@@ -229,16 +245,22 @@ Blocked status behavior:
 ##### Edit Task
 - Enter edit mode
 - Inline title editing via `ngModel`
+- Inline description editing via `ngModel`
+- Inline NextAction editing via `ngModel`
 - Save button:
   - Calls `updateTask()`
   - Triggers `refreshTasks()`
   - Exits edit mode
 
+Current edit support:
+- Title edit support is implemented.
+- Description edit support is implemented.
+- NextAction edit support is implemented.
+
 Known edit limitation:
-- Current edit UI edits title only.
-- Existing Task object fields include description, priorityLevel, dueDate, and nextAction.
-- Expanding edit mode to update those existing Task fields is allowed as a correction to implemented MVP behavior.
-- This should be done with TDD.
+- Current edit UI does not edit priorityLevel or dueDate.
+- Expanding edit mode to update priorityLevel and dueDate is allowed only as a correction to existing Task field support.
+- This should be done with TDD if selected as future validation work.
 
 ##### Delete Task
 - Calls `deleteTask()`
@@ -279,6 +301,7 @@ Known Progress Log limitation:
   - Medium = 1
   - High = 2
   - Blank dueDate = null
+- Treats dueDate as a date-only MVP value
 - Triggers `refreshTasks()`
 - Clears inputs after success
 - Uses tested `.task-form-card` structure
@@ -288,7 +311,7 @@ Known create limitation:
 - The Task object includes description.
 - Current Create Task UI does not capture description.
 - Adding description to Create Task is allowed as a correction to existing Task field support.
-- This should be done with TDD.
+- This should be done with TDD if selected as future validation work.
 
 ---
 
@@ -373,11 +396,14 @@ Coverage includes:
 - Active/InProgress status classes
 - Description display in Task List
 - Due Date display in Task List
+- Scoped edit-mode tests for title, description, and NextAction
+- NextAction edit-mode rendering and binding through the existing edit/save flow
+- DueDate date-only behavior documented as MVP scope boundary
 
 Latest Angular Karma run:
-- Date: 05/02/2026
+- Date: 05/03/2026
 - Command: `ng test`
-- Result: 128 of 128 tests passed
+- Result: 135 of 135 tests passed
 - Failed: 0
 - Browser: Chrome 147.0.0.0 on Windows 10
 
@@ -392,6 +418,8 @@ Latest Angular Karma run:
   - Status tests normalized to use `updateTaskStatus()` and refresh behavior
   - Completed status confirmation behavior covered
   - Task List detail display tests added for Description and Due Date
+  - Edit-mode field tests normalized to scope selectors inside `.edit-task-fields`
+  - NextAction edit-mode input coverage added
 - `task.service.spec.ts`
   - GET `/api/tasks` response fixtures normalized to full Task shape
   - POST `/api/tasks` create payload intentionally remains create-payload shaped
@@ -461,6 +489,8 @@ Current E2E coverage is limited to routed page-load smoke tests. MVP feature beh
 ### Business Rules
 - TaskRules
 - Overdue is derived, not stored
+- DueDate is treated as a date-only MVP field
+- Time-specific due dates or due times are outside MVP scope
 - A task is overdue when:
   - Status is Active or InProgress
   - DueDate exists
@@ -489,6 +519,8 @@ Latest backend xUnit run:
 - Completed tasks are terminal
 - Confirmation is required before setting a task to Completed
 - Overdue is derived (not stored)
+- DueDate is date-only in the MVP
+- Time-specific deadlines are outside MVP scope
 - Sorting:
   1. Overdue
   2. Due date ascending
@@ -502,6 +534,10 @@ Latest backend xUnit run:
   - Due Date
   - NextAction
   - Progress Log entries
+- Existing task edit mode supports:
+  - Title
+  - Description
+  - NextAction
 
 ---
 
@@ -519,7 +555,7 @@ User actions:
 - Login invalid credentials → visible error message
 - Login success → Task List
 - Create → refresh → visible
-- Edit title → save → refresh → updated
+- Edit title/description/NextAction → save → refresh → updated
 - Delete → refresh → removed
 - Status change → refresh → updated
 - Completed status selection → confirmation required
@@ -562,6 +598,11 @@ Manual MVP Workflow Testing is documented in the Test Planning Document.
 
 Practical UX Review remains pending unless the full checklist is separately confirmed.
 
+Manual browser verification still pending:
+- Confirm editing NextAction after task creation updates and displays correctly after save/refresh.
+- Confirm Description display manually after task data includes description.
+- Confirm Due Date display manually after task data includes dueDate.
+
 ---
 
 ## Test Coverage
@@ -593,10 +634,12 @@ Practical UX Review remains pending unless the full checklist is separately conf
   - Task List clarity/access labels and structure
   - Description display in Task List
   - Due Date display in Task List
+  - Scoped edit-mode title, description, and NextAction tests
+  - NextAction edit-mode input rendering and binding
 
 Latest test runs:
 - Backend xUnit: 25 of 25 tests passed using `dotnet test`
-- Frontend Angular Karma: 128 of 128 tests passed using `ng test`
+- Frontend Angular Karma: 135 of 135 tests passed using `ng test`
 - Playwright active smoke tests: 3 passed
 - Playwright full run: 3 passed, 6 skipped across Chromium, Firefox, and WebKit
 
@@ -647,14 +690,29 @@ PriorityLevel mapping:
 
 Blank dueDate is sent as `null`.
 
+DueDate is treated as a date-only MVP field.
+
 Known Task field support gaps:
 - `description` exists in the Task object but is not captured by the current Create Task UI.
-- Edit mode currently updates title only.
+- Edit mode currently supports title, description, and NextAction.
+- Edit mode does not currently update priorityLevel or dueDate.
 - Updating Create/Edit support for existing Task fields should be handled with TDD.
 
 ---
 
 ## Future Enhancement Notes
+
+### Time-Specific Due Dates
+
+Current MVP behavior supports date-only DueDate values. A future version could support due times or full date/time deadlines, such as homework due at 5:00 PM on a specific date.
+
+Possible future behavior:
+- DueDate could become a date/time deadline.
+- Overdue logic could compare the current date and time instead of date only.
+- Task display could show both date and time.
+- Sorting could account for time-specific deadlines.
+
+This is not part of the current MVP and should not be implemented during the current post-MVP validation pass.
 
 ### Progress Log Correction History
 
@@ -694,6 +752,9 @@ This is not part of the current MVP and should not be implemented during the cur
 - [x] Add tested Task List clarity/access labels and structure
 - [x] Add tested Description display in Task List
 - [x] Add tested Due Date display in Task List
+- [x] Add scoped edit-mode tests for title, description, and NextAction
+- [x] Add tested NextAction edit-mode input rendering and binding
+- [x] Document DueDate date-only MVP boundary
 
 ---
 
@@ -707,6 +768,7 @@ This is not part of the current MVP and should not be implemented during the cur
 - [x] Confirm Progress Log entries display after refresh
 - [x] Confirm Delete Task removes task after refresh
 - [x] Confirm Completed status confirmation manually
+- [ ] Confirm NextAction edit/save behavior manually after task creation
 - [ ] Confirm Description display manually after task data includes description
 - [ ] Confirm Due Date display manually after task data includes dueDate
 - [ ] Complete Practical UX Review only after full manual screen review is confirmed
@@ -714,6 +776,21 @@ This is not part of the current MVP and should not be implemented during the cur
 ---
 
 ### Documentation / Context Alignment
+- [x] Update SRS to v1.10
+  - DueDate date-only boundary documented
+  - NextAction edit behavior documented
+  - `/register` routing reflected
+  - SRS kept limited to product requirements
+- [x] Update Test Plan to v1.12
+  - Latest Angular Karma result updated to 135 of 135
+  - DueDate date-only boundary documented
+  - NextAction edit-mode coverage documented
+  - Practical UX Review remains pending
+- [x] Update README to v2.9
+  - Latest Angular Karma result updated to 135 of 135
+  - Work log status documented as 52 hours logged / 48 remaining
+  - DueDate date-only boundary documented
+  - NextAction edit-mode support documented
 - [ ] Update TaskAnchor Context to reflect:
   - `/register` route exposed
   - Login page Register link added
@@ -723,9 +800,12 @@ This is not part of the current MVP and should not be implemented during the cur
   - Completed status confirmation added
   - Task List clarity/access updates added
   - Description and Due Date display added to Task List
-  - Angular Karma result updated to 128 of 128 tests passed
+  - NextAction edit-mode support added
+  - DueDate date-only MVP boundary documented
+  - Angular Karma result updated to 135 of 135 tests passed
   - Register manual workflow verification completed
   - Completed status confirmation manually verified
+  - Work log status: 52 hours logged / 48 remaining
   - Progress Log correction history documented as future enhancement only
 
 ---
@@ -771,18 +851,15 @@ This is not part of the current MVP and should not be implemented during the cur
 - [x] Task List details needed clearer labels and structure
 - [x] Task List display was missing Description when present
 - [x] Task List display was missing Due Date when present
+- [x] Edit Task UI did not expose NextAction
 - [ ] Create Task UI does not capture Description
-- [ ] Edit Task UI only edits Title
-- [ ] Edit Task UI does not edit Description, PriorityLevel, DueDate, or NextAction
+- [ ] Edit Task UI does not edit PriorityLevel or DueDate
 
 Allowed future corrections:
 - Add Description to Create Task.
 - Expand Edit Task to update existing Task fields:
-  - title
-  - description
   - priorityLevel
   - dueDate
-  - nextAction
 
 Blocked fixes:
 - Do not add undo
@@ -790,6 +867,8 @@ Blocked fixes:
 - Do not reactivate Completed tasks
 - Do not add a Completed archive/list
 - Do not add a new status workflow
+- Do not add time-specific due dates or due times
+- Do not add date/time deadline behavior
 - Do not edit existing Progress Log entries in the current MVP
 - Do not delete existing Progress Log entries in the current MVP
 - Do not add Progress Log correction history in the current MVP
@@ -811,6 +890,7 @@ Blocked fixes:
   - Follow-through problem
   - Tasks persist until completed
   - Overdue is derived
+  - DueDate is date-only in the MVP
   - Completed is terminal
   - Progress Log supports resuming work
   - NextAction supports concrete next steps
@@ -823,29 +903,29 @@ Blocked fixes:
 - [x] Add 2026-05-01 Completed confirmation work log entry
 - [x] Add 2026-05-01 Task List clarity/access work log entry
 - [ ] Add 2026-05-02 Task List Description/Due Date display work log entry
-- [ ] Commit/sync latest Task List display, styling, and documentation updates
+- [ ] Add 2026-05-03 NextAction edit-mode and documentation alignment work log entry
+- [ ] Commit/sync latest Task List display, edit-mode, styling, scope-boundary, and documentation updates
 
 ---
 
 ## Next Steps (Execution Order)
 
 1. Check Known Scope Boundaries before continuing work
-2. Commit/sync latest Task List status button styling, Description display, Due Date display, and README updates
+2. Commit/sync latest Task List status button styling, Description display, Due Date display, NextAction edit-mode support, DueDate boundary documentation, and README updates
 3. Add 2026-05-02 work log entry
-4. Reconcile TaskAnchor Context documentation against the current README and Test Planning Document
-5. Use TDD to add Description capture to Create Task
-6. Use TDD to expand Edit Task for existing Task fields only:
-   - title
-   - description
+4. Add 2026-05-03 work log entry
+5. Reconcile TaskAnchor Context documentation against the current README, SRS, and Test Planning Document
+6. Manually verify NextAction edit/save behavior after task creation
+7. Use TDD to add Description capture to Create Task if selected as next validation correction
+8. Use TDD to expand Edit Task for existing Task fields only if selected as next validation correction:
    - priorityLevel
    - dueDate
-   - nextAction
-7. Complete Practical UX Review for clarity, access, and usability of existing MVP flows only after manual screen review is confirmed
-8. Document remaining bugs, limitations, and known gaps
-9. Prepare demo notes for the implemented MVP
-10. Prepare capstone presentation and poster materials
-11. Continue work logging toward the 100-hour capstone requirement
-12. Optionally expand Playwright coverage for existing MVP flows only
+9. Complete Practical UX Review for clarity, access, and usability of existing MVP flows only after manual screen review is confirmed
+10. Document remaining bugs, limitations, and known gaps
+11. Prepare demo notes for the implemented MVP
+12. Prepare capstone presentation and poster materials
+13. Continue work logging toward the 100-hour capstone requirement
+14. Optionally expand Playwright coverage for existing MVP flows only
 
 ---
 
@@ -859,6 +939,7 @@ Blocked fixes:
 - UX polish, redesign, and new workflows are not part of the current scope
 - No notifications, roles, or advanced features
 - No navbar/logout/session guard behavior in current MVP scope
+- No time-specific DueDate behavior in current MVP scope
 - Refresh pattern is mandatory for UI consistency
 - Status logic enforced by backend rules
 - Completed tasks are terminal and cannot be reactivated in MVP
@@ -868,10 +949,32 @@ Blocked fixes:
 - Existing Progress Log entries are add/view only in the current MVP
 - Progress Log correction history is documented as a future enhancement only
 - Continue work logging toward the 100-hour capstone requirement
+- Current work log status: 52 hours logged / 48 hours remaining
 
 ---
 
 ## Changelog
+
+### v2.9 (05/03/2026)
+- Updated README after NextAction edit-mode work and documentation alignment.
+- Recorded latest Angular Karma result: 135 of 135 tests passed using `ng test`.
+- Documented work log status: 52 hours logged and 48 hours remaining toward the 100-hour capstone requirement.
+- Updated documentation references to SRS v1.10 and Test Planning Document v1.12.
+- Documented DueDate as a date-only MVP field.
+- Added time-specific due dates, due times, and date/time deadline behavior to out-of-scope items.
+- Added Time-Specific Due Dates as a future enhancement note only.
+- Documented NextAction edit-mode support through existing task edit flow.
+- Updated Edit Task section to show title, description, and NextAction edit support as implemented.
+- Updated known edit limitation to only priorityLevel and dueDate.
+- Updated frontend test coverage to include scoped edit-mode tests for title, description, and NextAction.
+- Updated Test Normalization Completed section to include edit-mode selector scoping and NextAction edit-mode input coverage.
+- Updated Manual MVP Workflow Testing section to list NextAction edit/save browser verification as pending.
+- Updated Task Object Shape Rule notes to show edit mode currently supports title, description, and NextAction.
+- Updated Loose Ends to mark NextAction edit-mode support complete.
+- Updated Documentation / Context Alignment section to mark SRS v1.10, Test Plan v1.12, and README v2.9 updates complete.
+- Added TaskAnchor Context update items for NextAction edit-mode support, DueDate date-only boundary, 135 of 135 Angular Karma result, and 52/48 work log status.
+- Updated Practical UX / Access Issues to mark missing NextAction edit support complete.
+- Updated Next Steps to prioritize Context alignment, work log entries, manual NextAction edit/save verification, Practical UX Review, demo/poster/presentation prep, and optional Playwright expansion.
 
 ### v2.8 (05/02/2026)
 - Updated README after Task List Description and Due Date display work.
