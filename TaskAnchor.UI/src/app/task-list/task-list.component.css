@@ -128,9 +128,22 @@
       margin-top: 0;
     }
 
-  .task-list-card .edit-status-button {
-    margin-right: 0;
+  .task-list-card .status-button {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.08rem;
+    margin-top: 0;
+    border: 2px solid #111111;
+    white-space: nowrap;
+    line-height: 1.15;
   }
+
+  .task-list-card .status-next-action {
+    font-size: 0.82rem;
+    font-weight: 600;
+  }
+
   .task-list-card .progress-log-list {
     display: flex;
     flex-wrap: wrap;

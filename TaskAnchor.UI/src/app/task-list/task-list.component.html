@@ -11,13 +11,16 @@
         </div>
 
         <button type="button"
-                class="status-button"
-                [ngClass]="{
+          class="status-button"
+          [ngClass]="{
             'status-active': getStatusLabel(task.status) === 'Active',
             'status-in-progress': getStatusLabel(task.status) === 'InProgress'
           }"
-                (click)="onStatusChange(task)">
-          Status: {{ getStatusLabel(task.status) }}
+          (click)="onStatusChange(task)">
+          <span>Status: {{ getStatusLabel(task.status) }} </span>
+          <span class="status-next-action">
+            Click → {{ getStatusLabel(task.status) === 'Active' ? 'InProgress' : 'Complete'}}
+          </span>
         </button>
 
       </div>
@@ -38,10 +41,10 @@
 
         <label for="editDueDate" class="task-detail-label">Due Date: </label>
         <input id="editDueDate"
-               name="editDueDate"
-               type="date"
-               [value]="task.dueDate ? task.dueDate.substring(0, 10) : ''"
-               (input)="task.dueDate = ($any($event.target).value || null)" />
+          name="editDueDate"
+          type="date"
+          [value]="task.dueDate ? task.dueDate.substring(0, 10) : ''"
+          (input)="task.dueDate = ($any($event.target).value || null)" />
 
         <label for="editNextAction" class="task-detail-label">Next Action: </label>
         <input id="editNextAction" name="editNextAction" [(ngModel)]="task.nextAction" />
@@ -50,13 +53,16 @@
           <button name="saveButton" (click)="onSave(task)">Save</button>
 
           <button type="button"
-                  class="status-button edit-status-button"
-                  [ngClass]="{
+            class="status-button edit-status-button"
+            [ngClass]="{
               'status-active': getStatusLabel(task.status) === 'Active',
               'status-in-progress': getStatusLabel(task.status) === 'InProgress'
             }"
-                  (click)="onStatusChange(task)">
-            Status: {{ getStatusLabel(task.status) }}
+            (click)="onStatusChange(task)">
+            <span>Status: {{ getStatusLabel(task.status) }} </span>
+            <span class="status-next-action">
+              Click → {{ getStatusLabel(task.status) === 'Active' ? 'InProgress' : 'Complete'}}
+            </span>
           </button>
 
         </div>
@@ -86,8 +92,8 @@
         <span class="task-detail-label">Progress Log: </span>
         <span class="task-detail-value progress-log-list">
           <span *ngFor="let log of task.progressLogs; let first = first"
-                class="progress-log-entry"
-                [class.latest-progress-log-entry]="first || task.progressLogs.length === 1">
+            class="progress-log-entry"
+            [class.latest-progress-log-entry]="first || task.progressLogs.length === 1">
             {{ log.text || log.entryText }}
           </span>
         </span>

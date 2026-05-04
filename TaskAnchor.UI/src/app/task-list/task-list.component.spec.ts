@@ -748,7 +748,7 @@ describe('TaskListComponent', () => {
 
     const compiled = fixture.nativeElement as HTMLElement;
 
-    const statusButton = Array.from(compiled.querySelectorAll('button')).find(button => button.textContent?.trim() === 'Status: Active') as HTMLButtonElement;
+    const statusButton = compiled.querySelector('li .status-button') as HTMLButtonElement;
 
     statusButton.dispatchEvent(new Event('click'));
 
@@ -1771,6 +1771,43 @@ describe('TaskListComponent', () => {
 
     expect(statusButton).not.toBeNull();
     expect(statusButton?.classList).toContain('status-in-progress');
+  });
+
+  it('should render compact status button text with current status and click target', () => {
+    component.tasks = [
+      {
+        taskId: 1,
+        title: 'Active Task',
+        description: '',
+        status: 'Active',
+        priorityLevel: 'Medium',
+        dueDate: null,
+        nextAction: null,
+        lastUpdatedDate: new Date().toISOString()
+      },
+      {
+        taskId: 2,
+        title: 'InProgress Task',
+        description: '',
+        status: 'InProgress',
+        priorityLevel: 'High',
+        dueDate: null,
+        nextAction: null,
+        lastUpdatedDate: new Date().toISOString()
+      }
+    ];
+
+    fixture.detectChanges();
+
+    const compiled = fixture.nativeElement as HTMLElement;
+    const statusButtons = compiled.querySelectorAll('li .status-button');
+
+    expect(statusButtons.length).toBe(2);
+    expect(statusButtons[0].textContent).toContain('Status: Active');
+    expect(statusButtons[0].textContent).toContain('Click → InProgress');
+
+    expect(statusButtons[1].textContent).toContain('Status: InProgress');
+    expect(statusButtons[1].textContent).toContain('Click → Complete');
   });
 
   it('should render a Description label when a task has description', () => {
