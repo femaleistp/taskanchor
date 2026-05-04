@@ -22,8 +22,8 @@ Do not add new MVP features during this phase.
 ## Project Structure
 
 /docs
-- SRS_v1.10_050326.pdf
-- Test_Planning_Document_v1.12_050326.pdf
+- SRS_v1.11_050426.pdf
+- Test_Planning_Document_v1.13_050426.pdf
 - TaskAnchor_Component_Diagram.pdf
 - TaskAnchor_Class_Diagram.pdf
 - TaskAnchor_Use_Case_Diagram.pdf
@@ -57,13 +57,13 @@ MVP feature development is complete.
 
 Current capstone work remains focused on test normalization, test integrity enforcement, documentation alignment, MVP behavior validation, Practical UX Review, demo preparation, presentation/poster preparation, and work log completion.
 
-No new MVP features are being added. Out-of-scope items include subtasks, archiving/restoring, reactivation of completed tasks, categories/tags, multi-user features, notifications/reminders, AI features, payments, advanced prioritization, navbar/logout/session guard behavior, completed-task restore, completed-task undo behavior, time-specific due dates or due times, and Progress Log edit/delete/revision-history workflows.
+No new MVP features are being added. Out-of-scope items include subtasks, archiving/restoring, reactivation of completed tasks, categories/tags, multi-user features, notifications/reminders, AI features, payments, advanced prioritization, navbar/logout/session guard behavior, completed-task restore, completed-task undo behavior, time-specific due dates or due times, Progress Log edit/delete/revision-history workflows, CAPTCHA, rate limiting, lockouts, account verification, token/session enforcement beyond current MVP scope, and new authentication workflows.
 
 Current work log status:
-- 52 hours logged
-- 48 hours remaining toward the 100-hour capstone requirement
+- 59.47 hours worked
+- 40.53 hours remaining toward the 100-hour capstone requirement
 
-Manual MVP Workflow Testing is documented in the Test Planning Document. Browser verification has confirmed Register, Login, Task List, Create Task, Edit Task, status transitions, confirmation before terminal Completed status, Completed task exclusion, NextAction display, Progress Log save/display after refresh, Delete Task, deleted task removal after refresh, refresh behavior, Login/Register navigation links, Register success return to Login, duplicate Register error display, invalid Login error display, and Task List clarity/access improvements.
+Manual MVP Workflow Testing is documented in the Test Planning Document. Browser verification has confirmed Register, Login, Task List, Create Task, Edit Task, status transitions, confirmation before terminal Completed status, Completed task exclusion, NextAction display/edit behavior, PriorityLevel edit behavior, Progress Log save/display after refresh, blank Progress Log save close/clear behavior, Delete Task, deleted task removal after refresh, refresh behavior, Login/Register navigation links, Register success return to Login, duplicate Register error display, invalid Login error display, Login/Register blank-field validation, Create Task Title validation, and Task List clarity/access improvements.
 
 Practical UX Review remains pending unless the full existing-screen checklist is explicitly confirmed.
 
@@ -102,6 +102,8 @@ Allowed remaining work:
 - Confirmation before Completed status selection
 - Display corrections for existing Task object fields
 - Edit corrections for existing Task object fields already supported by backend update behavior
+- Existing-form validation for required fields
+- Existing authentication input validation checks
 
 Not allowed:
 - New MVP features
@@ -125,6 +127,12 @@ Not allowed:
 - Editing existing Progress Log entries
 - Deleting existing Progress Log entries
 - Progress Log correction/revision history in the current MVP
+- CAPTCHA
+- Rate limiting
+- Lockouts
+- Account verification
+- Token/session enforcement beyond current MVP scope
+- New authentication workflows
 
 ---
 
@@ -136,12 +144,20 @@ Not allowed:
 - [x] README documents Manual MVP Workflow Testing
 - [x] README documents Known Scope Boundaries
 - [x] README documents Login/Register access and error-feedback corrections
+- [x] README documents Login/Register blank-field validation
+- [x] README documents authentication suspicious-input validation
 - [x] README documents Completed status confirmation
 - [x] README documents Task List clarity/access updates
 - [x] README documents Description and Due Date display in Task List
 - [x] README documents NextAction edit-mode support
+- [x] README documents PriorityLevel display/edit support
+- [x] README documents DueDate edit support
 - [x] README documents DueDate date-only MVP boundary
+- [x] README documents Progress Log blank-save behavior
+- [x] README documents Create Task Description textarea support
+- [x] README documents Create Task Title validation
 - [x] README documents current frontend test result
+- [x] README documents current backend test result
 - [x] README documents current work log hour status
 - [x] SRS reviewed against current README
   - [x] MVP completion status aligned
@@ -149,27 +165,21 @@ Not allowed:
   - [x] Product requirements aligned
   - [x] DueDate date-only boundary aligned
   - [x] NextAction edit behavior aligned
+  - [x] PriorityLevel edit behavior aligned
+  - [x] Create Task validation aligned
+  - [x] Login/Register validation aligned
 - [x] Test Plan reviewed against current README
   - [x] Existing automated test coverage aligned
   - [x] Manual MVP Workflow Testing documented in Test Plan
   - [x] Practical UX Review/manual validation documented in Test Plan
   - [x] E2E coverage gaps documented in Test Plan
   - [x] Authentication access/error corrections documented in Test Plan
+  - [x] Authentication validation/security handling documented in Test Plan
   - [x] Completed status confirmation documented in Test Plan
   - [x] DueDate date-only boundary documented in Test Plan
   - [x] NextAction edit-mode coverage documented in Test Plan
-- [ ] TaskAnchor Context reviewed against current README
-  - [ ] MVP completion status aligned
-  - [ ] Practical UX Review scope checked
-  - [ ] Manual MVP Workflow Testing checked
-  - [ ] Known Scope Boundaries checked
-  - [ ] Remaining capstone work checked
-  - [ ] Login/Register access and error-feedback corrections checked
-  - [ ] Completed status confirmation checked
-  - [ ] Task List clarity/access updates checked
-  - [ ] NextAction edit-mode support checked
-  - [ ] DueDate date-only boundary checked
-  - [ ] Work log hour status checked
+  - [x] PriorityLevel edit-mode coverage documented in Test Plan
+  - [x] Create Task validation coverage documented in Test Plan
 
 ---
 
@@ -180,10 +190,13 @@ Not allowed:
 #### Register UI
 - Email + password capture via Angular binding
 - Submit handling
-- Calls `AuthService.register()`
+- Calls `AuthService.register()` when fields are valid
 - `/register` route exposed
 - Navigates back to Login after successful registration
 - Displays backend-provided duplicate-registration error text when available
+- Displays required-field validation when email or password is blank/whitespace
+- Does not call `AuthService.register()` when email or password is blank/whitespace
+- Handles script-like or SQL-like input as plain text
 - Provides Login link for users who already have an account
 - Uses tested `.register-card` structure
 - Uses black/white/gold styling aligned with Login, Create Task, and Task List
@@ -191,9 +204,12 @@ Not allowed:
 #### Login UI
 - Email + password capture via Angular binding
 - Submit handling
-- Calls `AuthService.login()`
+- Calls `AuthService.login()` when fields are valid
 - Navigates to `/tasks` after successful login
 - Displays visible error message after failed login
+- Displays required-field validation when email or password is blank/whitespace
+- Does not call `AuthService.login()` when email or password is blank/whitespace
+- Handles script-like or SQL-like input as plain text
 - Provides Register link for users without an account
 - Uses tested `.login-card` structure
 - Uses black/white/gold styling aligned with Register, Create Task, and Task List
@@ -246,6 +262,8 @@ Blocked status behavior:
 - Enter edit mode
 - Inline title editing via `ngModel`
 - Inline description editing via `ngModel`
+- Inline PriorityLevel editing through select control
+- Inline DueDate editing through date-only input
 - Inline NextAction editing via `ngModel`
 - Save button:
   - Calls `updateTask()`
@@ -255,12 +273,9 @@ Blocked status behavior:
 Current edit support:
 - Title edit support is implemented.
 - Description edit support is implemented.
+- PriorityLevel edit support is implemented.
+- DueDate edit support is implemented as a date-only value.
 - NextAction edit support is implemented.
-
-Known edit limitation:
-- Current edit UI does not edit priorityLevel or dueDate.
-- Expanding edit mode to update priorityLevel and dueDate is allowed only as a correction to existing Task field support.
-- This should be done with TDD if selected as future validation work.
 
 ##### Delete Task
 - Calls `deleteTask()`
@@ -272,13 +287,19 @@ Known edit limitation:
 - Conditional input rendering
 - Input bound via `ngModel`
 - Save Progress Log button:
-  - Calls `addProgressLog(taskId, text)`
-  - Triggers `refreshTasks()`
-  - Clears input + exits mode
+  - Calls `addProgressLog(taskId, text)` when text is not blank
+  - Triggers `refreshTasks()` after successful save
+  - Clears input + exits mode after successful save
+- Blank or whitespace Progress Log save:
+  - Does not call `addProgressLog()`
+  - Does not call `refreshTasks()`
+  - Clears the input
+  - Exits Progress Log input mode
 - Existing Progress Log entries displayed per task:
   - `task.progressLogs[]`
   - Rendered as text entries
 - Manual browser verification confirmed Progress Log entries display after refresh
+- Manual browser verification confirmed blank Progress Log save closes/clears the input without creating an empty entry
 
 Known Progress Log limitation:
 - Existing Progress Log entries can be added and viewed.
@@ -291,27 +312,31 @@ Known Progress Log limitation:
 #### Task Create UI
 - Captures:
   - title
+  - description
   - priorityLevel
   - dueDate
   - nextAction (`NextAction` in SRS/API terminology)
 - Uses `ngModel`
-- Calls `createTask()`
+- Uses Description textarea
+- Uses DueDate date input
+- Validates required Title
+- Shows visible dark-red validation message when Title is blank/whitespace
+- Does not call `createTask()` or `refreshTasks()` when Title is blank/whitespace
+- Preserves entered values when validation fails so the user can correct the form
+- Calls `createTask()` after valid input
 - Sends backend-compatible create payload values:
   - Low = 0
   - Medium = 1
   - High = 2
   - Blank dueDate = null
 - Treats dueDate as a date-only MVP value
-- Triggers `refreshTasks()`
+- Does not send status from the frontend Create Task form
+- Triggers `refreshTasks()` after successful create
 - Clears inputs after success
+- Resets priorityLevel to Medium after success
+- Clears validation message after successful create
 - Uses tested `.task-form-card` structure
 - Uses black/white/gold styling aligned with Login, Register, and Task List
-
-Known create limitation:
-- The Task object includes description.
-- Current Create Task UI does not capture description.
-- Adding description to Create Task is allowed as a correction to existing Task field support.
-- This should be done with TDD if selected as future validation work.
 
 ---
 
@@ -380,6 +405,7 @@ Coverage includes:
 - Edit/save flow
 - Delete behavior
 - Progress Log full flow
+- Blank Progress Log save close/clear behavior
 - Refresh signaling
 - Task object shape normalization
 - Create payload normalization for backend-compatible priorityLevel and dueDate values
@@ -390,20 +416,30 @@ Coverage includes:
 - Register success navigation back to Login
 - Login failed-attempt error display
 - Register failed/duplicate-email error display
+- Login/Register blank-field validation
+- Login/Register suspicious-input handling as plain text
 - Task List scanability labels
 - Task detail row structure
 - Task title structure
 - Active/InProgress status classes
 - Description display in Task List
 - Due Date display in Task List
-- Scoped edit-mode tests for title, description, and NextAction
+- Priority display in Task List
+- Scoped edit-mode tests for title, description, PriorityLevel, DueDate, and NextAction
+- PriorityLevel edit-mode rendering and binding through the existing edit/save flow
+- DueDate date-only edit behavior
 - NextAction edit-mode rendering and binding through the existing edit/save flow
+- Create Task Description textarea support
+- Create Task Description payload support
+- Create Task field reset behavior after successful create
+- Create Task required Title validation
+- Create Task validation error styling
 - DueDate date-only behavior documented as MVP scope boundary
 
 Latest Angular Karma run:
-- Date: 05/03/2026
+- Date: 05/04/2026
 - Command: `ng test`
-- Result: 135 of 135 tests passed
+- Result: 151 of 151 tests passed
 - Failed: 0
 - Browser: Chrome 147.0.0.0 on Windows 10
 
@@ -417,9 +453,10 @@ Latest Angular Karma run:
   - TaskList template tests updated for embedded `TaskFormComponent`
   - Status tests normalized to use `updateTaskStatus()` and refresh behavior
   - Completed status confirmation behavior covered
-  - Task List detail display tests added for Description and Due Date
+  - Task List detail display tests added for Description, Priority, and Due Date
   - Edit-mode field tests normalized to scope selectors inside `.edit-task-fields`
-  - NextAction edit-mode input coverage added
+  - PriorityLevel, DueDate, and NextAction edit-mode input coverage added
+  - Blank Progress Log save behavior covered
 - `task.service.spec.ts`
   - GET `/api/tasks` response fixtures normalized to full Task shape
   - POST `/api/tasks` create payload intentionally remains create-payload shaped
@@ -428,6 +465,11 @@ Latest Angular Karma run:
   - Create payload expectations normalized to backend-compatible values:
     - `priorityLevel: 0 | 1 | 2`
     - `dueDate: null` when blank
+  - Description textarea coverage added
+  - Description create payload coverage added
+  - Field reset coverage added
+  - Title validation coverage added
+  - Validation message styling coverage added
 - `app.component.spec.ts`
   - Checked
   - No Task objects
@@ -435,10 +477,14 @@ Latest Angular Karma run:
   - Checked
   - No Task objects
   - Includes Login/Register link and failed-login message coverage
+  - Includes blank-field validation coverage
+  - Includes suspicious-input plain-text coverage
 - `register.component.spec.ts`
   - Checked
   - No Task objects
   - Includes Register route-related behavior, success navigation, failed-registration message, Login link, and `.register-card` structure coverage
+  - Includes blank-field validation coverage
+  - Includes suspicious-input plain-text coverage
 - `auth.service.spec.ts`
   - Checked
   - No Task objects
@@ -470,6 +516,10 @@ Current E2E coverage is limited to routed page-load smoke tests. MVP feature beh
 - Duplicate registration returns backend error text such as `Email is already registered.`
 - Frontend Register error display reads backend-provided error text from `HttpErrorResponse.error`
 - Invalid login is rejected and frontend displays a visible login failure message
+- Blank Login/Register fields are blocked in the frontend before AuthService calls
+- Suspicious/script-like login input does not bypass backend authentication
+- Suspicious registration input stores email as trimmed text and password as a hash
+- Raw password text is not stored
 
 ### Task Management
 - POST `/api/tasks`
@@ -484,6 +534,7 @@ Current E2E coverage is limited to routed page-load smoke tests. MVP feature beh
 - POST `/api/tasks/{id}/progress`
 - GET `/api/tasks/{id}/progress`
 - Frontend uses `TaskService.addProgressLog(taskId, text)` to persist Progress Log entries
+- Blank/whitespace Progress Log entries are blocked in frontend behavior
 - Task list responses include Progress Log data for UI display
 
 ### Business Rules
@@ -503,12 +554,13 @@ Current E2E coverage is limited to routed page-load smoke tests. MVP feature beh
   3. No due date → priority High → Low
 
 Latest backend xUnit run:
-- Date: 04/29/2026
+- Date: 05/04/2026
 - Command: `dotnet test`
-- Result: 25 of 25 tests passed
+- Result: 27 of 27 tests passed
 - Failed: 0
 - Skipped: 0
 - Build: succeeded
+- Notes: 2 existing nullable-reference warnings remain in `ProgressLogTests.cs`
 
 ---
 
@@ -518,7 +570,7 @@ Latest backend xUnit run:
 - Completed tasks excluded from active list
 - Completed tasks are terminal
 - Confirmation is required before setting a task to Completed
-- Overdue is derived (not stored)
+- Overdue is derived, not stored
 - DueDate is date-only in the MVP
 - Time-specific deadlines are outside MVP scope
 - Sorting:
@@ -529,15 +581,21 @@ Latest backend xUnit run:
 - Register success returns to Login
 - Login success routes to Task List
 - Register/Login failures display visible feedback
+- Register/Login blank fields display visible feedback and block service calls
+- Create Task blank Title displays visible feedback and blocks create calls
 - Task List displays existing Task object details when present:
   - Description
+  - Priority
   - Due Date
   - NextAction
   - Progress Log entries
 - Existing task edit mode supports:
   - Title
   - Description
+  - PriorityLevel
+  - DueDate
   - NextAction
+- Blank Progress Log save closes/clears input without creating an empty entry
 
 ---
 
@@ -550,16 +608,20 @@ Latest backend xUnit run:
 5. Task list loads
 
 User actions:
+- Register blank fields → visible validation message
 - Register → success → return to Login
 - Register duplicate email → visible error message
+- Login blank fields → visible validation message
 - Login invalid credentials → visible error message
 - Login success → Task List
-- Create → refresh → visible
-- Edit title/description/NextAction → save → refresh → updated
+- Create with blank Title → visible validation message
+- Create valid task → refresh → visible
+- Edit title/description/PriorityLevel/DueDate/NextAction → save → refresh → updated
 - Delete → refresh → removed
 - Status change → refresh → updated
 - Completed status selection → confirmation required
 - Add Progress Log → save → refresh → visible
+- Blank Progress Log save → input closes/clears and no empty entry is created
 
 Tasks remain visible until completed.
 
@@ -575,19 +637,26 @@ Current browser verification confirms:
 - Register user workflow succeeds
 - Successful Register returns to Login
 - Duplicate Register attempt displays visible backend-provided error message
+- Register blank-field validation displays visible red message and blocks submission
 - Login page loads and login succeeds
+- Login blank-field validation displays visible red message and blocks submission
 - Invalid Login attempt displays visible error message
 - Login navigates to Task List
 - Task List displays active tasks
 - Create Task form is visible on `/tasks`
+- Create Task Title validation displays visible dark-red message
+- Create Task valid submission clears the Title validation message
 - Create Task workflow succeeds after create payload normalization
 - Created tasks appear after refresh
 - Edit Task workflow succeeds for title editing
+- PriorityLevel edit/save persists
+- NextAction edit/save updates and displays after save/refresh
 - Status Active → InProgress succeeds
 - Status InProgress → Completed succeeds after confirmation
 - Completed task disappears from active task list
 - NextAction displays when present
 - Progress Log saves through backend
+- Blank Progress Log save clears/closes input and does not create an empty entry
 - Progress Log entries display in the browser after refresh
 - Delete Task removes the selected task after refresh
 - Refresh behavior works after create, edit, status change, Progress Log save, and delete
@@ -599,7 +668,7 @@ Manual MVP Workflow Testing is documented in the Test Planning Document.
 Practical UX Review remains pending unless the full checklist is separately confirmed.
 
 Manual browser verification still pending:
-- Confirm editing NextAction after task creation updates and displays correctly after save/refresh.
+- Confirm Due Date edit/save persists after browser refresh if not already separately confirmed.
 - Confirm Description display manually after task data includes description.
 - Confirm Due Date display manually after task data includes dueDate.
 
@@ -613,6 +682,8 @@ Manual browser verification still pending:
   - Progress Log persistence behavior
   - Status transition behavior
   - Authentication validation behavior
+  - Authentication suspicious-input behavior
+  - Password hashing behavior
 - Frontend:
   - Rendering
   - Binding
@@ -623,23 +694,29 @@ Manual browser verification still pending:
   - Edit flow
   - Delete flow
   - Progress Log flow
+  - Blank Progress Log save behavior
   - Register route coverage
   - Login/Register navigation links
   - Register success navigation
   - Login error display
   - Register error display
+  - Login/Register blank-field validation
+  - Login/Register suspicious-input handling
   - Task object shape normalization
   - Backend-compatible create payload normalization
   - Tested card structures for Login, Register, Create Task, and Task List
   - Task List clarity/access labels and structure
   - Description display in Task List
+  - Priority display in Task List
   - Due Date display in Task List
-  - Scoped edit-mode title, description, and NextAction tests
-  - NextAction edit-mode input rendering and binding
+  - Scoped edit-mode title, description, PriorityLevel, DueDate, and NextAction tests
+  - Create Task Description textarea support
+  - Create Task Title validation
+  - Create Task validation message styling
 
 Latest test runs:
-- Backend xUnit: 25 of 25 tests passed using `dotnet test`
-- Frontend Angular Karma: 135 of 135 tests passed using `ng test`
+- Backend xUnit: 27 of 27 tests passed using `dotnet test`
+- Frontend Angular Karma: 151 of 151 tests passed using `ng test`
 - Playwright active smoke tests: 3 passed
 - Playwright full run: 3 passed, 6 skipped across Chromium, Firefox, and WebKit
 
@@ -669,6 +746,7 @@ Valid frontend create payload source shape before backend mapping:
 
     {
       title: string;
+      description: string;
       priorityLevel: string;
       dueDate: string;
       nextAction: string;
@@ -678,6 +756,7 @@ Valid backend-compatible create payload sent by `TaskFormComponent`:
 
     {
       title: string;
+      description: string;
       priorityLevel: number;
       dueDate: string | null;
       nextAction: string;
@@ -692,11 +771,10 @@ Blank dueDate is sent as `null`.
 
 DueDate is treated as a date-only MVP field.
 
-Known Task field support gaps:
-- `description` exists in the Task object but is not captured by the current Create Task UI.
-- Edit mode currently supports title, description, and NextAction.
-- Edit mode does not currently update priorityLevel or dueDate.
-- Updating Create/Edit support for existing Task fields should be handled with TDD.
+Current Task field support:
+- Description exists in the Task object and is captured by the Create Task UI.
+- Edit mode supports title, description, PriorityLevel, DueDate, and NextAction.
+- Status is not supplied by the frontend Create Task form; backend/default create behavior assigns initial task status.
 
 ---
 
@@ -727,6 +805,20 @@ Possible future behavior:
 
 This is not part of the current MVP and should not be implemented during the current post-MVP validation pass.
 
+### Production Authentication Hardening
+
+Current MVP behavior supports basic Register/Login behavior, password hashing, visible validation feedback, and suspicious-input validation tests.
+
+Possible future behavior:
+- Token/session enforcement
+- Account verification
+- Rate limiting
+- Account lockout
+- CAPTCHA
+- Role-based access control
+
+These are not part of the current MVP and should not be implemented during the current post-MVP validation pass.
+
 ---
 
 ## Loose Ends (STRICT MVP)
@@ -748,12 +840,21 @@ This is not part of the current MVP and should not be implemented during the cur
 - [x] Add tested Register route access
 - [x] Add tested Login/Register navigation links
 - [x] Add tested Login and Register error display behavior
+- [x] Add tested Login and Register blank-field validation
+- [x] Add tested Login and Register suspicious-input handling
+- [x] Add backend authentication suspicious-input tests
 - [x] Add tested confirmation before Completed status selection
 - [x] Add tested Task List clarity/access labels and structure
 - [x] Add tested Description display in Task List
+- [x] Add tested Priority display in Task List
 - [x] Add tested Due Date display in Task List
-- [x] Add scoped edit-mode tests for title, description, and NextAction
+- [x] Add scoped edit-mode tests for title, description, PriorityLevel, DueDate, and NextAction
 - [x] Add tested NextAction edit-mode input rendering and binding
+- [x] Add tested PriorityLevel edit-mode support
+- [x] Add tested DueDate edit-mode support
+- [x] Add tested blank Progress Log save behavior
+- [x] Add tested Create Task Description textarea support
+- [x] Add tested Create Task Title validation
 - [x] Document DueDate date-only MVP boundary
 
 ---
@@ -765,48 +866,54 @@ This is not part of the current MVP and should not be implemented during the cur
 - [x] Confirm successful Register returns to Login
 - [x] Confirm duplicate Register error message displays
 - [x] Confirm invalid Login error message displays
+- [x] Confirm Login blank-field validation displays and blocks submission
+- [x] Confirm Register blank-field validation displays and blocks submission
 - [x] Confirm Progress Log entries display after refresh
+- [x] Confirm blank Progress Log save closes/clears input without creating an empty entry
 - [x] Confirm Delete Task removes task after refresh
 - [x] Confirm Completed status confirmation manually
-- [ ] Confirm NextAction edit/save behavior manually after task creation
+- [x] Confirm NextAction edit/save behavior manually after task creation
+- [x] Confirm PriorityLevel edit/save persists
+- [x] Confirm Create Task Title validation displays and clears after valid create
+- [ ] Confirm DueDate edit/save persists after browser refresh if not already separately confirmed
 - [ ] Confirm Description display manually after task data includes description
 - [ ] Confirm Due Date display manually after task data includes dueDate
 - [ ] Complete Practical UX Review only after full manual screen review is confirmed
 
 ---
 
-### Documentation / Context Alignment
-- [x] Update SRS to v1.10
+### Documentation Alignment
+- [x] Update SRS to v1.11
   - DueDate date-only boundary documented
   - NextAction edit behavior documented
+  - PriorityLevel edit behavior documented
+  - Create Task validation documented
+  - Login/Register validation documented
+  - Authentication suspicious-input behavior documented
   - `/register` routing reflected
   - SRS kept limited to product requirements
-- [x] Update Test Plan to v1.12
-  - Latest Angular Karma result updated to 135 of 135
+- [x] Update Test Plan to v1.13
+  - Latest Angular Karma result updated to 151 of 151
+  - Latest backend xUnit result updated to 27 of 27
   - DueDate date-only boundary documented
   - NextAction edit-mode coverage documented
+  - PriorityLevel edit-mode coverage documented
+  - Create Task validation documented
+  - Login/Register validation documented
+  - Authentication suspicious-input tests documented
   - Practical UX Review remains pending
-- [x] Update README to v2.9
-  - Latest Angular Karma result updated to 135 of 135
-  - Work log status documented as 52 hours logged / 48 remaining
+- [x] Update README to v3.0
+  - Latest Angular Karma result updated to 151 of 151
+  - Latest backend xUnit result updated to 27 of 27
+  - Work log status documented as 59.47 hours worked / 40.53 remaining
   - DueDate date-only boundary documented
   - NextAction edit-mode support documented
-- [ ] Update TaskAnchor Context to reflect:
-  - `/register` route exposed
-  - Login page Register link added
-  - Register page Login link added
-  - Register success returns to Login
-  - Login/Register error messages added
-  - Completed status confirmation added
-  - Task List clarity/access updates added
-  - Description and Due Date display added to Task List
-  - NextAction edit-mode support added
-  - DueDate date-only MVP boundary documented
-  - Angular Karma result updated to 135 of 135 tests passed
-  - Register manual workflow verification completed
-  - Completed status confirmation manually verified
-  - Work log status: 52 hours logged / 48 remaining
-  - Progress Log correction history documented as future enhancement only
+  - PriorityLevel edit support documented
+  - DueDate edit support documented
+  - Create Task Description textarea support documented
+  - Create Task Title validation documented
+  - Login/Register validation documented
+  - Authentication suspicious-input tests documented
 
 ---
 
@@ -818,6 +925,8 @@ This is not part of the current MVP and should not be implemented during the cur
   - Existing MVP screen access understandable
   - Existing MVP screen structure supports task follow-through
   - Task List details are clear enough for demo use
+  - Create Task validation is understandable
+  - Login/Register validation is understandable
 - [ ] Keep Practical UX Review unchecked until full checklist is confirmed
 
 ---
@@ -827,6 +936,7 @@ This is not part of the current MVP and should not be implemented during the cur
 - [x] Login → navigate to `/tasks` after success
 - [x] Login page links to Register
 - [x] Register page links to Login
+- [x] Login/Register blank fields are blocked before service calls
 - [ ] Authentication/session route protection is not implemented and remains out of scope for MVP
 
 ---
@@ -838,6 +948,7 @@ This is not part of the current MVP and should not be implemented during the cur
 - [ ] Add task creation Playwright flow test
 - [ ] Add status update Playwright flow test
 - [ ] Add Progress Log Playwright flow test
+- [ ] Add validation-message Playwright checks only if needed for demo confidence
 
 ---
 
@@ -846,20 +957,18 @@ This is not part of the current MVP and should not be implemented during the cur
 - [x] Register had no visible Login return link
 - [x] Register duplicate email failure had no visible message
 - [x] Login invalid credential failure had no visible message
+- [x] Login/Register blank fields had no frontend validation
 - [x] Login/Register links had inconsistent styling
 - [x] Accidental Completed status selection risk addressed with confirmation
 - [x] Task List details needed clearer labels and structure
 - [x] Task List display was missing Description when present
+- [x] Task List display was missing Priority when present
 - [x] Task List display was missing Due Date when present
 - [x] Edit Task UI did not expose NextAction
-- [ ] Create Task UI does not capture Description
-- [ ] Edit Task UI does not edit PriorityLevel or DueDate
-
-Allowed future corrections:
-- Add Description to Create Task.
-- Expand Edit Task to update existing Task fields:
-  - priorityLevel
-  - dueDate
+- [x] Edit Task UI did not expose PriorityLevel
+- [x] Edit Task UI did not expose DueDate
+- [x] Create Task UI did not capture Description
+- [x] Create Task UI allowed blank/whitespace Title submission
 
 Blocked fixes:
 - Do not add undo
@@ -872,6 +981,8 @@ Blocked fixes:
 - Do not edit existing Progress Log entries in the current MVP
 - Do not delete existing Progress Log entries in the current MVP
 - Do not add Progress Log correction history in the current MVP
+- Do not add token/session enforcement in the current MVP
+- Do not add CAPTCHA, rate limiting, lockouts, or account verification in the current MVP
 
 ---
 
@@ -879,9 +990,15 @@ Blocked fixes:
 - [ ] Prepare demo script for:
   - Register
   - Login
+  - Login/Register required-field validation
   - Create Task
+  - Create Task required Title validation
+  - Description
+  - PriorityLevel
+  - DueDate
   - NextAction
   - Progress Log
+  - Blank Progress Log save behavior
   - Status change
   - Completed confirmation
   - Completed exclusion
@@ -895,6 +1012,7 @@ Blocked fixes:
   - Progress Log supports resuming work
   - NextAction supports concrete next steps
   - Practical UX Review improved clarity/access without adding new workflows
+  - Authentication validation/security checks remained within MVP scope
 
 ---
 
@@ -902,30 +1020,27 @@ Blocked fixes:
 - [x] Add 2026-04-30 work log entry
 - [x] Add 2026-05-01 Completed confirmation work log entry
 - [x] Add 2026-05-01 Task List clarity/access work log entry
-- [ ] Add 2026-05-02 Task List Description/Due Date display work log entry
-- [ ] Add 2026-05-03 NextAction edit-mode and documentation alignment work log entry
-- [ ] Commit/sync latest Task List display, edit-mode, styling, scope-boundary, and documentation updates
+- [x] Add 2026-05-02 Task List Description/Due Date display work log entry
+- [x] Add 2026-05-03 frontend validation/documentation alignment work log entry
+- [x] Add 2026-05-04 Create Task form usability work log entry
+- [x] Add 2026-05-04 authentication validation work log entry
+- [ ] Commit/sync latest SRS, Test Plan, README, validation, and authentication test updates if not already committed
 
 ---
 
 ## Next Steps (Execution Order)
 
 1. Check Known Scope Boundaries before continuing work
-2. Commit/sync latest Task List status button styling, Description display, Due Date display, NextAction edit-mode support, DueDate boundary documentation, and README updates
-3. Add 2026-05-02 work log entry
-4. Add 2026-05-03 work log entry
-5. Reconcile TaskAnchor Context documentation against the current README, SRS, and Test Planning Document
-6. Manually verify NextAction edit/save behavior after task creation
-7. Use TDD to add Description capture to Create Task if selected as next validation correction
-8. Use TDD to expand Edit Task for existing Task fields only if selected as next validation correction:
-   - priorityLevel
-   - dueDate
-9. Complete Practical UX Review for clarity, access, and usability of existing MVP flows only after manual screen review is confirmed
-10. Document remaining bugs, limitations, and known gaps
-11. Prepare demo notes for the implemented MVP
-12. Prepare capstone presentation and poster materials
-13. Continue work logging toward the 100-hour capstone requirement
-14. Optionally expand Playwright coverage for existing MVP flows only
+2. Commit/sync latest SRS, Test Plan, README, validation, and authentication test updates if not already committed
+3. Confirm whether DueDate edit/save persists after browser refresh
+4. Confirm Description display manually after task data includes description
+5. Confirm Due Date display manually after task data includes dueDate
+6. Complete Practical UX Review for clarity, access, and usability of existing MVP flows only after manual screen review is confirmed
+7. Document remaining bugs, limitations, and known gaps
+8. Prepare demo notes for the implemented MVP
+9. Prepare capstone presentation and poster materials
+10. Continue work logging toward the 100-hour capstone requirement
+11. Optionally expand Playwright coverage for existing MVP flows only
 
 ---
 
@@ -940,6 +1055,7 @@ Blocked fixes:
 - No notifications, roles, or advanced features
 - No navbar/logout/session guard behavior in current MVP scope
 - No time-specific DueDate behavior in current MVP scope
+- No production authentication hardening beyond current MVP validation checks
 - Refresh pattern is mandatory for UI consistency
 - Status logic enforced by backend rules
 - Completed tasks are terminal and cannot be reactivated in MVP
@@ -949,11 +1065,37 @@ Blocked fixes:
 - Existing Progress Log entries are add/view only in the current MVP
 - Progress Log correction history is documented as a future enhancement only
 - Continue work logging toward the 100-hour capstone requirement
-- Current work log status: 52 hours logged / 48 hours remaining
+- Current work log status: 59.47 hours worked / 40.53 hours remaining
 
 ---
 
 ## Changelog
+
+### v3.0 (05/04/2026)
+- Updated README to align with SRS v1.11 and Test Planning Document v1.13.
+- Removed references to separate project context documentation.
+- Recorded latest Angular Karma result: 151 of 151 tests passed using `ng test`.
+- Recorded latest backend xUnit result: 27 of 27 tests passed using `dotnet test`.
+- Documented work log status: 59.47 hours worked and 40.53 hours remaining toward the 100-hour capstone requirement.
+- Documented Login/Register blank-field validation.
+- Documented Login/Register suspicious-input handling.
+- Documented backend authentication suspicious-input tests.
+- Documented password hashing validation for suspicious registration input.
+- Documented Create Task Description textarea support.
+- Documented Create Task Description payload support.
+- Documented Create Task required Title validation.
+- Documented Create Task validation error styling.
+- Documented Create Task field reset behavior after successful create.
+- Documented PriorityLevel read-only display and edit-mode support.
+- Documented DueDate edit-mode support while preserving the date-only MVP boundary.
+- Documented blank Progress Log save close/clear behavior.
+- Updated Manual MVP Workflow Testing summary with latest browser confirmations.
+- Updated Test Coverage section with frontend 151/151 and backend 27/27 results.
+- Updated Task Object Shape Rule to include description in create payloads.
+- Updated known field support gaps to show Description create support, PriorityLevel edit support, and DueDate edit support are implemented.
+- Updated Future Enhancement Notes with production authentication hardening items outside MVP scope.
+- Updated Loose Ends, Documentation Alignment, Practical UX / Access Issues, Demo / Presentation Prep, Work Log / Git, and Next Steps sections.
+- Kept Practical UX Review pending until full manual screen checklist is explicitly confirmed.
 
 ### v2.9 (05/03/2026)
 - Updated README after NextAction edit-mode work and documentation alignment.
@@ -971,10 +1113,9 @@ Blocked fixes:
 - Updated Manual MVP Workflow Testing section to list NextAction edit/save browser verification as pending.
 - Updated Task Object Shape Rule notes to show edit mode currently supports title, description, and NextAction.
 - Updated Loose Ends to mark NextAction edit-mode support complete.
-- Updated Documentation / Context Alignment section to mark SRS v1.10, Test Plan v1.12, and README v2.9 updates complete.
-- Added TaskAnchor Context update items for NextAction edit-mode support, DueDate date-only boundary, 135 of 135 Angular Karma result, and 52/48 work log status.
+- Updated Documentation Alignment section to mark SRS v1.10, Test Plan v1.12, and README v2.9 updates complete.
 - Updated Practical UX / Access Issues to mark missing NextAction edit support complete.
-- Updated Next Steps to prioritize Context alignment, work log entries, manual NextAction edit/save verification, Practical UX Review, demo/poster/presentation prep, and optional Playwright expansion.
+- Updated Next Steps to prioritize work log entries, manual NextAction edit/save verification, Practical UX Review, demo/poster/presentation prep, and optional Playwright expansion.
 
 ### v2.8 (05/02/2026)
 - Updated README after Task List Description and Due Date display work.
@@ -1036,7 +1177,7 @@ Blocked fixes:
 - Updated E2E notes to state that the previously skipped Register Playwright test should be revisited now that `/register` exists.
 - Updated Manual MVP Workflow Testing summary to include Register access, Register success return to Login, duplicate Register error display, invalid Login error display, and Login/Register visual consistency.
 - Updated Loose Ends to mark Register user workflow and authentication access corrections complete.
-- Added Documentation / Context Alignment loose ends.
+- Added Documentation Alignment loose ends.
 - Added Practical UX Review loose ends.
 - Added Demo / Presentation Prep loose ends.
 - Added Work Log / Git loose ends.
@@ -1076,7 +1217,7 @@ Blocked fixes:
 - Added Current Working Phase and early scope-control wording
 - Added Capstone Work Remaining section to clarify ongoing work after MVP feature completion
 - Added Known Scope Boundaries section to separate allowed remaining work from blocked feature expansion
-- Added Documentation Alignment Status for README, SRS, Test Plan, and TaskAnchor Context tracking
+- Added Documentation Alignment Status for README, SRS, and Test Plan tracking
 - Clarified that Practical UX Review is in scope for existing MVP flows only
 - Added Practical UX Review checklist for clarity, access, and usability validation
 - Added Manual MVP Workflow Testing checklist for end-to-end manual validation
