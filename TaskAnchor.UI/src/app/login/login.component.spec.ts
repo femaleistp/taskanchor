@@ -130,15 +130,10 @@ describe('LoginComponent', () => {
     const router = TestBed.inject(Router);
     spyOn(router, 'navigate');
 
-    const compiled = fixture.nativeElement as HTMLElement;
-    const emailInput = compiled.querySelector('input[name="email"]') as HTMLInputElement;
-    const passwordInput = compiled.querySelector('input[name="password"]') as HTMLInputElement;
+    component.email = 'test@example.com';
+    component.password = 'password123';
 
-    emailInput.value = 'test@example.com';
-    passwordInput.value = 'password123';
-
-    const form = compiled.querySelector('form');
-    form?.dispatchEvent(new Event('submit'));
+    component.onSubmit();
 
     expect(router.navigate).toHaveBeenCalledWith(['/tasks']);
   });
@@ -208,5 +203,46 @@ describe('LoginComponent', () => {
 
     expect(errorMessage).not.toBeNull();
     expect(errorMessage?.textContent).toContain('Login failed');
+  });
+
+  it('should show a validation message and not call login when email or password is blank', () => {
+    const authService = TestBed.inject(AuthService);
+
+    spyOn(authService, 'login').and.returnValue({
+      subscribe: () => { }
+    } as any);
+
+    component.email = '   ';
+    component.password = '';
+
+    component.onSubmit();
+    fixture.detectChanges();
+
+    const compiled = fixture.nativeElement as HTMLElement;
+    const errorMessage = compiled.querySelector('.login-error');
+
+    expect(authService.login).not.toHaveBeenCalled();
+    expect(errorMessage).not.toBeNull();
+    expect(errorMessage?.textContent).toContain('Email and password are required.');
+    expect(component.email).toBe('   ');
+    expect(component.password).toBe('');
+  });
+
+  it('should pass login input as plain text when values contain script-like characters', () => {
+    const authService = TestBed.inject(AuthService);
+
+    spyOn(authService, 'login').and.returnValue({
+      subscribe: () => ({})
+    } as any);
+
+    component.email = '<script>alert("x")</script>@example.com';
+    component.password = `password' OR '1'='1`;
+
+    component.onSubmit();
+
+    expect(authService.login).toHaveBeenCalledWith(
+      '<script>alert("x")</script>@example.com',
+    `password' OR '1'='1`
+    );
   });
 });

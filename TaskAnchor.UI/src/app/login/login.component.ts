@@ -20,6 +20,10 @@ export class LoginComponent {
   onSubmit(): void {
     this.loginError = '';
 
+    if (!this.email.trim() || !this.password.trim()) {
+      this.loginError = 'Email and password are required.';
+      return;
+    }
     this.authService.login(this.email, this.password).subscribe(
       () => {
       this.router.navigate(['/tasks']);

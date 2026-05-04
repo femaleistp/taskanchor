@@ -189,6 +189,47 @@ describe('RegisterComponent', () => {
     expect(errorMessage?.textContent).toContain('Email is already registered.');
   });
 
+  it('should show a validation message and not call register when email or password is blank', () => {
+    const authService = TestBed.inject(AuthService);
+
+    spyOn(authService, 'register').and.returnValue({
+      subscribe: () => { }
+    } as any);
+
+    component.email = '   ';
+    component.password = '';
+
+    component.onSubmit();
+    fixture.detectChanges();
+
+    const compiled = fixture.nativeElement as HTMLElement;
+    const errorMessage = compiled.querySelector('.register-error');
+
+    expect(authService.register).not.toHaveBeenCalled();
+    expect(errorMessage).not.toBeNull();
+    expect(errorMessage?.textContent).toContain('Email and password are required.');
+    expect(component.email).toBe('   ');
+    expect(component.password).toBe('');
+  });
+
+  it('should pass login input as plain text when values contain script-like characters', () => {
+    const authService = TestBed.inject(AuthService);
+
+    spyOn(authService, 'register').and.returnValue({
+      subscribe: () => ({})
+    } as any);
+
+    component.email = '<script>alert("x")</script>@example.com';
+    component.password = `password' OR '1'='1`;
+
+    component.onSubmit();
+
+    expect(authService.register).toHaveBeenCalledWith(
+      '<script>alert("x")</script>@example.com',
+      `password' OR '1'='1`
+    );
+  });
+
   it('should render a login link for users who already have an account', () => {
     const compiled = fixture.nativeElement as HTMLElement;
     const loginLink = compiled.querySelector('a[routerLink="/"]');

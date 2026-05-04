@@ -21,6 +21,11 @@ export class RegisterComponent {
   onSubmit(): void {
     this.registerError = '';
 
+    if (!this.email.trim() || !this.password.trim()) {
+      this.registerError = 'Email and password are required.';
+      return;
+    }
+
     this.authService.register(this.email, this.password).subscribe(
       () => {
         this.router.navigate(['/']);
