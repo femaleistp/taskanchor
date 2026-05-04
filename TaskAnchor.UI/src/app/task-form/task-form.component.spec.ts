@@ -44,11 +44,11 @@ describe('TaskFormComponent', () => {
     expect(input).not.toBeNull();
   });
 
-  it('should render a description input', () => {
+  it('should render a description textarea', () => {
     const compiled = fixture.nativeElement as HTMLElement;
-    const input = compiled.querySelector('input[name="description"]');
+    const textarea = compiled.querySelector('textarea[name="description"]');
 
-    expect(input).not.toBeNull();
+    expect(textarea).not.toBeNull();
   });
 
   it('should render a submit button', () => {
@@ -100,6 +100,71 @@ describe('TaskFormComponent', () => {
     expect(taskService.createTask).toHaveBeenCalledWith({ title: 'New Task', description: '', priorityLevel: 1, dueDate: null, nextAction: '' });
   });
 
+  it('should show a validation message and not create a task when title is blank or whitespace', () => {
+    const taskService = TestBed.inject(TaskService);
+
+    spyOn(taskService, 'createTask').and.returnValue({
+      subscribe: () => { }
+    } as any);
+
+
+    spyOn(taskService, 'refreshTasks');
+
+    component.title = '    ';
+    component.description = 'Description should remain';
+    component.priorityLevel = 'High';
+    component.dueDate = '2026-05-04';
+    component.nextAction = 'Next action should remain';
+
+    component.onSubmit();
+    fixture.detectChanges();
+
+    const compiled = fixture.nativeElement as HTMLElement;
+    const validationMessage = compiled.querySelector('.task-form-error');
+
+    expect(taskService.createTask).not.toHaveBeenCalled();
+    expect(taskService.refreshTasks).not.toHaveBeenCalled();
+    expect(validationMessage).not.toBeNull();
+    expect(validationMessage?.textContent).toContain('Title is required.');
+    expect(component.title).toBe('    ');
+    expect(component.description).toBe('Description should remain');
+    expect(component.priorityLevel).toBe('High');
+    expect(component.dueDate).toBe('2026-05-04');
+    expect(component.nextAction).toBe('Next action should remain');
+  });
+
+  it('should render the task form validation message in dark red', () => {
+    component.taskFormError = 'Title is required.';
+
+    fixture.detectChanges();
+
+    const compiled = fixture.nativeElement as HTMLElement;
+    const errorMessage = compiled.querySelector('.task-form-error') as HTMLElement;
+
+    expect(errorMessage).not.toBeNull();
+    expect(errorMessage.textContent).toContain('Title is required.');
+    expect(getComputedStyle(errorMessage).color).toBe('rgb(139, 0, 0)');
+  });
+
+  it('should clear task form validation message after successful task creation', () => {
+    const taskService = TestBed.inject(TaskService);
+
+    spyOn(taskService, 'createTask').and.returnValue({
+      subscribe: (fn: any) => fn({})
+    } as any);
+
+    component.taskFormError = 'Title is required.';
+    component.title = 'New Task';
+    component.description = 'Task description';
+    component.priorityLevel = 'Medium';
+    component.dueDate = '';
+    component.nextAction = '';
+
+    component.onSubmit();
+
+    expect(component.taskFormError).toBe('');
+  });
+
   it('should include description in the create task payload', () => {
     const taskService = TestBed.inject(TaskService);
     spyOn(taskService, 'createTask').and.returnValue(of({}));
@@ -135,6 +200,39 @@ describe('TaskFormComponent', () => {
     form?.dispatchEvent(new Event('submit'));
 
     expect(component.title).toBe('');
+  });
+
+  it('should clear description after successful task creation', () => {
+    const taskService = TestBed.inject(TaskService);
+    spyOn(taskService, 'createTask').and.returnValue({
+      subscribe: (fn: any) => fn({})
+    } as any);
+
+    component.title = 'New Task';
+    component.description = 'Task description';
+
+    component.onSubmit();
+
+    expect(component.description).toBe('');
+  });
+
+  it('should reset priorityLevel, dueDate, and nextAction after successful task creation', () => {
+    const taskService = TestBed.inject(TaskService);
+    spyOn(taskService, 'createTask').and.returnValue({
+      subscribe: (fn: any) => fn({})
+    } as any);
+
+    component.title = 'New Task';
+    component.description = 'Task description';
+    component.priorityLevel = 'High';
+    component.dueDate = '2026-05-04';
+    component.nextAction = 'Next step';
+
+    component.onSubmit();
+
+    expect(component.priorityLevel).toBe('Medium');
+    expect(component.dueDate).toBe('');
+    expect(component.nextAction).toBe('');
   });
 
   it('should call refreshTasks and not call getTasks after successful task creation', () => {
@@ -229,10 +327,13 @@ describe('TaskFormComponent', () => {
   it('should render a DueDate input field', () => {
     const compiled = fixture.nativeElement as HTMLElement;
 
-    const input = compiled.querySelector('input[name="dueDate"]');
+    const input = compiled.querySelector('input[name="dueDate"]') as HTMLInputElement;
 
     expect(input).not.toBeNull();
+    expect(input.type).toBe('date');
   });
+
+
 
   it('should bind DueDate input to component property', () => {
     const compiled = fixture.nativeElement as HTMLElement;

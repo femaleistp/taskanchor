@@ -12,10 +12,18 @@ export class TaskFormComponent {
   priorityLevel: string = 'Medium';
   dueDate: string = '';
   nextAction: string = '';
+  taskFormError: string = '';
 
   constructor(private taskService: TaskService) { }
 
   onSubmit(): void {
+    this.taskFormError = '';
+
+    if (!this.title.trim()) {
+      this.taskFormError = 'Title is required.';
+      return;
+    }
+
     const priorityMap: Record<string, number> = {
       Low: 0,
       Medium: 1,

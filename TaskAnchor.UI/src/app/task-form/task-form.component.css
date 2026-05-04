@@ -65,3 +65,10 @@
       background: #d4af37;
       color: #111111;
     }
+
+  .task-form-card .task-form-error {
+    grid-column: 2;
+    margin: 0.25rem 0 0;
+    color: #8b0000;
+    font-weight: 600;
+  }

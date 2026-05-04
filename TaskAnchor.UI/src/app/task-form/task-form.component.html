@@ -6,7 +6,7 @@
     <input id="title" name="title" [(ngModel)]="title" />
 
     <label for="description">Description</label>
-    <input id="description" name="description" [(ngModel)]="description" />
+    <textarea id="description" name="description" [(ngModel)]="description"></textarea>
 
     <label for="priorityLevel">Priority</label>
     <select id="priorityLevel" name="priorityLevel" [(ngModel)]="priorityLevel">
@@ -16,10 +16,14 @@
     </select>
 
     <label for="dueDate">Due Date</label>
-    <input id="dueDate" type="date" name="dueDate" [(ngModel)]="dueDate" />
+    <input id="dueDate" name="dueDate" type="date" [(ngModel)]="dueDate" />
 
     <label for="nextAction">NextAction</label>
     <input id="nextAction" name="nextAction" [(ngModel)]="nextAction" />
+
+    <p class="task-form-error" *ngIf="taskFormError">
+      {{ taskFormError }}
+    </p>
 
     <button type="submit">Create Task</button>
   </form>
