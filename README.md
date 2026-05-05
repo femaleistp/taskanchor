@@ -6,7 +6,7 @@ TaskAnchor is a personal task system focused on follow-through, visibility, and 
 
 The system ensures that tasks remain visible and actionable until they are completed, reducing the likelihood of forgotten or abandoned work.
 
-Current working phase: post-MVP capstone validation, documentation alignment, Practical UX Review, Manual MVP Workflow Testing documentation, demo preparation, presentation/poster preparation, and work log completion.
+Current working phase: post-MVP capstone validation, documentation alignment, Practical UX Review documentation, Manual MVP Workflow Testing documentation, demo preparation, presentation/poster preparation, and work log completion.
 
 Do not add new MVP features during this phase.
 
@@ -22,8 +22,8 @@ Do not add new MVP features during this phase.
 ## Project Structure
 
 /docs
-- SRS_v1.11_050426.pdf
-- Test_Planning_Document_v1.13_050426.pdf
+- SRS_v1.12_050526.pdf
+- Test_Planning_Document_v1.14_050526.pdf
 - TaskAnchor_Component_Diagram.pdf
 - TaskAnchor_Class_Diagram.pdf
 - TaskAnchor_Use_Case_Diagram.pdf
@@ -46,6 +46,8 @@ Do not add new MVP features during this phase.
   - task-form/
   - models/
   - services/
+- tests/
+  - Playwright tests for existing MVP browser flows
 
 ---
 
@@ -55,17 +57,17 @@ Backend MVP: Complete
 Frontend MVP: Complete  
 MVP feature development is complete.
 
-Current capstone work remains focused on test normalization, test integrity enforcement, documentation alignment, MVP behavior validation, Practical UX Review, demo preparation, presentation/poster preparation, and work log completion.
+Current capstone work remains focused on documentation alignment, MVP behavior validation, Practical UX Review documentation, demo preparation, presentation/poster preparation, and work log completion.
 
-No new MVP features are being added. Out-of-scope items include subtasks, archiving/restoring, reactivation of completed tasks, categories/tags, multi-user features, notifications/reminders, AI features, payments, advanced prioritization, navbar/logout/session guard behavior, completed-task restore, completed-task undo behavior, time-specific due dates or due times, Progress Log edit/delete/revision-history workflows, CAPTCHA, rate limiting, lockouts, account verification, token/session enforcement beyond current MVP scope, and new authentication workflows.
+No new MVP features are being added. Out-of-scope items include subtasks, archiving/restoring, reactivation of completed tasks, categories/tags, multi-user features, notifications/reminders, AI features, payments, advanced prioritization, navbar/logout/session guard behavior, completed-task restore, completed-task undo behavior, time-specific due dates or due times, Progress Log edit/delete/revision-history workflows, CAPTCHA, rate limiting, lockouts, account verification, token/session enforcement beyond current MVP scope, new authentication workflows, and broad DRY refactoring during post-MVP validation.
 
 Current work log status:
-- 59.47 hours worked
-- 40.53 hours remaining toward the 100-hour capstone requirement
+- 64.23 hours worked
+- 35.77 hours remaining toward the 100-hour capstone requirement
 
-Manual MVP Workflow Testing is documented in the Test Planning Document. Browser verification has confirmed Register, Login, Task List, Create Task, Edit Task, status transitions, confirmation before terminal Completed status, Completed task exclusion, NextAction display/edit behavior, PriorityLevel edit behavior, Progress Log save/display after refresh, blank Progress Log save close/clear behavior, Delete Task, deleted task removal after refresh, refresh behavior, Login/Register navigation links, Register success return to Login, duplicate Register error display, invalid Login error display, Login/Register blank-field validation, Create Task Title validation, and Task List clarity/access improvements.
+Manual MVP Workflow Testing is documented in the Test Planning Document. Browser verification has confirmed Register, Login, Task List, Create Task, Edit Task, status transitions, confirmation before terminal Completed status, Completed task exclusion, NextAction display/edit behavior, PriorityLevel edit behavior, DueDate edit/save after browser refresh, Description display with task data, Due Date display with task data, Progress Log save/display after refresh, blank Progress Log save close/clear behavior, Delete Task confirmation, deleted task removal after accepted delete and refresh, refresh behavior, Login/Register navigation links, Register success return to Login, duplicate Register error display, invalid Login error display, Login/Register blank-field validation, Create Task Title validation, and Task List clarity/access improvements.
 
-Practical UX Review remains pending unless the full existing-screen checklist is explicitly confirmed.
+Practical UX Review full existing-screen review was confirmed on 05/05/2026. Remaining Practical UX Review findings are documented as known limitations.
 
 ---
 
@@ -75,15 +77,12 @@ MVP feature development is complete, but capstone work is still ongoing.
 
 Remaining work includes:
 - Documentation alignment
-- Practical UX Review
-- Practical structure/access review for existing MVP screens
-- Remaining Manual MVP Workflow Testing documentation cleanup if needed
 - Bug/limitation documentation
 - Demo preparation
 - Presentation/poster preparation
 - Work log completion toward the 100-hour requirement
-- Optional Playwright expansion for existing MVP flows only
-- Optional TDD corrections for existing MVP field display/edit behavior
+- Final validation checks if needed
+- Optional corrections only for defects or small existing-screen clarity/access issues
 
 ---
 
@@ -93,17 +92,19 @@ Allowed remaining work:
 - Test integrity review
 - Expanded tests for existing MVP behavior
 - Documentation alignment
-- Practical UX Review
-- Practical structure/access review for existing MVP screens
-- Manual MVP Workflow Testing
+- Practical UX Review documentation
+- Practical structure/access review documentation for existing MVP screens
+- Manual MVP Workflow Testing documentation
 - Bug fixes for implemented MVP behavior
 - Clarity/access corrections for existing MVP screens
 - Demo, presentation, poster, and work log preparation
 - Confirmation before Completed status selection
+- Confirmation before destructive Delete Task action
 - Display corrections for existing Task object fields
 - Edit corrections for existing Task object fields already supported by backend update behavior
 - Existing-form validation for required fields
 - Existing authentication input validation checks
+- Existing status display readability corrections
 
 Not allowed:
 - New MVP features
@@ -133,6 +134,7 @@ Not allowed:
 - Account verification
 - Token/session enforcement beyond current MVP scope
 - New authentication workflows
+- Broad DRY refactoring or architecture cleanup during post-MVP validation
 
 ---
 
@@ -147,8 +149,11 @@ Not allowed:
 - [x] README documents Login/Register blank-field validation
 - [x] README documents authentication suspicious-input validation
 - [x] README documents Completed status confirmation
+- [x] README documents Delete Task confirmation
+- [x] README documents user-facing "In Progress" status readability
 - [x] README documents Task List clarity/access updates
 - [x] README documents Description and Due Date display in Task List
+- [x] README documents DueDate edit/save after browser refresh
 - [x] README documents NextAction edit-mode support
 - [x] README documents PriorityLevel display/edit support
 - [x] README documents DueDate edit support
@@ -158,6 +163,7 @@ Not allowed:
 - [x] README documents Create Task Title validation
 - [x] README documents current frontend test result
 - [x] README documents current backend test result
+- [x] README documents current Playwright result
 - [x] README documents current work log hour status
 - [x] SRS reviewed against current README
   - [x] MVP completion status aligned
@@ -168,14 +174,18 @@ Not allowed:
   - [x] PriorityLevel edit behavior aligned
   - [x] Create Task validation aligned
   - [x] Login/Register validation aligned
+  - [x] Delete confirmation aligned
+  - [x] Status display readability aligned
 - [x] Test Plan reviewed against current README
   - [x] Existing automated test coverage aligned
   - [x] Manual MVP Workflow Testing documented in Test Plan
   - [x] Practical UX Review/manual validation documented in Test Plan
-  - [x] E2E coverage gaps documented in Test Plan
+  - [x] E2E coverage gaps documented as completed
   - [x] Authentication access/error corrections documented in Test Plan
   - [x] Authentication validation/security handling documented in Test Plan
   - [x] Completed status confirmation documented in Test Plan
+  - [x] Delete confirmation documented in Test Plan
+  - [x] Status display readability documented in Test Plan
   - [x] DueDate date-only boundary documented in Test Plan
   - [x] NextAction edit-mode coverage documented in Test Plan
   - [x] PriorityLevel edit-mode coverage documented in Test Plan
@@ -235,6 +245,7 @@ Not allowed:
   - InProgress status button
 - Active status button is styled green with darker green hover
 - InProgress status button is styled gold with darker gold hover
+- User-facing InProgress status text displays as "In Progress"
 - Completed status color is documented as a future CSS note only because Completed tasks are excluded from the active list
 
 #### Task Interactions
@@ -244,7 +255,8 @@ Not allowed:
 - InProgress → Completed
 - Completed is terminal
 - Completed tasks are excluded from active list
-- Uses exact status value `InProgress`
+- Uses exact backend/status value `InProgress`
+- Displays user-facing status text as `In Progress`
 - Calls `updateTaskStatus()`
 - Triggers `refreshTasks()`
 - Confirmation is shown before moving a task to Completed
@@ -275,12 +287,22 @@ Current edit support:
 - Description edit support is implemented.
 - PriorityLevel edit support is implemented.
 - DueDate edit support is implemented as a date-only value.
+- DueDate edit/save persists after browser refresh.
 - NextAction edit support is implemented.
 
 ##### Delete Task
-- Calls `deleteTask()`
-- Triggers `refreshTasks()`
-- Manual browser verification confirmed deleted tasks are removed after refresh
+- Delete action shows a browser confirmation before deleting
+- Confirmation message includes the clicked task title:
+  - `Delete task "Task Title"? This action cannot be undone.`
+- Cancelling Delete:
+  - Does not call `deleteTask()`
+  - Does not call `refreshTasks()`
+  - Keeps the task visible
+- Accepting Delete:
+  - Calls `deleteTask()`
+  - Triggers `refreshTasks()`
+  - Removes the task after refresh
+- Manual browser verification confirmed deleted tasks are removed after accepted delete and refresh
 
 ##### Progress Log
 - Add Progress Log button per task
@@ -380,6 +402,7 @@ Known Progress Log limitation:
 - `Task` interface includes optional Progress Log support:
   - `progressLogs?: ProgressLog[]`
 - `ProgressLog` interface is currently defined in `models/task.ts`
+- Internal/backend status value remains `InProgress`; visible UI display uses `In Progress`
 
 ---
 
@@ -401,9 +424,11 @@ Coverage includes:
 - Angular binding behavior
 - Service interaction
 - Status transitions
+- User-facing `In Progress` status display
 - Completed status confirmation behavior
 - Edit/save flow
 - Delete behavior
+- Delete confirmation cancel/accept behavior
 - Progress Log full flow
 - Blank Progress Log save close/clear behavior
 - Refresh signaling
@@ -437,9 +462,9 @@ Coverage includes:
 - DueDate date-only behavior documented as MVP scope boundary
 
 Latest Angular Karma run:
-- Date: 05/04/2026
+- Date: 05/05/2026
 - Command: `ng test`
-- Result: 151 of 151 tests passed
+- Result: 155 of 155 tests passed
 - Failed: 0
 - Browser: Chrome 147.0.0.0 on Windows 10
 
@@ -453,6 +478,8 @@ Latest Angular Karma run:
   - TaskList template tests updated for embedded `TaskFormComponent`
   - Status tests normalized to use `updateTaskStatus()` and refresh behavior
   - Completed status confirmation behavior covered
+  - Delete confirmation cancel/accept behavior covered
+  - User-facing `In Progress` status readability covered
   - Task List detail display tests added for Description, Priority, and Due Date
   - Edit-mode field tests normalized to scope selectors inside `.edit-task-fields`
   - PriorityLevel, DueDate, and NextAction edit-mode input coverage added
@@ -495,16 +522,36 @@ Latest Angular Karma run:
 
 ### E2E (Playwright)
 
+Playwright coverage is limited to existing MVP flows only.
+
+Current Playwright coverage:
 - Login page loads
-- TaskList page load test added
-- Register page load test was previously skipped because RegisterComponent was implemented and unit-tested, but no `/register` route was exposed
-- `/register` route is now exposed, so the skipped Register Playwright test should be revisited
+- Register page loads
+- Task List page loads
+- Register blank-field validation
+- Login blank-field validation
+- Login → Task List navigation
+- Create Task blank-title validation
+- Valid Create Task flow
+- Status update flow
+- Progress Log add/display flow
+- Delete confirmation cancel flow
+- Delete confirmation accept flow
 
-Current Playwright results:
-- Full run: 3 passed, 6 skipped across Chromium, Firefox, and WebKit
-- Filtered active run excluding skipped Register test: 3 passed
+Latest Playwright results:
+- Date: 05/05/2026
+- Command: `npx playwright test`
+- Result: 36 passed, 0 skipped, 0 failed
 
-Current E2E coverage is limited to routed page-load smoke tests. MVP feature behavior is covered by backend xUnit tests, Angular Karma unit/component tests, and manual browser workflow testing. Skipped Playwright checks are documented as E2E gaps and do not count as completed Manual MVP Workflow Testing.
+Previously documented E2E gaps are now complete:
+- Register page load revalidation
+- Login → Task List navigation
+- Task creation flow
+- Status update flow
+- Progress Log flow
+- Login/Register blank validation flow
+- Create Task validation flow
+- Delete confirmation browser flow after safety correction
 
 ---
 
@@ -529,6 +576,7 @@ Current E2E coverage is limited to routed page-load smoke tests. MVP feature beh
 - DELETE `/api/tasks/{id}`
 - Frontend status changes persist through `TaskService.updateTaskStatus()` and then trigger `refreshTasks()`
 - Frontend task updates persist through `TaskService.updateTask()` and then trigger `refreshTasks()`
+- Frontend delete requests are protected by title-specific confirmation before `deleteTask()` is called
 
 ### Progress Log
 - POST `/api/tasks/{id}/progress`
@@ -570,9 +618,12 @@ Latest backend xUnit run:
 - Completed tasks excluded from active list
 - Completed tasks are terminal
 - Confirmation is required before setting a task to Completed
+- Delete Task requires title-specific confirmation before deletion
 - Overdue is derived, not stored
 - DueDate is date-only in the MVP
 - Time-specific deadlines are outside MVP scope
+- Internal/backend status value remains `InProgress`
+- User-facing status display uses `In Progress`
 - Sorting:
   1. Overdue
   2. Due date ascending
@@ -617,8 +668,9 @@ User actions:
 - Create with blank Title → visible validation message
 - Create valid task → refresh → visible
 - Edit title/description/PriorityLevel/DueDate/NextAction → save → refresh → updated
-- Delete → refresh → removed
-- Status change → refresh → updated
+- Delete → confirmation → cancel keeps task
+- Delete → confirmation → accept deletes → refresh → removed
+- Status Active → In Progress → refresh → updated
 - Completed status selection → confirmation required
 - Add Progress Log → save → refresh → visible
 - Blank Progress Log save → input closes/clears and no empty entry is created
@@ -648,29 +700,68 @@ Current browser verification confirms:
 - Create Task valid submission clears the Title validation message
 - Create Task workflow succeeds after create payload normalization
 - Created tasks appear after refresh
+- Description displays when task data includes description
+- Due Date displays when task data includes DueDate
 - Edit Task workflow succeeds for title editing
 - PriorityLevel edit/save persists
+- DueDate edit/save persists after browser refresh
 - NextAction edit/save updates and displays after save/refresh
 - Status Active → InProgress succeeds
+- User-facing InProgress status displays as "In Progress"
 - Status InProgress → Completed succeeds after confirmation
 - Completed task disappears from active task list
 - NextAction displays when present
 - Progress Log saves through backend
 - Blank Progress Log save clears/closes input and does not create an empty entry
 - Progress Log entries display in the browser after refresh
-- Delete Task removes the selected task after refresh
+- Delete Task shows confirmation before deleting
+- Cancelling Delete keeps the task visible
+- Accepting Delete removes the selected task after refresh
 - Refresh behavior works after create, edit, status change, Progress Log save, and delete
 - Login, Register, Create Task, and Task List visual direction is consistent
 - Task List clarity/access improvements support scanability and demo readiness
+- Full Practical UX Review existing-screen review is confirmed
 
 Manual MVP Workflow Testing is documented in the Test Planning Document.
 
-Practical UX Review remains pending unless the full checklist is separately confirmed.
+Practical UX Review findings and known limitations are documented in the Test Planning Document.
 
 Manual browser verification still pending:
-- Confirm Due Date edit/save persists after browser refresh if not already separately confirmed.
-- Confirm Description display manually after task data includes description.
-- Confirm Due Date display manually after task data includes dueDate.
+- None currently identified for core MVP workflow completion.
+
+---
+
+## Practical UX Review Summary
+
+Full Practical UX Review was confirmed on 05/05/2026 for existing MVP screens:
+- Login
+- Register
+- Task List
+- Create Task
+- Edit Task mode
+- Progress Log flow
+- Validation messages
+
+Resolved Practical UX Review corrections:
+- Delete Task now requires title-specific confirmation.
+- User-facing `InProgress` status text now displays as `In Progress`.
+
+Remaining Practical UX Review findings / known limitations:
+- Add Progress Log button remains visible/clickable after Add Progress Log mode is already open, but clicking it again does not appear to do anything.
+- Edit mode and Add Progress Log mode can be open at the same time on the same task.
+- A task can be deleted while Edit mode and/or Add Progress Log mode are open, although Delete now requires confirmation.
+- Multiple interaction modes may allow unsaved text to be lost if the user switches actions before saving.
+- Create Task labels do not use colons, while Task List detail labels use colons.
+- Create Task card and Task List card styling could be easier to distinguish visually.
+- Create Task heading and Task List heading appear at different sizes.
+- Date inputs in Create Task and Edit Task may appear in a different font depending on browser rendering.
+- Code has repeated patterns and could benefit from future DRY cleanup.
+
+Current decision:
+- Delete confirmation and status readability were corrected because they were small, high-value existing-screen clarity/safety fixes.
+- Remaining interaction-mode findings are documented as known limitations.
+- Do not expand MVP scope into edit/progress-log mode redesign unless explicitly needed later.
+- Do not start broad DRY refactoring during post-MVP validation unless required by a defect.
 
 ---
 
@@ -690,9 +781,11 @@ Manual browser verification still pending:
   - Service calls
   - Refresh signaling
   - Status transitions
+  - User-facing `In Progress` status text
   - Completed status confirmation
   - Edit flow
   - Delete flow
+  - Delete confirmation cancel/accept behavior
   - Progress Log flow
   - Blank Progress Log save behavior
   - Register route coverage
@@ -713,12 +806,24 @@ Manual browser verification still pending:
   - Create Task Description textarea support
   - Create Task Title validation
   - Create Task validation message styling
+- Playwright:
+  - Login page loads
+  - Register page loads
+  - Task List page loads
+  - Register blank-field validation
+  - Login blank-field validation
+  - Login → Task List navigation
+  - Create Task blank-title validation
+  - Valid Create Task browser flow
+  - Status update browser flow
+  - Progress Log add/display browser flow
+  - Delete confirmation cancel browser flow
+  - Delete confirmation accept browser flow
 
 Latest test runs:
 - Backend xUnit: 27 of 27 tests passed using `dotnet test`
-- Frontend Angular Karma: 151 of 151 tests passed using `ng test`
-- Playwright active smoke tests: 3 passed
-- Playwright full run: 3 passed, 6 skipped across Chromium, Firefox, and WebKit
+- Frontend Angular Karma: 155 of 155 tests passed using `ng test`
+- Playwright full run: 36 passed, 0 skipped, 0 failed using `npx playwright test`
 
 Practical UX Review and Manual MVP Workflow Testing are defined in the Test Planning Document as manual validation activities for existing MVP flows only.
 
@@ -773,8 +878,12 @@ DueDate is treated as a date-only MVP field.
 
 Current Task field support:
 - Description exists in the Task object and is captured by the Create Task UI.
+- Description displays when task data includes description.
+- Due Date displays when task data includes DueDate.
 - Edit mode supports title, description, PriorityLevel, DueDate, and NextAction.
+- DueDate edit/save persists after browser refresh.
 - Status is not supplied by the frontend Create Task form; backend/default create behavior assigns initial task status.
+- Internal/backend status value remains `InProgress`; user-facing display text uses `In Progress`.
 
 ---
 
@@ -819,6 +928,30 @@ Possible future behavior:
 
 These are not part of the current MVP and should not be implemented during the current post-MVP validation pass.
 
+### Interaction-Mode Guardrails
+
+Current MVP behavior allows Edit mode and Add Progress Log mode to be open at the same time. A future version could add guardrails to prevent accidental unsaved text loss when users switch modes.
+
+Possible future behavior:
+- Close Add Progress Log mode when Edit mode opens.
+- Close Edit mode when Add Progress Log mode opens.
+- Warn before switching modes if unsaved text exists.
+- Disable Delete while Edit mode or Progress Log mode is open.
+
+This is not part of the current MVP and should not be implemented during the current post-MVP validation pass unless selected later as a small clarity/access correction.
+
+### DRY / Refactoring Cleanup
+
+Current MVP implementation has repeated patterns across UI tests and component logic. A future cleanup pass could reduce duplication and improve maintainability.
+
+Possible future behavior:
+- Shared test fixture helpers
+- Shared Task factory helpers
+- Shared display helper functions
+- Reduced duplicated Playwright task creation setup
+
+This is not part of the current MVP and should not be implemented during the current post-MVP validation pass unless required by a defect.
+
 ---
 
 ## Loose Ends (STRICT MVP)
@@ -844,6 +977,8 @@ These are not part of the current MVP and should not be implemented during the c
 - [x] Add tested Login and Register suspicious-input handling
 - [x] Add backend authentication suspicious-input tests
 - [x] Add tested confirmation before Completed status selection
+- [x] Add tested Delete Task confirmation
+- [x] Add tested user-facing `In Progress` status readability
 - [x] Add tested Task List clarity/access labels and structure
 - [x] Add tested Description display in Task List
 - [x] Add tested Priority display in Task List
@@ -856,6 +991,7 @@ These are not part of the current MVP and should not be implemented during the c
 - [x] Add tested Create Task Description textarea support
 - [x] Add tested Create Task Title validation
 - [x] Document DueDate date-only MVP boundary
+- [x] Expand Playwright coverage for documented existing MVP E2E gaps
 
 ---
 
@@ -871,42 +1007,53 @@ These are not part of the current MVP and should not be implemented during the c
 - [x] Confirm Progress Log entries display after refresh
 - [x] Confirm blank Progress Log save closes/clears input without creating an empty entry
 - [x] Confirm Delete Task removes task after refresh
+- [x] Confirm Delete Task confirmation appears before destructive delete
+- [x] Confirm cancelling Delete keeps the task visible
+- [x] Confirm accepting Delete removes the task after refresh
 - [x] Confirm Completed status confirmation manually
 - [x] Confirm NextAction edit/save behavior manually after task creation
 - [x] Confirm PriorityLevel edit/save persists
+- [x] Confirm DueDate edit/save persists after browser refresh
+- [x] Confirm Description display with task data
+- [x] Confirm Due Date display with task data
 - [x] Confirm Create Task Title validation displays and clears after valid create
-- [ ] Confirm DueDate edit/save persists after browser refresh if not already separately confirmed
-- [ ] Confirm Description display manually after task data includes description
-- [ ] Confirm Due Date display manually after task data includes dueDate
-- [ ] Complete Practical UX Review only after full manual screen review is confirmed
+- [x] Complete Practical UX Review after full manual screen review confirmation
 
 ---
 
 ### Documentation Alignment
-- [x] Update SRS to v1.11
+- [x] Update SRS to v1.12
   - DueDate date-only boundary documented
   - NextAction edit behavior documented
   - PriorityLevel edit behavior documented
   - Create Task validation documented
   - Login/Register validation documented
   - Authentication suspicious-input behavior documented
+  - Delete confirmation documented
+  - Status display readability documented
   - `/register` routing reflected
   - SRS kept limited to product requirements
-- [x] Update Test Plan to v1.13
-  - Latest Angular Karma result updated to 151 of 151
-  - Latest backend xUnit result updated to 27 of 27
+- [x] Update Test Plan to v1.14
+  - Latest Angular Karma result updated to 155 of 155
+  - Latest backend xUnit result remains 27 of 27
+  - Latest Playwright result updated to 36 passed, 0 skipped, 0 failed
   - DueDate date-only boundary documented
   - NextAction edit-mode coverage documented
   - PriorityLevel edit-mode coverage documented
   - Create Task validation documented
   - Login/Register validation documented
   - Authentication suspicious-input tests documented
-  - Practical UX Review remains pending
-- [x] Update README to v3.0
-  - Latest Angular Karma result updated to 151 of 151
-  - Latest backend xUnit result updated to 27 of 27
-  - Work log status documented as 59.47 hours worked / 40.53 remaining
+  - Delete confirmation documented
+  - Status readability documented
+  - Practical UX Review confirmed and findings documented
+- [x] Update README to v3.1
+  - Latest Angular Karma result updated to 155 of 155
+  - Latest backend xUnit result remains 27 of 27
+  - Latest Playwright result updated to 36 passed, 0 skipped, 0 failed
+  - Work log status documented as 64.23 hours worked / 35.77 remaining
   - DueDate date-only boundary documented
+  - DueDate edit/save after browser refresh documented
+  - Description and Due Date display confirmed
   - NextAction edit-mode support documented
   - PriorityLevel edit support documented
   - DueDate edit support documented
@@ -914,20 +1061,22 @@ These are not part of the current MVP and should not be implemented during the c
   - Create Task Title validation documented
   - Login/Register validation documented
   - Authentication suspicious-input tests documented
+  - Delete confirmation documented
+  - Status display readability documented
+  - Practical UX Review confirmed and known limitations documented
 
 ---
 
 ### Practical UX Review
-- [ ] Complete Practical UX Review checklist only after explicit full manual screen review confirmation
-- [ ] Decide whether current manual checks are enough to mark:
-  - Login flow understandable
-  - Register flow understandable
-  - Existing MVP screen access understandable
-  - Existing MVP screen structure supports task follow-through
-  - Task List details are clear enough for demo use
-  - Create Task validation is understandable
-  - Login/Register validation is understandable
-- [ ] Keep Practical UX Review unchecked until full checklist is confirmed
+- [x] Complete Practical UX Review checklist after explicit full manual screen review confirmation
+- [x] Confirm Login flow understandable
+- [x] Confirm Register flow understandable
+- [x] Confirm existing MVP screen access understandable
+- [x] Confirm existing MVP screen structure supports task follow-through
+- [x] Confirm Task List details are clear enough for demo use
+- [x] Confirm Create Task validation is understandable
+- [x] Confirm Login/Register validation is understandable
+- [x] Document remaining Practical UX Review findings as known limitations
 
 ---
 
@@ -937,18 +1086,20 @@ These are not part of the current MVP and should not be implemented during the c
 - [x] Login page links to Register
 - [x] Register page links to Login
 - [x] Login/Register blank fields are blocked before service calls
+- [x] Delete confirmation protects destructive delete action
 - [ ] Authentication/session route protection is not implemented and remains out of scope for MVP
 
 ---
 
 ### E2E Coverage
 - [x] TaskList page load test
-- [ ] Revisit skipped Register page load test now that `/register` route exists
-- [ ] Add Login → TaskList Playwright flow test
-- [ ] Add task creation Playwright flow test
-- [ ] Add status update Playwright flow test
-- [ ] Add Progress Log Playwright flow test
-- [ ] Add validation-message Playwright checks only if needed for demo confidence
+- [x] Revisit skipped Register page load test now that `/register` route exists
+- [x] Add Login → TaskList Playwright flow test
+- [x] Add task creation Playwright flow test
+- [x] Add status update Playwright flow test
+- [x] Add Progress Log Playwright flow test
+- [x] Add validation-message Playwright checks for Login, Register, and Create Task
+- [x] Add Delete confirmation Playwright flow tests
 
 ---
 
@@ -960,6 +1111,8 @@ These are not part of the current MVP and should not be implemented during the c
 - [x] Login/Register blank fields had no frontend validation
 - [x] Login/Register links had inconsistent styling
 - [x] Accidental Completed status selection risk addressed with confirmation
+- [x] Accidental Delete Task risk addressed with title-specific confirmation
+- [x] User-facing InProgress display changed to In Progress
 - [x] Task List details needed clearer labels and structure
 - [x] Task List display was missing Description when present
 - [x] Task List display was missing Priority when present
@@ -969,6 +1122,16 @@ These are not part of the current MVP and should not be implemented during the c
 - [x] Edit Task UI did not expose DueDate
 - [x] Create Task UI did not capture Description
 - [x] Create Task UI allowed blank/whitespace Title submission
+
+Remaining known limitations:
+- Add Progress Log button remains visible/clickable after Add Progress Log mode is already open.
+- Edit mode and Add Progress Log mode can be open at the same time.
+- A task can be deleted while Edit mode and/or Add Progress Log mode are open, although Delete now requires confirmation.
+- Unsaved text may be lost if the user switches interaction modes before saving.
+- Create Task labels and Task List labels use slightly different punctuation.
+- Create Task and Task List sections could be more visually distinct.
+- Date inputs may render with browser-specific font differences.
+- Code has repeated patterns and could benefit from future DRY cleanup.
 
 Blocked fixes:
 - Do not add undo
@@ -983,6 +1146,7 @@ Blocked fixes:
 - Do not add Progress Log correction history in the current MVP
 - Do not add token/session enforcement in the current MVP
 - Do not add CAPTCHA, rate limiting, lockouts, or account verification in the current MVP
+- Do not start broad DRY refactoring during post-MVP validation unless required by a defect
 
 ---
 
@@ -1000,8 +1164,10 @@ Blocked fixes:
   - Progress Log
   - Blank Progress Log save behavior
   - Status change
+  - User-facing In Progress status display
   - Completed confirmation
   - Completed exclusion
+  - Delete confirmation
   - Delete Task
 - [ ] Prepare poster/presentation wording around:
   - Follow-through problem
@@ -1013,6 +1179,7 @@ Blocked fixes:
   - NextAction supports concrete next steps
   - Practical UX Review improved clarity/access without adding new workflows
   - Authentication validation/security checks remained within MVP scope
+  - Existing-flow Playwright coverage confirmed MVP behavior in browser
 
 ---
 
@@ -1024,23 +1191,22 @@ Blocked fixes:
 - [x] Add 2026-05-03 frontend validation/documentation alignment work log entry
 - [x] Add 2026-05-04 Create Task form usability work log entry
 - [x] Add 2026-05-04 authentication validation work log entry
-- [ ] Commit/sync latest SRS, Test Plan, README, validation, and authentication test updates if not already committed
+- [ ] Add 2026-05-05 Playwright validation work log entry
+- [ ] Add 2026-05-05 Practical UX Review/Delete confirmation/status readability/documentation work log entry
+- [ ] Commit/sync latest SRS, Test Plan, README, validation, and documentation updates if not already committed
 
 ---
 
 ## Next Steps (Execution Order)
 
-1. Check Known Scope Boundaries before continuing work
-2. Commit/sync latest SRS, Test Plan, README, validation, and authentication test updates if not already committed
-3. Confirm whether DueDate edit/save persists after browser refresh
-4. Confirm Description display manually after task data includes description
-5. Confirm Due Date display manually after task data includes dueDate
-6. Complete Practical UX Review for clarity, access, and usability of existing MVP flows only after manual screen review is confirmed
-7. Document remaining bugs, limitations, and known gaps
-8. Prepare demo notes for the implemented MVP
-9. Prepare capstone presentation and poster materials
-10. Continue work logging toward the 100-hour capstone requirement
-11. Optionally expand Playwright coverage for existing MVP flows only
+1. Commit/sync latest Test Plan, SRS, README, validation, and documentation updates if not already committed.
+2. Update project context document if needed for private continuity.
+3. Update MyGPT instructions/context if needed for future session alignment.
+4. Add 05/05/2026 work log entries.
+5. Prepare demo notes for the implemented MVP.
+6. Prepare capstone presentation and poster materials.
+7. Continue work logging toward the 100-hour capstone requirement.
+8. Only add further code changes for confirmed defects or small existing-screen clarity/access corrections.
 
 ---
 
@@ -1060,16 +1226,45 @@ Blocked fixes:
 - Status logic enforced by backend rules
 - Completed tasks are terminal and cannot be reactivated in MVP
 - Confirmation before Completed protects against accidental terminal status selection
+- Confirmation before Delete protects against accidental destructive deletion
 - Create payloads are intentionally smaller than full returned Task objects
 - Returned/rendered Task test fixtures must use the full frontend Task shape
 - Existing Progress Log entries are add/view only in the current MVP
 - Progress Log correction history is documented as a future enhancement only
-- Continue work logging toward the 100-hour capstone requirement
-- Current work log status: 59.47 hours worked / 40.53 hours remaining
+- Current work log status: 64.23 hours worked / 35.77 hours remaining
 
 ---
 
 ## Changelog
+
+### v3.1 (05/05/2026)
+- Updated README to align with SRS v1.12 and Test Planning Document v1.14.
+- Recorded latest Angular Karma result: 155 of 155 tests passed using `ng test`.
+- Recorded latest Playwright result: 36 passed, 0 skipped, and 0 failed using `npx playwright test`.
+- Kept latest backend xUnit result: 27 of 27 tests passed using `dotnet test`.
+- Updated work log status to 64.23 hours worked and 35.77 hours remaining.
+- Documented Register page Playwright revalidation after enabling/correcting the route test to `/register`.
+- Documented Register blank-field Playwright validation coverage.
+- Documented Login blank-field Playwright validation as included in full Playwright coverage.
+- Documented Login → Task List Playwright coverage.
+- Documented Create Task blank-title Playwright validation coverage.
+- Documented valid Create Task Playwright flow coverage.
+- Documented Status update Playwright coverage.
+- Documented Progress Log add/display Playwright coverage.
+- Documented Delete confirmation Playwright coverage for cancel and accept flows.
+- Updated E2E section to show previously documented Playwright gaps are complete.
+- Documented Delete Task confirmation behavior.
+- Documented Delete confirmation message includes clicked task title.
+- Documented Delete cancel path keeps the task visible and does not call delete/refresh.
+- Documented Delete accept path calls delete, refreshes, and removes the task.
+- Documented user-facing status display correction from `InProgress` to `In Progress`.
+- Clarified backend/status value remains `InProgress`.
+- Updated Manual MVP Workflow Testing confirmations for DueDate edit/save after browser refresh, Description display, Due Date display, Delete confirmation, and Practical UX Review completion.
+- Added Practical UX Review Summary section.
+- Documented remaining Practical UX Review known limitations.
+- Added Future Enhancement notes for interaction-mode guardrails and DRY/refactoring cleanup.
+- Updated Loose Ends, Manual Validation, Documentation Alignment, E2E Coverage, Practical UX / Access Issues, Demo / Presentation Prep, Work Log / Git, and Next Steps sections.
+- Maintained scope boundaries: no new MVP features, no new workflows, no completed-task restore/reactivation/archive behavior, no due times, no Progress Log edit/delete/revision history, no token/session enforcement, and no broad refactoring.
 
 ### v3.0 (05/04/2026)
 - Updated README to align with SRS v1.11 and Test Planning Document v1.13.
