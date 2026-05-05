@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 
-test.skip('register page loads', async ({ page }) => {
-  await page.goto('http://localhost:63093');
+test('register page loads', async ({ page }) => {
+  await page.goto('http://localhost:63093/register');
 
   await expect(page.getByRole('heading', { name: 'Register' })).toBeVisible();
   await expect(page.locator('input[name="email"]')).toBeVisible();
