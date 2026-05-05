@@ -14,12 +14,12 @@
           class="status-button"
           [ngClass]="{
             'status-active': getStatusLabel(task.status) === 'Active',
-            'status-in-progress': getStatusLabel(task.status) === 'InProgress'
+            'status-in-progress': getStatusLabel(task.status) === 'In Progress'
           }"
           (click)="onStatusChange(task)">
           <span>Status: {{ getStatusLabel(task.status) }} </span>
           <span class="status-next-action">
-            Click → {{ getStatusLabel(task.status) === 'Active' ? 'InProgress' : 'Complete'}}
+            Click → {{ getStatusLabel(task.status) === 'Active' ? 'In Progress' : 'Complete'}}
           </span>
         </button>
 
@@ -56,12 +56,12 @@
             class="status-button edit-status-button"
             [ngClass]="{
               'status-active': getStatusLabel(task.status) === 'Active',
-              'status-in-progress': getStatusLabel(task.status) === 'InProgress'
+              'status-in-progress': getStatusLabel(task.status) === 'In Progress'
             }"
             (click)="onStatusChange(task)">
             <span>Status: {{ getStatusLabel(task.status) }} </span>
             <span class="status-next-action">
-              Click → {{ getStatusLabel(task.status) === 'Active' ? 'InProgress' : 'Complete'}}
+              Click → {{ getStatusLabel(task.status) === 'Active' ? 'In Progress' : 'Complete'}}
             </span>
           </button>
 

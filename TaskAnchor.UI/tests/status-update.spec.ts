@@ -21,7 +21,7 @@ test('task status can be updated from Active to InProgress', async ({ page }) =>
   await expect(taskCard.getByText('Status: Active')).toBeVisible({ timeout: 15000 });
 
 
-  await taskCard.getByRole('button', { name: /Click.*InProgress/ }).click();
+  await taskCard.getByRole('button', { name: /Click.*In Progress/ }).click();
 
-  await expect(taskCard.getByText('Status: InProgress')).toBeVisible();
+  await expect(taskCard.getByText('Status: In Progress')).toBeVisible();
 });

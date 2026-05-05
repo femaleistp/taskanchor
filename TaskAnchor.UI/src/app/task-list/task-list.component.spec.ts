@@ -659,8 +659,72 @@ describe('TaskListComponent', () => {
     expect(component.onDelete).toHaveBeenCalledWith(component.tasks[1]);
   });
 
+  it('should not delete task when delete confirmation is cancelled', () => {
+    const taskService = TestBed.inject(TaskService);
+
+    spyOn(window, 'confirm').and.returnValue(false);
+    spyOn(taskService, 'deleteTask').and.callThrough();
+    spyOn(taskService, 'refreshTasks');
+
+    const task = {
+      taskId: 1,
+      title: 'Test Task',
+      description: '',
+      status: 'Active',
+      priorityLevel: 'Medium',
+      dueDate: null,
+      nextAction: null,
+      lastUpdatedDate: new Date().toISOString()
+    };
+
+    component.onDelete(task);
+
+    expect(window.confirm).toHaveBeenCalledWith(
+      'Delete task "Test Task"? This action cannot be undone.'
+    );
+    expect(taskService.deleteTask).not.toHaveBeenCalled();
+    expect(taskService.refreshTasks).not.toHaveBeenCalled();
+  });
+
+  it('should delete task when delete confirmation is accepted', () => {
+    const taskService = TestBed.inject(TaskService);
+
+    spyOn(window, 'confirm').and.returnValue(true);
+
+    spyOn(taskService, 'deleteTask').and.returnValue({
+      subscribe: (fn?: any) => {
+        if (fn) {
+          fn({})
+        }
+      }
+    } as any);
+
+    spyOn(taskService, 'refreshTasks');
+
+    const task = {
+      taskId: 1,
+      title: 'Test Task',
+      description: '',
+      status: 'Active',
+      priorityLevel: 'Medium',
+      dueDate: null,
+      nextAction: null,
+      lastUpdatedDate: new Date().toISOString()
+    };
+
+    component.onDelete(task);
+
+    expect(window.confirm).toHaveBeenCalledWith(
+      'Delete task "Test Task"? This action cannot be undone.'
+    );
+    expect(taskService.deleteTask).toHaveBeenCalledWith(task.taskId);
+    expect(taskService.refreshTasks).toHaveBeenCalled();
+  });
+
   it('should call TaskService.deleteTask when onDelete is triggered', () => {
     const taskService = TestBed.inject(TaskService);
+
+    spyOn(window, 'confirm').and.returnValue(true);
 
     spyOn(taskService, 'deleteTask').and.returnValue({
       subscribe: () => { }
@@ -684,6 +748,8 @@ describe('TaskListComponent', () => {
 
   it('should trigger task refresh after delete', () => {
     const taskService = TestBed.inject(TaskService);
+
+    spyOn(window, 'confirm').and.returnValue(true);
 
     spyOn(taskService, 'deleteTask').and.returnValue({
       subscribe: (fn: any) => fn()
@@ -713,7 +779,7 @@ describe('TaskListComponent', () => {
         taskId: 1,
         title: 'Test Task',
         description: '',
-        status: 'InProgress',
+        status: 'In Progress',
         priorityLevel: 'Medium',
         dueDate: null,
         nextAction: null,
@@ -725,7 +791,12 @@ describe('TaskListComponent', () => {
 
     const compiled = fixture.nativeElement as HTMLElement;
 
-    expect(compiled.textContent).toContain('InProgress');
+    expect(compiled.textContent).toContain('In Progress');
+  });
+
+  it('should display InProgress status as In Progress for readability', () => {
+    expect(component.getStatusLabel('InProgress')).toBe('In Progress');
+    expect(component.getStatusLabel(1)).toBe('In Progress');
   });
 
   it('should call onStatusChange when status is clicked', () => {
@@ -1804,9 +1875,9 @@ describe('TaskListComponent', () => {
 
     expect(statusButtons.length).toBe(2);
     expect(statusButtons[0].textContent).toContain('Status: Active');
-    expect(statusButtons[0].textContent).toContain('Click → InProgress');
+    expect(statusButtons[0].textContent).toContain('Click → In Progress');
 
-    expect(statusButtons[1].textContent).toContain('Status: InProgress');
+    expect(statusButtons[1].textContent).toContain('Status: In Progress');
     expect(statusButtons[1].textContent).toContain('Click → Complete');
   });
 

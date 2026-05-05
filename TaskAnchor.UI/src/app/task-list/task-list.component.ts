@@ -35,14 +35,14 @@ export class TaskListComponent implements OnInit {
     }
 
     if (status === 1 || status === 'InProgress') {
-      return 'InProgress';
+      return 'In Progress';
     }
 
     if (status === 2 || status === 'Completed') {
       return 'Completed';
     }
 
-    return String(status);
+    return status;
   }
 
   getPriorityLabel(priorityLevel: any): string {
@@ -66,6 +66,14 @@ export class TaskListComponent implements OnInit {
   }
 
   onDelete(task: Task): void {
+    const confirmed = window.confirm(
+      `Delete task "${task.title}"? This action cannot be undone.`
+    );
+
+    if (!confirmed) {
+      return;
+    }
+
     this.taskService.deleteTask(task.taskId).subscribe(() => {
       this.taskService.refreshTasks();
     });
