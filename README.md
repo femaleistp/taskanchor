@@ -6,7 +6,7 @@ TaskAnchor is a personal task system focused on follow-through, visibility, and 
 
 The system ensures that tasks remain visible and actionable until they are completed, reducing the likelihood of forgotten or abandoned work.
 
-Current working phase: post-MVP capstone validation, documentation alignment, Practical UX Review documentation, Manual MVP Workflow Testing documentation, demo preparation, presentation/poster preparation, and work log completion.
+Current working phase: post-MVP capstone validation, documentation alignment, Practical UX Review documentation, Manual MVP Workflow Testing documentation, security review documentation, future hardening backlog documentation, demo preparation, presentation/poster preparation, and work log completion.
 
 Do not add new MVP features during this phase.
 
@@ -22,8 +22,8 @@ Do not add new MVP features during this phase.
 ## Project Structure
 
 /docs
-- SRS_v1.12_050526.pdf
-- Test_Planning_Document_v1.14_050526.pdf
+- SRS_v1.13_050626.pdf
+- Test_Planning_Document_v1.15_050626.pdf
 - TaskAnchor_Component_Diagram.pdf
 - TaskAnchor_Class_Diagram.pdf
 - TaskAnchor_Use_Case_Diagram.pdf
@@ -57,17 +57,19 @@ Backend MVP: Complete
 Frontend MVP: Complete  
 MVP feature development is complete.
 
-Current capstone work remains focused on documentation alignment, MVP behavior validation, Practical UX Review documentation, demo preparation, presentation/poster preparation, and work log completion.
+Current capstone work remains focused on documentation alignment, MVP behavior validation, Practical UX Review documentation, security review documentation, future hardening backlog documentation, demo preparation, presentation/poster preparation, and work log completion.
 
-No new MVP features are being added. Out-of-scope items include subtasks, archiving/restoring, reactivation of completed tasks, categories/tags, multi-user features, notifications/reminders, AI features, payments, advanced prioritization, navbar/logout/session guard behavior, completed-task restore, completed-task undo behavior, time-specific due dates or due times, Progress Log edit/delete/revision-history workflows, CAPTCHA, rate limiting, lockouts, account verification, token/session enforcement beyond current MVP scope, new authentication workflows, and broad DRY refactoring during post-MVP validation.
+No new MVP features are being added. Out-of-scope items include subtasks, archiving/restoring, reactivation of completed tasks, categories/tags, multi-user features, notifications/reminders, AI features, payments, advanced prioritization, navbar/logout/session guard behavior, completed-task restore, completed-task undo behavior, time-specific due dates or due times, Progress Log edit/delete/revision-history workflows, CAPTCHA, rate limiting, lockouts, account verification, token/session enforcement beyond current MVP scope, multi-user authorization or ownership enforcement beyond current MVP scope, CSRF protection for future browser-session authentication, new authentication workflows, production deployment security hardening, and broad DRY refactoring during post-MVP validation.
 
 Current work log status:
-- 64.23 hours worked
-- 35.77 hours remaining toward the 100-hour capstone requirement
+- 66.48 hours worked
+- 33.52 hours remaining toward the 100-hour capstone requirement
 
 Manual MVP Workflow Testing is documented in the Test Planning Document. Browser verification has confirmed Register, Login, Task List, Create Task, Edit Task, status transitions, confirmation before terminal Completed status, Completed task exclusion, NextAction display/edit behavior, PriorityLevel edit behavior, DueDate edit/save after browser refresh, Description display with task data, Due Date display with task data, Progress Log save/display after refresh, blank Progress Log save close/clear behavior, Delete Task confirmation, deleted task removal after accepted delete and refresh, refresh behavior, Login/Register navigation links, Register success return to Login, duplicate Register error display, invalid Login error display, Login/Register blank-field validation, Create Task Title validation, and Task List clarity/access improvements.
 
 Practical UX Review full existing-screen review was confirmed on 05/05/2026. Remaining Practical UX Review findings are documented as known limitations.
+
+Security review documentation was added on 05/06/2026. The review covered Injection and Broken Access Control study topics, documented current MVP security limitations, and created future hardening backlog items. These future hardening items are not implemented MVP features.
 
 ---
 
@@ -78,6 +80,8 @@ MVP feature development is complete, but capstone work is still ongoing.
 Remaining work includes:
 - Documentation alignment
 - Bug/limitation documentation
+- Security review documentation
+- Future hardening backlog documentation
 - Demo preparation
 - Presentation/poster preparation
 - Work log completion toward the 100-hour requirement
@@ -92,6 +96,8 @@ Allowed remaining work:
 - Test integrity review
 - Expanded tests for existing MVP behavior
 - Documentation alignment
+- Security review documentation
+- Future security hardening backlog documentation
 - Practical UX Review documentation
 - Practical structure/access review documentation for existing MVP screens
 - Manual MVP Workflow Testing documentation
@@ -133,8 +139,18 @@ Not allowed:
 - Lockouts
 - Account verification
 - Token/session enforcement beyond current MVP scope
+- Multi-user authorization or ownership enforcement beyond current MVP scope
+- Role-based access control
+- CSRF protection for future browser-session authentication
 - New authentication workflows
+- Production deployment security hardening
 - Broad DRY refactoring or architecture cleanup during post-MVP validation
+
+Security scope boundary:
+- The MVP includes basic authentication, password hashing, required-field validation for current auth forms, and suspicious-input validation for existing authentication behavior.
+- The MVP does not claim production-grade authentication or authorization.
+- Token/session enforcement, multi-user ownership checks, rate limiting, lockouts, CAPTCHA, account verification, CSRF protection, logout/session guards, and role-based access control are future hardening items.
+- Security review findings should be documented as known limitations or future enhancements unless a small existing-behavior defect is explicitly selected for correction.
 
 ---
 
@@ -161,6 +177,7 @@ Not allowed:
 - [x] README documents Progress Log blank-save behavior
 - [x] README documents Create Task Description textarea support
 - [x] README documents Create Task Title validation
+- [x] README documents security review scope and future hardening backlog status
 - [x] README documents current frontend test result
 - [x] README documents current backend test result
 - [x] README documents current Playwright result
@@ -176,6 +193,8 @@ Not allowed:
   - [x] Login/Register validation aligned
   - [x] Delete confirmation aligned
   - [x] Status display readability aligned
+  - [x] Security scope boundary aligned
+  - [x] Future hardening backlog boundary aligned
 - [x] Test Plan reviewed against current README
   - [x] Existing automated test coverage aligned
   - [x] Manual MVP Workflow Testing documented in Test Plan
@@ -190,6 +209,8 @@ Not allowed:
   - [x] NextAction edit-mode coverage documented in Test Plan
   - [x] PriorityLevel edit-mode coverage documented in Test Plan
   - [x] Create Task validation coverage documented in Test Plan
+  - [x] Security review documentation added to Test Plan
+  - [x] Future hardening backlog documentation added to Test Plan
 
 ---
 
@@ -404,6 +425,12 @@ Known Progress Log limitation:
 - `ProgressLog` interface is currently defined in `models/task.ts`
 - Internal/backend status value remains `InProgress`; visible UI display uses `In Progress`
 
+Security architecture note:
+- Current MVP uses basic authentication and simplified single-user behavior.
+- Current MVP does not include token/session enforcement.
+- Current MVP does not include multi-user authorization or record ownership enforcement.
+- Future production-ready versions should enforce authenticated API access, record ownership, and deny-by-default authorization.
+
 ---
 
 ## Frontend Testing
@@ -612,6 +639,73 @@ Latest backend xUnit run:
 
 ---
 
+## Security Review Summary
+
+Security review was documented on 05/06/2026 after studying Injection and Broken Access Control risk areas.
+
+Implemented MVP security validation:
+- Login rejects invalid credentials.
+- Duplicate registration is rejected.
+- Passwords are hashed during registration.
+- Blank Login/Register fields are blocked in the frontend before service calls.
+- Suspicious/script-like Login input is passed as plain text on the frontend and does not bypass backend authentication.
+- Suspicious/script-like Register input is passed as plain text on the frontend.
+- Suspicious registration password input is hashed and not stored raw.
+- Create Task blank Title is blocked in the frontend before `createTask()` and `refreshTasks()` calls.
+
+Current security assessment:
+- No confirmed SQL injection or command injection vulnerability was identified in the reviewed code snippets.
+- Reviewed backend behavior appears to use Entity Framework Core/LINQ rather than string-concatenated dynamic SQL.
+- Angular text interpolation should remain preferred for displaying user-entered text.
+- Unsafe dynamic HTML patterns, direct DOM manipulation, and dynamic command/query construction should be avoided in future changes.
+- The main security limitation is MVP-level access control/authentication enforcement.
+- Current MVP uses basic authentication and simplified single-user behavior.
+- Current MVP does not include token/session enforcement.
+- Current MVP does not include multi-user record ownership enforcement.
+- Current MVP should not be described as production-grade security.
+
+Security limitations intentionally outside MVP scope:
+- Token/session enforcement
+- Logout/session guard behavior
+- Multi-user authorization
+- Per-user task ownership enforcement
+- Role-based access control
+- CAPTCHA
+- Rate limiting
+- Lockouts
+- Account verification
+- CSRF protection for future browser-session authentication
+- Production-grade dependency vulnerability remediation process
+- Production deployment hardening
+
+Future security backlog:
+- Backend Title validation parity with frontend Create Task validation
+- Backend length limits for text fields
+- Progress Log input normalization review
+- Stored XSS regression tests for task display fields
+- Unsafe dynamic execution pattern review
+- Direct API tests for suspicious task input
+- Backend authentication/session hardening
+- Duplicate and invalid email validation review
+- Dependency vulnerability review before future release/deployment
+- Backend authentication enforcement for Task APIs
+- Authenticated user ownership checks
+- Progress Log ownership checks
+- Force browsing protection tests
+- Frontend unauthorized-response handling
+- CSRF review for future browser-based authentication
+- CORS review before deployment
+- Deny-by-default authorization policy
+- Access-control logging for rejected protected requests
+- Rate limiting for authentication and protected APIs
+- Secure session/token lifetime review
+
+Current decision:
+- Security backlog items are future hardening items unless explicitly selected later.
+- Security hardening should not interrupt final capstone documentation, demo preparation, poster preparation, presentation preparation, or work log completion unless a small existing-behavior defect is explicitly selected.
+
+---
+
 ## Behavior
 
 - Tasks persist until completed (Revisit Rule)
@@ -647,6 +741,8 @@ Latest backend xUnit run:
   - DueDate
   - NextAction
 - Blank Progress Log save closes/clears input without creating an empty entry
+- Authentication suspicious-input behavior is validated for the MVP
+- Passwords are stored as hashes, not raw password text
 
 ---
 
@@ -827,6 +923,8 @@ Latest test runs:
 
 Practical UX Review and Manual MVP Workflow Testing are defined in the Test Planning Document as manual validation activities for existing MVP flows only.
 
+Security review details and future hardening backlog items are documented in the Test Planning Document.
+
 ---
 
 ## Task Object Shape Rule
@@ -885,6 +983,11 @@ Current Task field support:
 - Status is not supplied by the frontend Create Task form; backend/default create behavior assigns initial task status.
 - Internal/backend status value remains `InProgress`; user-facing display text uses `In Progress`.
 
+Security data boundary:
+- UserId exists in the backend data model.
+- Current MVP uses simplified single-user behavior.
+- Future multi-user versions should enforce authenticated ownership so one user cannot access or modify another user's task or Progress Log data.
+
 ---
 
 ## Future Enhancement Notes
@@ -914,7 +1017,7 @@ Possible future behavior:
 
 This is not part of the current MVP and should not be implemented during the current post-MVP validation pass.
 
-### Production Authentication Hardening
+### Production Authentication and Authorization Hardening
 
 Current MVP behavior supports basic Register/Login behavior, password hashing, visible validation feedback, and suspicious-input validation tests.
 
@@ -925,8 +1028,32 @@ Possible future behavior:
 - Account lockout
 - CAPTCHA
 - Role-based access control
+- Logout/session guard behavior
+- Server-side authorization enforcement for task APIs
+- Authenticated record ownership checks for tasks
+- Authenticated record ownership checks for Progress Log endpoints
+- Deny-by-default authorization policy
+- CSRF review/protection for future browser-session authentication
+- CORS configuration review before deployment
+- Access-control logging for rejected protected requests
+- Secure session/token lifetime review
 
 These are not part of the current MVP and should not be implemented during the current post-MVP validation pass.
+
+### Injection and Stored Text Hardening
+
+Current MVP behavior includes suspicious-input validation for existing authentication behavior. No confirmed SQL injection or command injection vulnerability was identified in the reviewed code snippets.
+
+Possible future behavior:
+- Backend Title validation parity with frontend Create Task validation
+- Backend length limits for text fields
+- Progress Log input normalization review
+- Stored XSS regression tests for displayed task and Progress Log fields
+- Unsafe dynamic execution pattern review
+- Direct API tests for suspicious task input
+- Dependency vulnerability review before future release/deployment
+
+These are not part of the current MVP and should not be implemented during the current post-MVP validation pass unless explicitly selected later as small existing-behavior hardening or final validation work.
 
 ### Interaction-Mode Guardrails
 
@@ -1022,7 +1149,7 @@ This is not part of the current MVP and should not be implemented during the cur
 ---
 
 ### Documentation Alignment
-- [x] Update SRS to v1.12
+- [x] Update SRS to v1.13
   - DueDate date-only boundary documented
   - NextAction edit behavior documented
   - PriorityLevel edit behavior documented
@@ -1032,11 +1159,13 @@ This is not part of the current MVP and should not be implemented during the cur
   - Delete confirmation documented
   - Status display readability documented
   - `/register` routing reflected
+  - Security scope boundary documented
+  - Future hardening backlog boundary documented
   - SRS kept limited to product requirements
-- [x] Update Test Plan to v1.14
-  - Latest Angular Karma result updated to 155 of 155
+- [x] Update Test Plan to v1.15
+  - Latest Angular Karma result remains 155 of 155
   - Latest backend xUnit result remains 27 of 27
-  - Latest Playwright result updated to 36 passed, 0 skipped, 0 failed
+  - Latest Playwright result remains 36 passed, 0 skipped, 0 failed
   - DueDate date-only boundary documented
   - NextAction edit-mode coverage documented
   - PriorityLevel edit-mode coverage documented
@@ -1046,11 +1175,13 @@ This is not part of the current MVP and should not be implemented during the cur
   - Delete confirmation documented
   - Status readability documented
   - Practical UX Review confirmed and findings documented
-- [x] Update README to v3.1
-  - Latest Angular Karma result updated to 155 of 155
+  - Security review documented
+  - Future hardening backlog documented
+- [x] Update README to v3.2
+  - Latest Angular Karma result remains 155 of 155
   - Latest backend xUnit result remains 27 of 27
-  - Latest Playwright result updated to 36 passed, 0 skipped, 0 failed
-  - Work log status documented as 64.23 hours worked / 35.77 remaining
+  - Latest Playwright result remains 36 passed, 0 skipped, 0 failed
+  - Work log status documented as 66.48 hours worked / 33.52 remaining
   - DueDate date-only boundary documented
   - DueDate edit/save after browser refresh documented
   - Description and Due Date display confirmed
@@ -1064,6 +1195,8 @@ This is not part of the current MVP and should not be implemented during the cur
   - Delete confirmation documented
   - Status display readability documented
   - Practical UX Review confirmed and known limitations documented
+  - Security review documented
+  - Future hardening backlog documented
 
 ---
 
@@ -1080,6 +1213,19 @@ This is not part of the current MVP and should not be implemented during the cur
 
 ---
 
+### Security Review
+- [x] Review Injection risk area against current MVP code/documentation
+- [x] Review Broken Access Control risk area against current MVP code/documentation
+- [x] Document that no confirmed SQL injection or command injection vulnerability was identified in reviewed snippets
+- [x] Document that current MVP uses basic authentication and simplified single-user behavior
+- [x] Document that token/session enforcement remains outside MVP scope
+- [x] Document that multi-user ownership enforcement remains outside MVP scope
+- [x] Create future hardening backlog cards for Injection-related items
+- [x] Create future hardening backlog cards for Broken Access Control-related items
+- [x] Align security review wording across SRS, Test Plan, and README
+
+---
+
 ### Integration Gaps
 - [x] Register → navigate back to Login after success
 - [x] Login → navigate to `/tasks` after success
@@ -1088,6 +1234,7 @@ This is not part of the current MVP and should not be implemented during the cur
 - [x] Login/Register blank fields are blocked before service calls
 - [x] Delete confirmation protects destructive delete action
 - [ ] Authentication/session route protection is not implemented and remains out of scope for MVP
+- [ ] Multi-user task ownership enforcement is not implemented and remains out of scope for MVP
 
 ---
 
@@ -1132,6 +1279,9 @@ Remaining known limitations:
 - Create Task and Task List sections could be more visually distinct.
 - Date inputs may render with browser-specific font differences.
 - Code has repeated patterns and could benefit from future DRY cleanup.
+- Current MVP does not include token/session enforcement.
+- Current MVP does not include multi-user ownership enforcement.
+- Current MVP should not be treated as production-grade security.
 
 Blocked fixes:
 - Do not add undo
@@ -1145,6 +1295,9 @@ Blocked fixes:
 - Do not delete existing Progress Log entries in the current MVP
 - Do not add Progress Log correction history in the current MVP
 - Do not add token/session enforcement in the current MVP
+- Do not add multi-user ownership enforcement in the current MVP
+- Do not add role-based access control in the current MVP
+- Do not add CSRF protection in the current MVP
 - Do not add CAPTCHA, rate limiting, lockouts, or account verification in the current MVP
 - Do not start broad DRY refactoring during post-MVP validation unless required by a defect
 
@@ -1179,6 +1332,7 @@ Blocked fixes:
   - NextAction supports concrete next steps
   - Practical UX Review improved clarity/access without adding new workflows
   - Authentication validation/security checks remained within MVP scope
+  - Security review identified future hardening items without expanding MVP scope
   - Existing-flow Playwright coverage confirmed MVP behavior in browser
 
 ---
@@ -1193,6 +1347,7 @@ Blocked fixes:
 - [x] Add 2026-05-04 authentication validation work log entry
 - [ ] Add 2026-05-05 Playwright validation work log entry
 - [ ] Add 2026-05-05 Practical UX Review/Delete confirmation/status readability/documentation work log entry
+- [ ] Add 2026-05-06 security review/backlog documentation work log entry
 - [ ] Commit/sync latest SRS, Test Plan, README, validation, and documentation updates if not already committed
 
 ---
@@ -1200,13 +1355,14 @@ Blocked fixes:
 ## Next Steps (Execution Order)
 
 1. Commit/sync latest Test Plan, SRS, README, validation, and documentation updates if not already committed.
-2. Update project context document if needed for private continuity.
-3. Update MyGPT instructions/context if needed for future session alignment.
+2. Update private continuity/context document if needed.
+3. Update private assistant instructions/context if needed for future session alignment.
 4. Add 05/05/2026 work log entries.
-5. Prepare demo notes for the implemented MVP.
-6. Prepare capstone presentation and poster materials.
-7. Continue work logging toward the 100-hour capstone requirement.
-8. Only add further code changes for confirmed defects or small existing-screen clarity/access corrections.
+5. Add 05/06/2026 security review/backlog documentation work log entry.
+6. Prepare demo notes for the implemented MVP.
+7. Prepare capstone presentation and poster materials.
+8. Continue work logging toward the 100-hour capstone requirement.
+9. Only add further code changes for confirmed defects or small existing-screen clarity/access corrections.
 
 ---
 
@@ -1217,11 +1373,14 @@ Blocked fixes:
 - Practical UX Review is allowed for clarity, access, and usability of existing MVP flows
 - Manual MVP Workflow Testing is required for existing MVP flows
 - Detailed Practical UX Review and Manual MVP Workflow Testing checklists are maintained in the Test Planning Document
+- Security review details and future hardening backlog items are maintained in the Test Planning Document
 - UX polish, redesign, and new workflows are not part of the current scope
 - No notifications, roles, or advanced features
 - No navbar/logout/session guard behavior in current MVP scope
 - No time-specific DueDate behavior in current MVP scope
 - No production authentication hardening beyond current MVP validation checks
+- No token/session enforcement in current MVP scope
+- No multi-user authorization or ownership enforcement in current MVP scope
 - Refresh pattern is mandatory for UI consistency
 - Status logic enforced by backend rules
 - Completed tasks are terminal and cannot be reactivated in MVP
@@ -1231,11 +1390,66 @@ Blocked fixes:
 - Returned/rendered Task test fixtures must use the full frontend Task shape
 - Existing Progress Log entries are add/view only in the current MVP
 - Progress Log correction history is documented as a future enhancement only
-- Current work log status: 64.23 hours worked / 35.77 hours remaining
+- Current work log status: 66.48 hours worked / 33.52 hours remaining
 
 ---
 
 ## Changelog
+
+### v3.2 (05/06/2026)
+- Updated README to align with SRS v1.13 and Test Planning Document v1.15.
+- Updated document references to SRS_v1.13_050626.pdf and Test_Planning_Document_v1.15_050626.pdf.
+- Updated current work log status to 66.48 hours worked and 33.52 hours remaining toward the 100-hour capstone requirement.
+- Added security review documentation to Current Status, Capstone Work Remaining, Known Scope Boundaries, Documentation Alignment Status, Frontend Architecture Notes, Test Coverage, Future Enhancement Notes, Loose Ends, Next Steps, and Notes.
+- Added Security Review Summary section.
+- Documented that security review covered Injection and Broken Access Control study topics.
+- Documented implemented MVP security validation:
+  - Login rejects invalid credentials.
+  - Duplicate registration is rejected.
+  - Passwords are hashed during registration.
+  - Blank Login/Register fields are blocked in the frontend before service calls.
+  - Suspicious/script-like Login input is passed as plain text and does not bypass backend authentication.
+  - Suspicious/script-like Register input is passed as plain text.
+  - Suspicious registration password input is hashed and not stored raw.
+  - Create Task blank Title is blocked in the frontend before createTask and refreshTasks calls.
+- Documented current security assessment:
+  - No confirmed SQL injection or command injection vulnerability was identified in reviewed code snippets.
+  - Reviewed backend behavior appears to use Entity Framework Core/LINQ rather than string-concatenated dynamic SQL.
+  - Angular text interpolation should remain preferred for displaying user-entered text.
+  - Unsafe dynamic HTML patterns, direct DOM manipulation, and dynamic command/query construction should be avoided in future changes.
+  - The main security limitation is MVP-level access control/authentication enforcement.
+  - Current MVP uses basic authentication and simplified single-user behavior.
+  - Current MVP does not include token/session enforcement.
+  - Current MVP does not include multi-user record ownership enforcement.
+  - Current MVP should not be described as production-grade security.
+- Added future security backlog summary:
+  - Backend Title validation parity with frontend Create Task validation.
+  - Backend length limits for text fields.
+  - Progress Log input normalization review.
+  - Stored XSS regression tests for task display fields.
+  - Unsafe dynamic execution pattern review.
+  - Direct API tests for suspicious task input.
+  - Backend authentication/session hardening.
+  - Duplicate and invalid email validation review.
+  - Dependency vulnerability review before future release/deployment.
+  - Backend authentication enforcement for Task APIs.
+  - Authenticated user ownership checks.
+  - Progress Log ownership checks.
+  - Force browsing protection tests.
+  - Frontend unauthorized-response handling.
+  - CSRF review for future browser-based authentication.
+  - CORS review before deployment.
+  - Deny-by-default authorization policy.
+  - Access-control logging for rejected protected requests.
+  - Rate limiting for authentication and protected APIs.
+  - Secure session/token lifetime review.
+- Added Production Authentication and Authorization Hardening future enhancement note.
+- Added Injection and Stored Text Hardening future enhancement note.
+- Added Security Review loose-end checklist.
+- Added 2026-05-06 security review/backlog documentation work log item as pending.
+- Updated Next Steps to include 05/06/2026 security review/backlog documentation work log entry.
+- Replaced "MyGPT instructions/context" wording with "private assistant instructions/context."
+- Maintained scope boundaries: no new MVP features, no new workflows, no token/session enforcement, no multi-user ownership enforcement, no CAPTCHA, no rate limiting, no lockouts, no account verification, no role-based access control, no CSRF implementation, no Progress Log edit/delete/revision history, no due times, and no broad refactoring.
 
 ### v3.1 (05/05/2026)
 - Updated README to align with SRS v1.12 and Test Planning Document v1.14.
