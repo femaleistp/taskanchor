@@ -32,6 +32,11 @@ namespace TaskAnchor.API.Controllers
                 return BadRequest("Title must be 100 characters or fewer.");
             }
 
+            if (!string.IsNullOrEmpty(task.Description) && task.Description.Length > 500)
+            {
+                return BadRequest("Description must be 500 characters or fewer.");
+            }
+
             // Logic to create a new task
             task.UserId = 1; // Temporary hardcoded user ID for testing purposes
             task.Status = TaskStatus.Active;
