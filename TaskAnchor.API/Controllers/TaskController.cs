@@ -22,6 +22,11 @@ namespace TaskAnchor.API.Controllers
         [HttpPost]
         public IActionResult CreateTask([FromBody] TaskItem task)
         {
+            if (string.IsNullOrWhiteSpace(task.Title))
+            {
+                return BadRequest("Title is required.");
+            }
+
             // Logic to create a new task
             task.UserId = 1; // Temporary hardcoded user ID for testing purposes
             task.Status = TaskStatus.Active;

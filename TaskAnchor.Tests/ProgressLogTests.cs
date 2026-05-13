@@ -93,5 +93,38 @@ namespace TaskAnchor.Tests
             Assert.Equal("Newer", entries[0].EntryText);
             Assert.Equal("Older", entries[1].EntryText);
         }
+
+        [Fact]
+        public void CreateTask_WithBlankTitle_ReturnsBadRequest_And_DoesNotSaveTask()
+        {
+            // Arrange
+            var options = new DbContextOptionsBuilder<TaskAnchorDbContext>()
+                .UseInMemoryDatabase(databaseName: "CreateTaskBlankTitleTest")
+                .Options;
+
+            using var context = new TaskAnchorDbContext(options);
+
+            var controller = new TasksController(context);
+
+            var task = new TaskItem
+            {
+                UserId = 1,
+                Title = "   ",
+                Description = "Description should not be saved",
+                Status = TaskStatus.Active,
+                PriorityLevel = PriorityLevel.Medium,
+                DueDate = null,
+                NextAction = "Next action should not be saved",
+                LastUpdatedDate = DateTime.UtcNow
+            };
+
+            // Act
+            var result = controller.CreateTask(task);
+
+            // Assert
+            var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
+            Assert.Equal("Title is required.", badRequestResult.Value);
+            Assert.Empty(context.Tasks);
+        }
     }
 }
