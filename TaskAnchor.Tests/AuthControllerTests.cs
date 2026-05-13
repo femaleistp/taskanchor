@@ -99,5 +99,31 @@ namespace TaskAnchor.Tests
             Assert.Equal("Email must be 255 characters or fewer.", badRequestResult.Value);
             Assert.Empty(context.AppUsers);
         }
+
+        [Fact]
+        public void Register_WithPasswordOverMaxLength_ReturnsBadRequest_And_DoesNotSaveUser()
+        {
+            // Arrange
+            var options = new DbContextOptionsBuilder<TaskAnchorDbContext>()
+                .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
+                .Options;
+
+            using var context = new TaskAnchorDbContext(options);
+            var controller = new AuthController(context);
+
+            var request = new RegisterRequest
+            {
+                Email = "valid@example.com",
+                Password = new string('p', 129)
+            };
+
+            // Act
+            var result = controller.Register(request);
+
+            // Assert
+            var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
+            Assert.Equal("Password must be 128 characters or fewer.", badRequestResult.Value);
+            Assert.Empty(context.AppUsers);
+        }
     }
 }

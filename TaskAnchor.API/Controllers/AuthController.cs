@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Azure.Core;
+using Microsoft.AspNetCore.Mvc;
 using TaskAnchor.API.Data;
 using TaskAnchor.API.Models;
 using TaskAnchor.API.Services;
@@ -29,6 +30,11 @@ namespace TaskAnchor.API.Controllers
             if (email.Length > 255)
             {
                 return BadRequest("Email must be 255 characters or fewer.");
+            }
+
+            if (request.Password.Length > 128)
+            {
+                return BadRequest("Password must be 128 characters or fewer.");
             }
 
             var existingUser = _context.AppUsers.FirstOrDefault(u => u.Email == email);
