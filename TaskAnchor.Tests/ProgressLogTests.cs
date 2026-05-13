@@ -202,6 +202,39 @@ namespace TaskAnchor.Tests
         }
 
         [Fact]
+        public void CreateTask_WithTitleOverMaxLength_ReturnsBadRequest_And_DoesNotSaveTask()
+        {
+            // Arrange
+            var options = new DbContextOptionsBuilder<TaskAnchorDbContext>()
+                .UseInMemoryDatabase(databaseName: "CreateTaskTitleOverMaxLengthTest")
+                .Options;
+
+            using var context = new TaskAnchorDbContext(options);
+
+            var controller = new TasksController(context);
+
+            var task = new TaskItem
+            {
+                UserId = 1,
+                Title = new string('A', 101),
+                Description = "Description should not be saved",
+                Status = TaskStatus.Active,
+                PriorityLevel = PriorityLevel.Medium,
+                DueDate = null,
+                NextAction = "Next action should not be saved",
+                LastUpdatedDate = DateTime.UtcNow
+            };
+
+            // Act
+            var result = controller.CreateTask(task);
+
+            // Assert
+            var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
+            Assert.Equal("Title must be 100 characters or fewer.", badRequestResult.Value);
+            Assert.Empty(context.Tasks);
+        }
+        
+        [Fact]
         public void CreateTask_WithSuspiciousText_SavesValuesAsPlainText()
         {
             // Arrange
@@ -233,7 +266,6 @@ namespace TaskAnchor.Tests
             Assert.Equal("<script>alert(\"x\")</script>", savedTask.Title);
             Assert.Equal("' OR '1'='1", savedTask.Description);
             Assert.Equal("<b>Next action</b>", savedTask.NextAction);
-
         }
     }
 }
