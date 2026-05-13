@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Azure.Core;
+using Microsoft.AspNetCore.Mvc;
 using TaskAnchor.API.Data;
 using TaskAnchor.API.Models;
 using TaskAnchor.API.Services;
@@ -35,6 +36,11 @@ namespace TaskAnchor.API.Controllers
             if (!string.IsNullOrEmpty(task.Description) && task.Description.Length > 500)
             {
                 return BadRequest("Description must be 500 characters or fewer.");
+            }
+
+            if (!string.IsNullOrEmpty(task.NextAction) && task.NextAction.Length > 200)
+            {
+                return BadRequest("Next Action must be 200 characters or fewer.");
             }
 
             // Logic to create a new task
