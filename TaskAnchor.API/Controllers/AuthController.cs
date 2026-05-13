@@ -58,6 +58,11 @@ namespace TaskAnchor.API.Controllers
         [HttpPost("login")]
         public IActionResult Login([FromBody] LoginRequest request)
         {
+            if (string.IsNullOrWhiteSpace(request.Email) || string.IsNullOrEmpty(request.Password))
+            {
+                return BadRequest("Email and password are required.");
+            }
+
             if (request.Email.Trim().Length > 255)
             {
                 return BadRequest("Email must be 255 characters or fewer.");
