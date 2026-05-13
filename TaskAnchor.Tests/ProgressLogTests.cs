@@ -45,6 +45,43 @@ namespace TaskAnchor.Tests
         }
 
         [Fact]
+        public void CreateProgressLogEntry_TrimsEntryText_BeforeSaving()
+        {
+            // Arrange
+            var options = new DbContextOptionsBuilder<TaskAnchorDbContext>()
+                .UseInMemoryDatabase(databaseName: "CreateProgressLogTrimTest")
+                .Options;
+
+            using var context = new TaskAnchorDbContext(options);
+
+            var task = new TaskItem
+            {
+                UserId = 1,
+                Title = "Test Task",
+                Status = TaskStatus.Active,
+                PriorityLevel = PriorityLevel.Medium,
+                LastUpdatedDate = DateTime.UtcNow.AddDays(-1)
+            };
+
+            context.Tasks.Add(task);
+            context.SaveChanges();
+
+            var controller = new TasksController(context);
+
+            var request = new CreateProgressLogEntryRequest
+            {
+                EntryText = "    Worked on task    "
+            };
+
+            // Act
+            controller.CreateProgressLogEntry(task.TaskId, request);
+
+            // Assert
+            var entry = context.ProgressLogEntries.First();
+            Assert.Equal("Worked on task", entry.EntryText);
+        }
+
+        [Fact]
         public void GetProgressLogEntries_ReturnsEntries_NewestFirst()
         {
             // Arrange
