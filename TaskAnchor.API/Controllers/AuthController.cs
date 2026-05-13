@@ -24,16 +24,26 @@ namespace TaskAnchor.API.Controllers
                 return BadRequest("Email and password are required.");
             }
 
-            var existingUser = _context.AppUsers.FirstOrDefault(u => u.Email == request.Email);
+            var email = request.Email.Trim();
+
+            if (email.Length > 255)
+            {
+                return BadRequest("Email must be 255 characters or fewer.");
+            }
+
+            var existingUser = _context.AppUsers.FirstOrDefault(u => u.Email == email);
+            
             if (existingUser != null)
             {
                 return BadRequest("Email is already registered.");
             }
+
             var user = new AppUser
             {
-                Email = request.Email.Trim(),
+                Email = email,
                 PasswordHash = PasswordHasherService.HashPassword(request.Password)
             };
+
             _context.AppUsers.Add(user);
             _context.SaveChanges();
             return Ok("User registered successfully.");

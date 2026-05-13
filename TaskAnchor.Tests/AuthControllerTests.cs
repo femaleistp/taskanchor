@@ -74,5 +74,30 @@ namespace TaskAnchor.Tests
                 savedUser.PasswordHash
             );
         }
+
+        [Fact]
+        public void Register_WithEmailOverMaxLength_ReturnsBadRequest_And_DoesNotSaveUser()
+        {
+            // Arrange
+            var options = new DbContextOptionsBuilder<TaskAnchorDbContext>()
+                .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
+                .Options;
+
+            using var context = new TaskAnchorDbContext(options);   
+            var controller = new AuthController(context);
+            var request = new RegisterRequest
+            {
+                Email = new string('a', 245) + "@example.com",
+                Password = "password123"
+            };
+
+            // Act
+            var result = controller.Register(request);
+
+            // Assert
+            var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
+            Assert.Equal("Email must be 255 characters or fewer.", badRequestResult.Value);
+            Assert.Empty(context.AppUsers);
+        }
     }
 }
