@@ -58,16 +58,30 @@ namespace TaskAnchor.API.Controllers
         [HttpPost("login")]
         public IActionResult Login([FromBody] LoginRequest request)
         {
+            if (request.Email.Trim().Length > 255)
+            {
+                return BadRequest("Email must be 255 characters or fewer.");
+            }
+
+            if (request.Password.Length > 128)
+            {
+                return BadRequest("Password must be 128 characters or fewer.");
+            }
+
             var user = _context.AppUsers.FirstOrDefault(u => u.Email == request.Email);
+
             if(user == null)
             {
                 return Unauthorized("Invalid email or password.");
             }
+
             var hashedPassword = PasswordHasherService.HashPassword(request.Password);
+
             if(user.PasswordHash != hashedPassword)
             {
                 return Unauthorized("Invalid email or password.");
             }
+
             return Ok("Login successful.");
         }
     }

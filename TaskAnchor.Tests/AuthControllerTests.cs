@@ -101,6 +101,56 @@ namespace TaskAnchor.Tests
         }
 
         [Fact]
+        public void Login_WithEmailOverMaxLength_ReturnsBadRequest()
+        {
+            // Arrange
+            var options = new DbContextOptionsBuilder<TaskAnchorDbContext>()
+                .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
+                .Options;
+
+            using var context = new TaskAnchorDbContext(options);
+            var controller = new AuthController(context);
+
+            var request = new LoginRequest
+            {
+                Email = new string('a', 245) + "@example.com",
+                Password = "password123"
+            };
+
+            // Act
+            var result = controller.Login(request);
+
+            // Assert
+            var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
+            Assert.Equal("Email must be 255 characters or fewer.", badRequestResult.Value);
+        }
+
+        [Fact]
+        public void Login_WithPasswordOverMaxLength_ReturnsBadRequest()
+        {
+            // Arrange
+            var options = new DbContextOptionsBuilder<TaskAnchorDbContext>()
+                .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
+                .Options;
+
+            using var context = new TaskAnchorDbContext(options);
+            var controller = new AuthController(context);
+
+            var request = new LoginRequest
+            {
+                Email = "valid@example.com",
+                Password = new string('p', 129)
+            };
+
+            // Act
+            var result = controller.Login(request);
+
+            // Assert
+            var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
+            Assert.Equal("Password must be 128 characters or fewer.", badRequestResult.Value);
+        }
+
+        [Fact]
         public void Register_WithPasswordOverMaxLength_ReturnsBadRequest_And_DoesNotSaveUser()
         {
             // Arrange
