@@ -119,6 +119,45 @@ namespace TaskAnchor.Tests
         }
 
         [Fact]
+        public void CreateProgressLogEntry_WithEntryTextOverMaxLength_ReturnsBadRequest_And_DoesNotSaveEntry()
+        {
+            // Arrange
+            // Arrange
+            var options = new DbContextOptionsBuilder<TaskAnchorDbContext>()
+                .UseInMemoryDatabase(databaseName: "CreateProgressLogEntryTextOverMaxLengthTest")
+                .Options;
+
+            using var context = new TaskAnchorDbContext(options);
+
+            var task = new TaskItem
+            {
+                UserId = 1,
+                Title = "Test Task",
+                Status = TaskStatus.Active,
+                PriorityLevel = PriorityLevel.Medium,
+                LastUpdatedDate = DateTime.UtcNow.AddDays(-1)
+            };
+
+            context.Tasks.Add(task);
+            context.SaveChanges();
+
+            var controller = new TasksController(context);
+
+            var request = new CreateProgressLogEntryRequest
+            {
+                EntryText = new string('P', 501)
+            };
+
+            // Act
+            var result = controller.CreateProgressLogEntry(task.TaskId, request);
+
+            // Assert
+            var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
+            Assert.Equal("Entry Text must be 500 characters or fewer.", badRequestResult.Value);
+            Assert.Empty(context.ProgressLogEntries);
+        }
+
+        [Fact]
         public void GetProgressLogEntries_ReturnsEntries_NewestFirst()
         {
             // Arrange

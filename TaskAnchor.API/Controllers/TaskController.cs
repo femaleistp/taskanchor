@@ -58,20 +58,29 @@ namespace TaskAnchor.API.Controllers
         public IActionResult CreateProgressLogEntry(int id, [FromBody] CreateProgressLogEntryRequest request)
         {
             var existingTask = _context.Tasks.FirstOrDefault(t => t.TaskId == id && t.UserId == 1); // Temporary hardcoded user ID for testing purposes, should be t.TaskId == id in production
+            
             if (existingTask == null)
             {
                 return NotFound();
             }
-            if(string.IsNullOrWhiteSpace(request.EntryText))
+
+            if (string.IsNullOrWhiteSpace(request.EntryText))
             {
-                return BadRequest("EntryText is required.");
+                return BadRequest("Entry Text is required.");
             }
+
+            if (request.EntryText.Length > 500)
+            {
+                return BadRequest("Entry Text must be 500 characters or fewer.");
+            }
+
             var progressLogEntry = new ProgressLogEntry
             {
                 TaskId = id,
                 EntryText = request.EntryText.Trim(),
                 CreatedDate = TaskTimestampRules.GetUpdatedTimestamp()
             };
+
             _context.ProgressLogEntries.Add(progressLogEntry);
             existingTask.LastUpdatedDate = TaskTimestampRules.GetUpdatedTimestamp();
             _context.SaveChanges();
