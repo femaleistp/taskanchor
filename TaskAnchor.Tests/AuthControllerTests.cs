@@ -176,6 +176,40 @@ namespace TaskAnchor.Tests
         }
 
         [Fact]
+        public void Register_WithDuplicateEmail_ReturnsBadRequest_And_DoesNotSaveSecondUser()
+        {
+            // Arrange
+            var options = new DbContextOptionsBuilder<TaskAnchorDbContext>()
+                .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
+                .Options;
+
+            using var context = new TaskAnchorDbContext(options);
+
+            context.AppUsers.Add(new AppUser
+            {
+                Email = "duplicate@example.com",
+                PasswordHash = PasswordHasherService.HashPassword("password123")
+            });
+            context.SaveChanges();
+
+            var controller = new AuthController(context);
+
+            var request = new RegisterRequest
+            {
+                Email = "duplicate@example.com",
+                Password = "differentPassword123"
+            };
+
+            // Act
+            var result = controller.Register(request);
+
+            // Assert
+            var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
+            Assert.Equal("Email is already registered.", badRequestResult.Value);
+            Assert.Single(context.AppUsers);
+        }
+
+        [Fact]
         public void Register_WithPasswordOverMaxLength_ReturnsBadRequest_And_DoesNotSaveUser()
         {
             // Arrange
