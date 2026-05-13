@@ -200,5 +200,40 @@ namespace TaskAnchor.Tests
             Assert.Equal("Title is required.", badRequestResult.Value);
             Assert.Empty(context.Tasks);
         }
+
+        [Fact]
+        public void CreateTask_WithSuspiciousText_SavesValuesAsPlainText()
+        {
+            // Arrange
+            var options = new DbContextOptionsBuilder<TaskAnchorDbContext>()
+                .UseInMemoryDatabase(databaseName: "CreateTaskSuspiciousTextTest")
+                .Options;
+
+            using var context = new TaskAnchorDbContext(options);
+
+            var controller = new TasksController(context);
+
+            var task = new TaskItem
+            {
+                UserId = 1,
+                Title = "<script>alert(\"x\")</script>",
+                Description = "' OR '1'='1",
+                Status = TaskStatus.Active,
+                PriorityLevel = PriorityLevel.Medium,
+                DueDate = null,
+                NextAction = "<b>Next action</b>",
+                LastUpdatedDate = DateTime.UtcNow
+            };
+
+            // Act
+            controller.CreateTask(task);
+
+            // Assert
+            var savedTask = context.Tasks.First();
+            Assert.Equal("<script>alert(\"x\")</script>", savedTask.Title);
+            Assert.Equal("' OR '1'='1", savedTask.Description);
+            Assert.Equal("<b>Next action</b>", savedTask.NextAction);
+
+        }
     }
 }
