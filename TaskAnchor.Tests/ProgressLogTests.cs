@@ -82,6 +82,43 @@ namespace TaskAnchor.Tests
         }
 
         [Fact]
+        public void CreateProgressLogEntry_WithScriptLikeText_SavesAsPlainText()
+        {
+            // Arrange
+            var options = new DbContextOptionsBuilder<TaskAnchorDbContext>()
+                .UseInMemoryDatabase(databaseName: "CreateProgressLogScriptLikeTextTest")
+                .Options;
+
+            using var context = new TaskAnchorDbContext(options);
+
+            var task = new TaskItem
+            {
+                UserId = 1,
+                Title = "Test Task",
+                Status = TaskStatus.Active,
+                PriorityLevel = PriorityLevel.Medium,
+                LastUpdatedDate = DateTime.UtcNow.AddDays(-1)
+            };
+
+            context.Tasks.Add(task);
+            context.SaveChanges();
+
+            var controller = new TasksController(context);
+
+            var request = new CreateProgressLogEntryRequest
+            {
+                EntryText = "<script>alert(\"x\")</script>"
+            };
+
+            // Act
+            controller.CreateProgressLogEntry(task.TaskId, request);
+
+            // Assert
+            var entry = context.ProgressLogEntries.First();
+            Assert.Equal("<script>alert(\"x\")</script>", entry.EntryText);
+        }
+
+        [Fact]
         public void GetProgressLogEntries_ReturnsEntries_NewestFirst()
         {
             // Arrange
