@@ -266,6 +266,32 @@ namespace TaskAnchor.Tests
         }
 
         [Fact]
+        public void Register_WithScriptLikeEmail_ReturnsBadRequest_And_DoesNotSaveUser()
+        {
+            // Arrange
+            var options = new DbContextOptionsBuilder<TaskAnchorDbContext>()
+                .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
+                .Options;
+
+            using var context = new TaskAnchorDbContext(options);
+            var controller = new AuthController(context);
+
+            var request = new RegisterRequest
+            {
+                Email = "<script>alert(\"x\")</script>@example.com",
+                Password = "password123"
+            };
+
+            // Act
+            var result = controller.Register(request);
+
+            // Assert
+            var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
+            Assert.Equal("Email format is invalid.", badRequestResult.Value);
+            Assert.Empty(context.AppUsers);
+        }
+
+        [Fact]
         public void Login_WithValidCredentials_ReturnsOk()
         {
             // Arrange
