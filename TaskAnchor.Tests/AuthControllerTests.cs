@@ -44,7 +44,7 @@ namespace TaskAnchor.Tests
         }
 
         [Fact]
-        public void Register_With_Script_And_SqlLike_Input_Stores_Email_And_Hashes_Password()
+        public void Register_With_SqlLike_Password_Input_Stores_Email_And_Hashes_Password()
         {
             // Arrange
             var options = new DbContextOptionsBuilder<TaskAnchorDbContext>()
