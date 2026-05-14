@@ -131,6 +131,31 @@ describe('TaskListComponent', () => {
     expect(taskItem?.querySelector('script')).toBeNull();
   });
 
+  it('should render script-like next action as text without creating a script element', () => {
+    component.tasks = [
+      {
+        taskId: 1,
+        title: 'Task with script-like next action',
+        description: 'Task description',
+        status: 'Active',
+        priorityLevel: 'Medium',
+        dueDate: null,
+        nextAction: '<script>alert("x")</script>',
+        lastUpdatedDate: new Date().toISOString(),
+        progressLogs: []
+      }
+    ];
+
+    fixture.detectChanges();
+
+    const compiled = fixture.nativeElement as HTMLElement;
+    const taskItem = compiled.querySelector('li');
+
+    expect(taskItem).not.toBeNull();
+    expect(taskItem?.textContent).toContain('<script>alert("x")</script>');
+    expect(taskItem?.querySelector('script')).toBeNull();
+  });
+
   it('should not render empty state when tasks exist', () => {
     component.tasks = [
       {
@@ -901,8 +926,6 @@ describe('TaskListComponent', () => {
     expect(taskService.updateTaskStatus).toHaveBeenCalledWith(1, 1);
     expect(taskService.refreshTasks).toHaveBeenCalled();
   });
-
-  
 
   it('should change status from InProgress to Completed when clicked', () => {
     const task = {
