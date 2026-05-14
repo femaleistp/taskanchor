@@ -1,5 +1,6 @@
 ﻿using Azure.Core;
 using Microsoft.AspNetCore.Mvc;
+using System.Net.Mail;
 using TaskAnchor.API.Data;
 using TaskAnchor.API.Models;
 using TaskAnchor.API.Services;
@@ -30,6 +31,20 @@ namespace TaskAnchor.API.Controllers
             if (email.Length > 255)
             {
                 return BadRequest("Email must be 255 characters or fewer.");
+            }
+
+            try
+            {
+                var mailAddress = new MailAddress(email);
+
+                if (mailAddress.Address != email)
+                {
+                    return BadRequest("Email format is invalid.");
+                }
+            }
+            catch (FormatException)
+            {
+                return BadRequest("Email format is invalid.");
             }
 
             if (request.Password.Length > 128)

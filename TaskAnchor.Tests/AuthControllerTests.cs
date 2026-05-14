@@ -56,7 +56,7 @@ namespace TaskAnchor.Tests
 
             var request = new RegisterRequest
             {
-                Email = "  <script>alert(\"x\")</script>@example.com  ",
+                Email = "   valid@example.com   ",
                 Password = "password' OR '1'='1"
             };
 
@@ -68,7 +68,7 @@ namespace TaskAnchor.Tests
 
             var savedUser = context.AppUsers.Single();
 
-            Assert.Equal("<script>alert(\"x\")</script>@example.com", savedUser.Email);
+            Assert.Equal("valid@example.com", savedUser.Email);
             Assert.NotEqual("password'OR '1'='1", savedUser.PasswordHash);
             Assert.Equal(
                 PasswordHasherService.HashPassword("password' OR '1'='1"),
@@ -237,6 +237,32 @@ namespace TaskAnchor.Tests
             var savedUser = context.AppUsers.Single();
             Assert.Equal("valid@example.com", savedUser.Email);
             Assert.Equal(PasswordHasherService.HashPassword("password123"), savedUser.PasswordHash);
+        }
+
+        [Fact]
+        public void Register_WithClearlyInvalidEmail_ReturnsBadRequest_And_DoesNotSaveUser()
+        {
+            // Arrange
+            var options = new DbContextOptionsBuilder<TaskAnchorDbContext>()
+                .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
+                .Options;
+
+            using var context = new TaskAnchorDbContext(options);
+            var controller = new AuthController(context);
+
+            var request = new RegisterRequest
+            {
+                Email = "not-an-email",
+                Password = "password123"
+            };
+
+            // Act
+            var result = controller.Register(request);
+
+            // Assert
+            var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
+            Assert.Equal("Email format is invalid.", badRequestResult.Value);
+            Assert.Empty(context.AppUsers);
         }
 
         [Fact]
