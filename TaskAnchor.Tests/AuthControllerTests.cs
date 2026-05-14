@@ -240,6 +240,40 @@ namespace TaskAnchor.Tests
         }
 
         [Fact]
+        public void Login_WithValidCredentials_ReturnsOk()
+        {
+            // Arrange
+            var options = new DbContextOptionsBuilder<TaskAnchorDbContext>()
+                .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
+                .Options;
+
+            using var context = new TaskAnchorDbContext(options);
+
+            context.AppUsers.Add(new AppUser
+            {
+                Email = "valid@example.com",
+                PasswordHash = PasswordHasherService.HashPassword("password123")
+            });
+
+            context.SaveChanges();
+
+            var controller = new AuthController(context);
+
+            var request = new LoginRequest
+            {
+                Email = "valid@example.com",
+                Password = "password123"
+            };
+
+            // Act
+            var result = controller.Login(request);
+
+            // Assert
+            var okResult = Assert.IsType<OkObjectResult>(result);
+            Assert.Equal("Login successful.", okResult.Value);
+        }
+
+        [Fact]
         public void Register_WithPasswordOverMaxLength_ReturnsBadRequest_And_DoesNotSaveUser()
         {
             // Arrange
