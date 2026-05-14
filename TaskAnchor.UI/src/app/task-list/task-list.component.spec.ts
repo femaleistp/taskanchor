@@ -156,6 +156,35 @@ describe('TaskListComponent', () => {
     expect(taskItem?.querySelector('script')).toBeNull();
   });
 
+  it('should render script-like progress log text without creating a script element', () => {
+    component.tasks = [
+      {
+        taskId: 1,
+        title: 'Task with script-like progress log',
+        description: 'Task description',
+        status: 'Active',
+        priorityLevel: 'Medium',
+        dueDate: null,
+        nextAction: 'Next step',
+        lastUpdatedDate: new Date().toISOString(),
+        progressLogs: [
+          {
+            entryText: '<script>alert("x")</script>',
+          }
+        ]
+      }
+    ];
+
+    fixture.detectChanges();
+
+    const compiled = fixture.nativeElement as HTMLElement;
+    const taskItem = compiled.querySelector('li');
+
+    expect(taskItem).not.toBeNull();
+    expect(taskItem?.textContent).toContain('<script>alert("x")</script>');
+    expect(taskItem?.querySelector('script')).toBeNull();
+  });
+
   it('should not render empty state when tasks exist', () => {
     component.tasks = [
       {
