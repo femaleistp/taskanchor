@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using TaskAnchor.API.Controllers;
 using TaskAnchor.API.Data;
 using TaskAnchor.API.Services;
+using Microsoft.AspNetCore.Components;
 
 namespace TaskAnchor.Tests
 {
@@ -207,6 +208,35 @@ namespace TaskAnchor.Tests
             var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
             Assert.Equal("Email is already registered.", badRequestResult.Value);
             Assert.Single(context.AppUsers);
+        }
+
+        [Fact]
+        public void Register_WithValidEmailAndPassword_ReturnsOk_And_SavesUser()
+        {
+            // Arrange 
+            var options = new DbContextOptionsBuilder<TaskAnchorDbContext>()
+                .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
+                .Options;
+
+            using var context = new TaskAnchorDbContext(options);
+            var controller = new AuthController(context);
+
+            var request = new RegisterRequest
+            {
+                Email = "valid@example.com",
+                Password = "password123"
+            };
+
+            // Act
+            var result = controller.Register(request);
+
+            // Assert
+            var okResult = Assert.IsType<OkObjectResult>(result);
+            Assert.Equal("User registered successfully.", okResult.Value);
+
+            var savedUser = context.AppUsers.Single();
+            Assert.Equal("valid@example.com", savedUser.Email);
+            Assert.Equal(PasswordHasherService.HashPassword("password123"), savedUser.PasswordHash);
         }
 
         [Fact]
