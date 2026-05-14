@@ -22,8 +22,8 @@ Do not add new MVP features during this phase.
 ## Project Structure
 
 /docs
-- SRS_v1.13_050626.pdf
-- Test_Planning_Document_v1.15_050626.pdf
+- SRS_v1.15_051426.pdf
+- Test_Planning_Document_v1.16_051426.pdf
 - TaskAnchor_Component_Diagram.pdf
 - TaskAnchor_Class_Diagram.pdf
 - TaskAnchor_Use_Case_Diagram.pdf
@@ -62,14 +62,19 @@ Current capstone work remains focused on documentation alignment, MVP behavior v
 No new MVP features are being added. Out-of-scope items include subtasks, archiving/restoring, reactivation of completed tasks, categories/tags, multi-user features, notifications/reminders, AI features, payments, advanced prioritization, navbar/logout/session guard behavior, completed-task restore, completed-task undo behavior, time-specific due dates or due times, Progress Log edit/delete/revision-history workflows, CAPTCHA, rate limiting, lockouts, account verification, token/session enforcement beyond current MVP scope, multi-user authorization or ownership enforcement beyond current MVP scope, CSRF protection for future browser-session authentication, new authentication workflows, production deployment security hardening, and broad DRY refactoring during post-MVP validation.
 
 Current work log status:
-- 66.48 hours worked
-- 33.52 hours remaining toward the 100-hour capstone requirement
+- 70.32 hours worked
+- 29.68 hours remaining toward the 100-hour capstone requirement
 
 Manual MVP Workflow Testing is documented in the Test Planning Document. Browser verification has confirmed Register, Login, Task List, Create Task, Edit Task, status transitions, confirmation before terminal Completed status, Completed task exclusion, NextAction display/edit behavior, PriorityLevel edit behavior, DueDate edit/save after browser refresh, Description display with task data, Due Date display with task data, Progress Log save/display after refresh, blank Progress Log save close/clear behavior, Delete Task confirmation, deleted task removal after accepted delete and refresh, refresh behavior, Login/Register navigation links, Register success return to Login, duplicate Register error display, invalid Login error display, Login/Register blank-field validation, Create Task Title validation, and Task List clarity/access improvements.
 
 Practical UX Review full existing-screen review was confirmed on 05/05/2026. Remaining Practical UX Review findings are documented as known limitations.
 
-Security review documentation was added on 05/06/2026. The review covered Injection and Broken Access Control study topics, documented current MVP security limitations, and created future hardening backlog items. These future hardening items are not implemented MVP features.
+Security review documentation was added on 05/06/2026 and expanded through Week 7 validation/test-hardening updates on 05/14/2026. The review covered Injection and Broken Access Control study topics, documented current MVP security limitations, completed selected small existing-behavior validation/test-hardening backlog items, and preserved remaining production-grade security hardening as future work.
+
+Latest confirmed automated validation:
+- Backend xUnit: 45 of 45 tests passed
+- Angular Karma: 159 of 159 tests passed
+- Playwright: 36 passed, 0 skipped, 0 failed
 
 ---
 
@@ -109,7 +114,10 @@ Allowed remaining work:
 - Display corrections for existing Task object fields
 - Edit corrections for existing Task object fields already supported by backend update behavior
 - Existing-form validation for required fields
+- Existing backend validation hardening for selected current task/auth/progress-log inputs
 - Existing authentication input validation checks
+- Existing task/progress-log suspicious-input checks
+- Stored-text display regression tests for existing Task List fields
 - Existing status display readability corrections
 
 Not allowed:
@@ -147,7 +155,7 @@ Not allowed:
 - Broad DRY refactoring or architecture cleanup during post-MVP validation
 
 Security scope boundary:
-- The MVP includes basic authentication, password hashing, required-field validation for current auth forms, and suspicious-input validation for existing authentication behavior.
+- The MVP includes basic authentication, password hashing, required-field validation for current auth forms, selected backend validation hardening for existing auth/task/progress-log inputs, suspicious-input validation for existing authentication behavior, and stored-text display regression coverage for existing Task List fields.
 - The MVP does not claim production-grade authentication or authorization.
 - Token/session enforcement, multi-user ownership checks, rate limiting, lockouts, CAPTCHA, account verification, CSRF protection, logout/session guards, and role-based access control are future hardening items.
 - Security review findings should be documented as known limitations or future enhancements unless a small existing-behavior defect is explicitly selected for correction.
@@ -177,6 +185,15 @@ Security scope boundary:
 - [x] README documents Progress Log blank-save behavior
 - [x] README documents Create Task Description textarea support
 - [x] README documents Create Task Title validation
+- [x] README documents backend Create Task Title validation
+- [x] README documents backend text length validation for selected Task and Progress Log fields
+- [x] README documents backend authentication input length validation
+- [x] README documents backend Login blank-input validation
+- [x] README documents duplicate Register email validation
+- [x] README documents Register invalid email format validation
+- [x] README documents script-like Register email rejection
+- [x] README documents direct API suspicious task input testing
+- [x] README documents stored-text display regression coverage
 - [x] README documents security review scope and future hardening backlog status
 - [x] README documents current frontend test result
 - [x] README documents current backend test result
@@ -193,6 +210,7 @@ Security scope boundary:
   - [x] Login/Register validation aligned
   - [x] Delete confirmation aligned
   - [x] Status display readability aligned
+  - [x] Backend validation hardening aligned
   - [x] Security scope boundary aligned
   - [x] Future hardening backlog boundary aligned
 - [x] Test Plan reviewed against current README
@@ -202,6 +220,8 @@ Security scope boundary:
   - [x] E2E coverage gaps documented as completed
   - [x] Authentication access/error corrections documented in Test Plan
   - [x] Authentication validation/security handling documented in Test Plan
+  - [x] Backend validation hardening documented in Test Plan
+  - [x] Stored-text display regression coverage documented in Test Plan
   - [x] Completed status confirmation documented in Test Plan
   - [x] Delete confirmation documented in Test Plan
   - [x] Status display readability documented in Test Plan
@@ -227,7 +247,7 @@ Security scope boundary:
 - Displays backend-provided duplicate-registration error text when available
 - Displays required-field validation when email or password is blank/whitespace
 - Does not call `AuthService.register()` when email or password is blank/whitespace
-- Handles script-like or SQL-like input as plain text
+- Handles script-like or SQL-like input as plain text at the frontend service boundary
 - Provides Login link for users who already have an account
 - Uses tested `.register-card` structure
 - Uses black/white/gold styling aligned with Login, Create Task, and Task List
@@ -240,7 +260,7 @@ Security scope boundary:
 - Displays visible error message after failed login
 - Displays required-field validation when email or password is blank/whitespace
 - Does not call `AuthService.login()` when email or password is blank/whitespace
-- Handles script-like or SQL-like input as plain text
+- Handles script-like or SQL-like input as plain text at the frontend service boundary
 - Provides Register link for users without an account
 - Uses tested `.login-card` structure
 - Uses black/white/gold styling aligned with Register, Create Task, and Task List
@@ -267,6 +287,7 @@ Security scope boundary:
 - Active status button is styled green with darker green hover
 - InProgress status button is styled gold with darker gold hover
 - User-facing InProgress status text displays as "In Progress"
+- Script-like Title, Description, NextAction, and Progress Log text render as text and do not create script elements
 - Completed status color is documented as a future CSS note only because Completed tasks are excluded from the active list
 
 #### Task Interactions
@@ -341,6 +362,7 @@ Current edit support:
 - Existing Progress Log entries displayed per task:
   - `task.progressLogs[]`
   - Rendered as text entries
+  - Supports frontend display values from `log.text` or `log.entryText`
 - Manual browser verification confirmed Progress Log entries display after refresh
 - Manual browser verification confirmed blank Progress Log save closes/clears the input without creating an empty entry
 
@@ -423,6 +445,9 @@ Known Progress Log limitation:
 - `Task` interface includes optional Progress Log support:
   - `progressLogs?: ProgressLog[]`
 - `ProgressLog` interface is currently defined in `models/task.ts`
+- `ProgressLog` display supports:
+  - `text`
+  - `entryText`
 - Internal/backend status value remains `InProgress`; visible UI display uses `In Progress`
 
 Security architecture note:
@@ -487,13 +512,17 @@ Coverage includes:
 - Create Task required Title validation
 - Create Task validation error styling
 - DueDate date-only behavior documented as MVP scope boundary
+- Stored-text display regression coverage for script-like Task Title
+- Stored-text display regression coverage for script-like Task Description
+- Stored-text display regression coverage for script-like NextAction
+- Stored-text display regression coverage for script-like Progress Log text
 
 Latest Angular Karma run:
-- Date: 05/05/2026
+- Date: 05/14/2026
 - Command: `ng test`
-- Result: 155 of 155 tests passed
+- Result: 159 of 159 tests passed
 - Failed: 0
-- Browser: Chrome 147.0.0.0 on Windows 10
+- Browser: Chrome on Windows development environment
 
 ### Test Normalization Completed
 
@@ -511,6 +540,7 @@ Latest Angular Karma run:
   - Edit-mode field tests normalized to scope selectors inside `.edit-task-fields`
   - PriorityLevel, DueDate, and NextAction edit-mode input coverage added
   - Blank Progress Log save behavior covered
+  - Stored-text display regression tests added for script-like Title, Description, NextAction, and Progress Log text
 - `task.service.spec.ts`
   - GET `/api/tasks` response fixtures normalized to full Task shape
   - POST `/api/tasks` create payload intentionally remains create-payload shaped
@@ -591,8 +621,14 @@ Previously documented E2E gaps are now complete:
 - Frontend Register error display reads backend-provided error text from `HttpErrorResponse.error`
 - Invalid login is rejected and frontend displays a visible login failure message
 - Blank Login/Register fields are blocked in the frontend before AuthService calls
+- Backend Login rejects blank or whitespace email/password with `BadRequest("Email and password are required.")`
+- Register/Login email values over 255 characters are rejected with `BadRequest("Email must be 255 characters or fewer.")`
+- Register/Login password values over 128 characters are rejected with `BadRequest("Password must be 128 characters or fewer.")`
+- Duplicate Register email returns `BadRequest("Email is already registered.")` and does not save a second user
+- Clearly invalid Register email format returns `BadRequest("Email format is invalid.")` and does not save a user
+- Script-like Register email input is rejected as invalid email format and is not saved
+- SQL-like Register password input is stored only as a hash when paired with a valid email
 - Suspicious/script-like login input does not bypass backend authentication
-- Suspicious registration input stores email as trimmed text and password as a hash
 - Raw password text is not stored
 
 ### Task Management
@@ -604,12 +640,20 @@ Previously documented E2E gaps are now complete:
 - Frontend status changes persist through `TaskService.updateTaskStatus()` and then trigger `refreshTasks()`
 - Frontend task updates persist through `TaskService.updateTask()` and then trigger `refreshTasks()`
 - Frontend delete requests are protected by title-specific confirmation before `deleteTask()` is called
+- Backend Create Task rejects blank or whitespace-only Title values with `BadRequest("Title is required.")`
+- Backend Create Task rejects Title values over 100 characters with `BadRequest("Title must be 100 characters or fewer.")`
+- Backend Create Task rejects Description values over 500 characters with `BadRequest("Description must be 500 characters or fewer.")`
+- Backend Create Task rejects NextAction values over 200 characters with `BadRequest("Next Action must be 200 characters or fewer.")`
+- Direct API suspicious task input is tested and saved as plain text data
 
 ### Progress Log
 - POST `/api/tasks/{id}/progress`
 - GET `/api/tasks/{id}/progress`
 - Frontend uses `TaskService.addProgressLog(taskId, text)` to persist Progress Log entries
 - Blank/whitespace Progress Log entries are blocked in frontend behavior
+- Backend Progress Log EntryText is trimmed before saving
+- Script-like Progress Log EntryText is stored as plain text
+- Backend Progress Log EntryText values over 500 characters are rejected with `BadRequest("Entry Text must be 500 characters or fewer.")`
 - Task list responses include Progress Log data for UI display
 
 ### Business Rules
@@ -629,9 +673,9 @@ Previously documented E2E gaps are now complete:
   3. No due date → priority High → Low
 
 Latest backend xUnit run:
-- Date: 05/04/2026
+- Date: 05/14/2026
 - Command: `dotnet test`
-- Result: 27 of 27 tests passed
+- Result: 45 of 45 tests passed
 - Failed: 0
 - Skipped: 0
 - Build: succeeded
@@ -641,22 +685,33 @@ Latest backend xUnit run:
 
 ## Security Review Summary
 
-Security review was documented on 05/06/2026 after studying Injection and Broken Access Control risk areas.
+Security review was documented on 05/06/2026 after studying Injection and Broken Access Control risk areas. Selected small existing-behavior validation and regression-hardening items were completed during Week 7.
 
 Implemented MVP security validation:
 - Login rejects invalid credentials.
 - Duplicate registration is rejected.
 - Passwords are hashed during registration.
 - Blank Login/Register fields are blocked in the frontend before service calls.
+- Backend Login rejects blank or whitespace email/password values.
+- Register/Login email and password length limits are enforced in the backend.
+- Register invalid email format is rejected in the backend.
+- Script-like Register email input is rejected as invalid email format.
 - Suspicious/script-like Login input is passed as plain text on the frontend and does not bypass backend authentication.
 - Suspicious/script-like Register input is passed as plain text on the frontend.
-- Suspicious registration password input is hashed and not stored raw.
+- SQL-like registration password input is hashed and not stored raw when paired with a valid email.
 - Create Task blank Title is blocked in the frontend before `createTask()` and `refreshTasks()` calls.
+- Create Task blank Title is rejected by the backend.
+- Create Task selected text fields have backend length limits.
+- Progress Log EntryText is trimmed and length-limited in the backend.
+- Script-like Progress Log EntryText is stored as plain text.
+- Direct API suspicious task input is covered and stored as plain text.
+- Existing Task List Title, Description, NextAction, and Progress Log display fields have stored-text display regression coverage.
 
 Current security assessment:
 - No confirmed SQL injection or command injection vulnerability was identified in the reviewed code snippets.
 - Reviewed backend behavior appears to use Entity Framework Core/LINQ rather than string-concatenated dynamic SQL.
 - Angular text interpolation should remain preferred for displaying user-entered text.
+- Stored-text display regression coverage confirms script-like Title, Description, NextAction, and Progress Log values render as text without creating script elements.
 - Unsafe dynamic HTML patterns, direct DOM manipulation, and dynamic command/query construction should be avoided in future changes.
 - The main security limitation is MVP-level access control/authentication enforcement.
 - Current MVP uses basic authentication and simplified single-user behavior.
@@ -678,16 +733,19 @@ Security limitations intentionally outside MVP scope:
 - Production-grade dependency vulnerability remediation process
 - Production deployment hardening
 
-Future security backlog:
+Completed security/validation hardening backlog:
 - Backend Title validation parity with frontend Create Task validation
-- Backend length limits for text fields
+- Backend length limits for selected task/progress-log text fields
 - Progress Log input normalization review
-- Stored XSS regression tests for task display fields
-- Unsafe dynamic execution pattern review
+- Stored-text display regression tests for task display fields
 - Direct API tests for suspicious task input
-- Backend authentication/session hardening
 - Duplicate and invalid email validation review
+- Backend authentication input length validation
+
+Future security backlog:
+- Unsafe dynamic execution pattern review
 - Dependency vulnerability review before future release/deployment
+- Backend authentication/session hardening
 - Backend authentication enforcement for Task APIs
 - Authenticated user ownership checks
 - Progress Log ownership checks
@@ -699,6 +757,9 @@ Future security backlog:
 - Access-control logging for rejected protected requests
 - Rate limiting for authentication and protected APIs
 - Secure session/token lifetime review
+- File upload exposure review before adding file upload/import features
+- Path traversal review before adding file, import, export, or download features
+- Unsafe deserialization review before adding import/API bulk features
 
 Current decision:
 - Security backlog items are future hardening items unless explicitly selected later.
@@ -727,7 +788,13 @@ Current decision:
 - Login success routes to Task List
 - Register/Login failures display visible feedback
 - Register/Login blank fields display visible feedback and block service calls
+- Backend Login rejects blank input before authentication lookup
+- Register/Login input length limits are enforced by the backend
+- Register invalid email format is rejected by the backend
+- Duplicate Register email is rejected by the backend
 - Create Task blank Title displays visible feedback and blocks create calls
+- Backend Create Task rejects blank Title
+- Backend Create Task text length limits are enforced for Title, Description, and NextAction
 - Task List displays existing Task object details when present:
   - Description
   - Priority
@@ -741,7 +808,11 @@ Current decision:
   - DueDate
   - NextAction
 - Blank Progress Log save closes/clears input without creating an empty entry
+- Backend Progress Log EntryText is trimmed before saving
+- Backend Progress Log EntryText length limit is enforced
 - Authentication suspicious-input behavior is validated for the MVP
+- Task/progress-log suspicious input is validated as plain text behavior for selected cases
+- Stored-text display regression coverage verifies script-like Task List values display as text
 - Passwords are stored as hashes, not raw password text
 
 ---
@@ -758,6 +829,7 @@ User actions:
 - Register blank fields → visible validation message
 - Register → success → return to Login
 - Register duplicate email → visible error message
+- Register invalid email format → backend validation error
 - Login blank fields → visible validation message
 - Login invalid credentials → visible error message
 - Login success → Task List
@@ -867,10 +939,23 @@ Current decision:
   - Rule coverage
   - API behavior coverage
   - Progress Log persistence behavior
+  - Progress Log trim behavior
+  - Progress Log length validation
+  - Progress Log script-like plain-text behavior
   - Status transition behavior
   - Authentication validation behavior
   - Authentication suspicious-input behavior
   - Password hashing behavior
+  - Create Task blank Title validation
+  - Create Task text length validation
+  - Direct API suspicious task input behavior
+  - Register/Login input length validation
+  - Login blank input validation
+  - Duplicate Register email validation
+  - Valid Register regression coverage
+  - Valid Login regression coverage
+  - Register invalid email format validation
+  - Script-like Register email rejection
 - Frontend:
   - Rendering
   - Binding
@@ -902,6 +987,7 @@ Current decision:
   - Create Task Description textarea support
   - Create Task Title validation
   - Create Task validation message styling
+  - Stored-text display regression coverage for script-like Title, Description, NextAction, and Progress Log text
 - Playwright:
   - Login page loads
   - Register page loads
@@ -917,8 +1003,8 @@ Current decision:
   - Delete confirmation accept browser flow
 
 Latest test runs:
-- Backend xUnit: 27 of 27 tests passed using `dotnet test`
-- Frontend Angular Karma: 155 of 155 tests passed using `ng test`
+- Backend xUnit: 45 of 45 tests passed using `dotnet test`
+- Frontend Angular Karma: 159 of 159 tests passed using `ng test`
 - Playwright full run: 36 passed, 0 skipped, 0 failed using `npx playwright test`
 
 Practical UX Review and Manual MVP Workflow Testing are defined in the Test Planning Document as manual validation activities for existing MVP flows only.
@@ -974,6 +1060,13 @@ Blank dueDate is sent as `null`.
 
 DueDate is treated as a date-only MVP field.
 
+Frontend ProgressLog display objects support:
+
+    {
+      text?: string;
+      entryText?: string;
+    }
+
 Current Task field support:
 - Description exists in the Task object and is captured by the Create Task UI.
 - Description displays when task data includes description.
@@ -1019,7 +1112,7 @@ This is not part of the current MVP and should not be implemented during the cur
 
 ### Production Authentication and Authorization Hardening
 
-Current MVP behavior supports basic Register/Login behavior, password hashing, visible validation feedback, and suspicious-input validation tests.
+Current MVP behavior supports basic Register/Login behavior, password hashing, visible validation feedback, selected backend validation hardening, and suspicious-input validation tests.
 
 Possible future behavior:
 - Token/session enforcement
@@ -1042,16 +1135,23 @@ These are not part of the current MVP and should not be implemented during the c
 
 ### Injection and Stored Text Hardening
 
-Current MVP behavior includes suspicious-input validation for existing authentication behavior. No confirmed SQL injection or command injection vulnerability was identified in the reviewed code snippets.
+Current MVP behavior includes suspicious-input validation for existing authentication behavior, direct API suspicious task input testing, selected backend validation hardening, and stored-text display regression coverage for existing Task List fields. No confirmed SQL injection or command injection vulnerability was identified in the reviewed code snippets.
 
-Possible future behavior:
+Completed validation/test-hardening items:
 - Backend Title validation parity with frontend Create Task validation
-- Backend length limits for text fields
+- Backend length limits for selected task/progress-log text fields
 - Progress Log input normalization review
-- Stored XSS regression tests for displayed task and Progress Log fields
-- Unsafe dynamic execution pattern review
+- Stored-text display regression tests for displayed task and Progress Log fields
 - Direct API tests for suspicious task input
+- Duplicate and invalid email validation review
+- Backend authentication input length validation
+
+Remaining possible future behavior:
+- Unsafe dynamic execution pattern review
 - Dependency vulnerability review before future release/deployment
+- File upload exposure review before adding attachments/import features
+- Path traversal review before adding file, import, export, download, or generated-file features
+- Unsafe deserialization review before adding import, backup restore, or bulk API features
 
 These are not part of the current MVP and should not be implemented during the current post-MVP validation pass unless explicitly selected later as small existing-behavior hardening or final validation work.
 
@@ -1117,6 +1217,16 @@ This is not part of the current MVP and should not be implemented during the cur
 - [x] Add tested blank Progress Log save behavior
 - [x] Add tested Create Task Description textarea support
 - [x] Add tested Create Task Title validation
+- [x] Add backend Create Task Title validation
+- [x] Add backend text length validation for selected task/progress-log fields
+- [x] Add backend authentication input length validation
+- [x] Add backend Login blank-input validation
+- [x] Add duplicate Register email regression coverage
+- [x] Add valid Register regression coverage
+- [x] Add valid Login regression coverage
+- [x] Add Register invalid email format validation
+- [x] Add script-like Register email rejection coverage
+- [x] Add stored-text display regression coverage for Title, Description, NextAction, and Progress Log text
 - [x] Document DueDate date-only MVP boundary
 - [x] Expand Playwright coverage for documented existing MVP E2E gaps
 
@@ -1149,39 +1259,47 @@ This is not part of the current MVP and should not be implemented during the cur
 ---
 
 ### Documentation Alignment
-- [x] Update SRS to v1.13
+- [x] Update SRS to v1.15
   - DueDate date-only boundary documented
   - NextAction edit behavior documented
   - PriorityLevel edit behavior documented
   - Create Task validation documented
+  - Backend Create Task validation documented
+  - Backend text length validation documented
   - Login/Register validation documented
+  - Backend authentication input validation documented
   - Authentication suspicious-input behavior documented
+  - Register invalid email format validation documented
+  - Stored-text display regression coverage documented
   - Delete confirmation documented
   - Status display readability documented
   - `/register` routing reflected
   - Security scope boundary documented
   - Future hardening backlog boundary documented
   - SRS kept limited to product requirements
-- [x] Update Test Plan to v1.15
-  - Latest Angular Karma result remains 155 of 155
-  - Latest backend xUnit result remains 27 of 27
+- [x] Update Test Plan to v1.16
+  - Latest Angular Karma result updated to 159 of 159
+  - Latest backend xUnit result updated to 45 of 45
   - Latest Playwright result remains 36 passed, 0 skipped, 0 failed
   - DueDate date-only boundary documented
   - NextAction edit-mode coverage documented
   - PriorityLevel edit-mode coverage documented
   - Create Task validation documented
+  - Backend validation hardening documented
   - Login/Register validation documented
   - Authentication suspicious-input tests documented
+  - Register invalid email format validation documented
+  - Stored-text display regression coverage documented
   - Delete confirmation documented
   - Status readability documented
   - Practical UX Review confirmed and findings documented
   - Security review documented
   - Future hardening backlog documented
-- [x] Update README to v3.2
-  - Latest Angular Karma result remains 155 of 155
-  - Latest backend xUnit result remains 27 of 27
+- [x] Update README to v3.3
+  - Latest Angular Karma result updated to 159 of 159
+  - Latest backend xUnit result updated to 45 of 45
   - Latest Playwright result remains 36 passed, 0 skipped, 0 failed
-  - Work log status documented as 66.48 hours worked / 33.52 remaining
+  - Work log status documented as 70.32 hours worked / 29.68 remaining
   - DueDate date-only boundary documented
   - DueDate edit/save after browser refresh documented
   - Description and Due Date display confirmed
@@ -1190,8 +1308,13 @@ This is not part of the current MVP and should not be implemented during the cur
   - DueDate edit support documented
   - Create Task Description textarea support documented
   - Create Task Title validation documented
+  - Backend Create Task Title validation documented
+  - Backend text length validation documented
+  - Backend authentication input validation documented
   - Login/Register validation documented
   - Authentication suspicious-input tests documented
+  - Register invalid email format validation documented
+  - Stored-text display regression coverage documented
   - Delete confirmation documented
   - Status display readability documented
   - Practical UX Review confirmed and known limitations documented
@@ -1222,6 +1345,7 @@ This is not part of the current MVP and should not be implemented during the cur
 - [x] Document that multi-user ownership enforcement remains outside MVP scope
 - [x] Create future hardening backlog cards for Injection-related items
 - [x] Create future hardening backlog cards for Broken Access Control-related items
+- [x] Complete selected small validation/test-hardening backlog items for existing MVP behavior
 - [x] Align security review wording across SRS, Test Plan, and README
 
 ---
@@ -1334,6 +1458,7 @@ Blocked fixes:
   - Authentication validation/security checks remained within MVP scope
   - Security review identified future hardening items without expanding MVP scope
   - Existing-flow Playwright coverage confirmed MVP behavior in browser
+  - Week 7 validation hardening improved existing backend validation and regression coverage without adding new workflows
 
 ---
 
@@ -1345,10 +1470,12 @@ Blocked fixes:
 - [x] Add 2026-05-03 frontend validation/documentation alignment work log entry
 - [x] Add 2026-05-04 Create Task form usability work log entry
 - [x] Add 2026-05-04 authentication validation work log entry
-- [ ] Add 2026-05-05 Playwright validation work log entry
-- [ ] Add 2026-05-05 Practical UX Review/Delete confirmation/status readability/documentation work log entry
-- [ ] Add 2026-05-06 security review/backlog documentation work log entry
-- [ ] Commit/sync latest SRS, Test Plan, README, validation, and documentation updates if not already committed
+- [x] Add 2026-05-05 Playwright validation work log entry
+- [x] Add 2026-05-05 Practical UX Review/Delete confirmation/status readability/documentation work log entry
+- [x] Add 2026-05-06 security review/backlog documentation work log entry
+- [x] Add 2026-05-13 Week 7 backend validation/security hardening work log entry
+- [x] Add 2026-05-14 Week 7 authentication/stored-text display regression work log entry
+- [x] Commit/sync latest SRS, Test Plan, README, validation, and documentation updates if not already committed
 
 ---
 
@@ -1359,10 +1486,11 @@ Blocked fixes:
 3. Update private assistant instructions/context if needed for future session alignment.
 4. Add 05/05/2026 work log entries.
 5. Add 05/06/2026 security review/backlog documentation work log entry.
-6. Prepare demo notes for the implemented MVP.
-7. Prepare capstone presentation and poster materials.
-8. Continue work logging toward the 100-hour capstone requirement.
-9. Only add further code changes for confirmed defects or small existing-screen clarity/access corrections.
+6. Add 05/13/2026 and 05/14/2026 Week 7 validation/security hardening work log entries.
+7. Prepare demo notes for the implemented MVP.
+8. Prepare capstone presentation and poster materials.
+9. Continue work logging toward the 100-hour capstone requirement.
+10. Only add further code changes for confirmed defects or small existing-screen clarity/access corrections.
 
 ---
 
@@ -1390,11 +1518,48 @@ Blocked fixes:
 - Returned/rendered Task test fixtures must use the full frontend Task shape
 - Existing Progress Log entries are add/view only in the current MVP
 - Progress Log correction history is documented as a future enhancement only
-- Current work log status: 66.48 hours worked / 33.52 hours remaining
+- Current work log status: 70.32 hours worked / 29.68 hours remaining
 
 ---
 
 ## Changelog
+
+### v3.3 (05/14/2026)
+- Updated README to align with SRS v1.15 and Test Planning Document v1.16.
+- Updated document references to SRS_v1.15_051426.pdf and Test_Planning_Document_v1.16_051426.pdf.
+- Updated current work log status to 70.32 hours worked and 29.68 hours remaining toward the 100-hour capstone requirement.
+- Updated latest backend xUnit result to 45 of 45 tests passed using `dotnet test`.
+- Updated latest Angular Karma result to 159 of 159 tests passed using `ng test`.
+- Confirmed latest Playwright result remains 36 passed, 0 skipped, 0 failed using `npx playwright test`.
+- Documented completed backend Create Task blank Title validation.
+- Documented completed backend Create Task Title length validation.
+- Documented completed backend Create Task Description length validation.
+- Documented completed backend Create Task NextAction length validation.
+- Documented completed backend Progress Log EntryText trim behavior.
+- Documented completed backend Progress Log script-like plain-text behavior.
+- Documented completed backend Progress Log EntryText length validation.
+- Documented completed direct API suspicious task input plain-text coverage.
+- Documented completed backend Register email length validation.
+- Documented completed backend Register password length validation.
+- Documented completed backend Login email length validation.
+- Documented completed backend Login password length validation.
+- Documented completed backend Login blank-input validation.
+- Documented completed duplicate Register email regression coverage.
+- Documented completed valid Register regression coverage.
+- Documented completed valid Login regression coverage.
+- Documented completed Register invalid email format validation.
+- Documented completed script-like Register email rejection coverage.
+- Documented completed SQL-like Register password hashing coverage with valid email.
+- Documented completed stored-text display regression coverage:
+  - Script-like task Title renders as text without creating a script element.
+  - Script-like task Description renders as text without creating a script element.
+  - Script-like NextAction renders as text without creating a script element.
+  - Script-like Progress Log text renders as text without creating a script element.
+- Updated Security Review Summary to separate completed validation/test-hardening backlog items from future production-grade hardening.
+- Updated Future Enhancement Notes so completed validation/test-hardening items are no longer listed only as future work.
+- Added future review notes for file upload exposure, path traversal, and unsafe deserialization/import behavior.
+- Updated Loose Ends, Documentation Alignment, Security Review, Test Integrity, Demo / Presentation Prep, Work Log / Git, Next Steps, and Notes sections.
+- Maintained scope boundaries: no new MVP features, no new workflows, no token/session enforcement, no multi-user ownership enforcement, no CAPTCHA, no rate limiting, no lockouts, no account verification, no role-based access control, no CSRF implementation, no Progress Log edit/delete/revision history, no due times, and no broad refactoring.
 
 ### v3.2 (05/06/2026)
 - Updated README to align with SRS v1.13 and Test Planning Document v1.15.
@@ -1685,3 +1850,5 @@ Blocked fixes:
 
 ### v1.1
 - Core backend logic
+
+
