@@ -2,17 +2,17 @@
 
 namespace TaskAnchor.Tests
 {
-    public class SecurityPatternReviewTests
+    public class FileUploadExposureReviewTests
     {
         [Fact]
-        public void Codebase_DoesNotUseUnsafeDynamicExecutionPatterns()
+        public void Codebase_DoesNotExposeFileUploadSurface()
         {
             // Arrange
             var repositoryRoot = FindRepositoryRoot();
 
             var excludedDirectories = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
-            { 
-                ".git", 
+            {
+                ".git",
                 "bin",
                 "obj",
                 "node_modules",
@@ -25,22 +25,19 @@ namespace TaskAnchor.Tests
                 .EnumerateFiles(repositoryRoot, "*.*", SearchOption.AllDirectories)
                 .Where(file =>
                     !file.Split(Path.DirectorySeparatorChar).Any(part => excludedDirectories.Contains(part)) &&
-                    IsReviewedSourceFile(file))
+                    IsReviewedSourceFile(file) &&
+                    !Path.GetFileName(file).Equals("FileUploadExposureReviewTests.cs", StringComparison.OrdinalIgnoreCase))
                 .ToList();
 
-            var unsafePatterns = new Dictionary<string, Regex>
+            var uploadSurfacePatterns = new Dictionary<string, Regex>
             {
-                ["FromSqlRaw"] = new Regex(@"\bFromSqlRaw\s*\(", RegexOptions.Compiled),
-                ["ExecuteSqlRaw"] = new Regex(@"\bExecuteSqlRaw\s*\(", RegexOptions.Compiled),
-                ["SqlQuery"] = new Regex(@"\bSqlQuery\s*\(", RegexOptions.Compiled),
-                ["Process.Start"] = new Regex(@"\bProcess\.Start\s*\(", RegexOptions.Compiled),
-                ["eval"] = new Regex(@"\beval\s*\(", RegexOptions.Compiled),
-                ["dynamic HTML property assignment"] = new Regex(@"\.inner" + @"HTML\b", RegexOptions.Compiled),
-                ["bypassSecurityTrustHtml"] = new Regex(@"\bbypassSecurityTrustHtml\s*\(", RegexOptions.Compiled),
-                ["document.write"] = new Regex(@"\bdocument\.write\s*\(", RegexOptions.Compiled),
-                ["Function constructor"] = new Regex(@"\bnew\s+Function\s*\(", RegexOptions.Compiled),
-                ["setTimeout string argument"] = new Regex(@"\bsetTimeout\s*\(\s*['""]", RegexOptions.Compiled),
-                ["setInterval string argument"] = new Regex(@"\bsetInterval\s*\(\s*['""]", RegexOptions.Compiled),
+                ["IFormFile"] = new Regex(@"\bI" + @"FormFile\b", RegexOptions.Compiled | RegexOptions.IgnoreCase),
+                ["FormFile"] = new Regex(@"\b" + @"FormFile\b", RegexOptions.Compiled | RegexOptions.IgnoreCase),
+                ["Request.Form.Files"] = new Regex(@"\bRequest\.Form\.Files\b", RegexOptions.Compiled | RegexOptions.IgnoreCase),
+                ["multipart form data"] = new Regex(@"multipart/form-data", RegexOptions.Compiled | RegexOptions.IgnoreCase),
+                ["file input"] = new Regex(@"type\s*=\s*[""']file[""']", RegexOptions.Compiled | RegexOptions.IgnoreCase),
+                ["FormData"] = new Regex(@"\b" + @"FormData\b", RegexOptions.Compiled | RegexOptions.IgnoreCase),
+                ["upload route or identifier"] = new Regex(@"\b(upload|uploads|attachment|attachments)\b", RegexOptions.Compiled | RegexOptions.IgnoreCase),
             };
 
             // Act
@@ -50,10 +47,10 @@ namespace TaskAnchor.Tests
             {
                 var content = File.ReadAllText(file);
 
-                foreach (var pattern in unsafePatterns)
+                foreach (var pattern in uploadSurfacePatterns)
                 {
                     if (pattern.Value.IsMatch(content))
-                    { 
+                    {
                         findings.Add($"{Path.GetRelativePath(repositoryRoot, file)} contains {pattern.Key}");
                     }
                 }
@@ -62,9 +59,9 @@ namespace TaskAnchor.Tests
             // Assert
             Assert.True(
                 findings.Count == 0,
-                "Unsafe dynamic execution patterns were found: " + string.Join("; ", findings));
+                "Potential file upload surface was found: " + string.Join("; ", findings));
         }
-        
+
         private static string FindRepositoryRoot()
         {
             var currentDirectory = Directory.GetCurrentDirectory();
@@ -81,16 +78,16 @@ namespace TaskAnchor.Tests
                 currentDirectory = Directory.GetParent(currentDirectory)?.FullName;
             }
 
-            throw new DirectoryNotFoundException("Could not locate TashAnchor repository root.");
+            throw new DirectoryNotFoundException("Could not locate TaskAnchor repository root.");
         }
-    
+
         private static bool IsReviewedSourceFile(string file)
         {
             var extension = Path.GetExtension(file);
 
             return extension.Equals(".cs", StringComparison.OrdinalIgnoreCase) ||
-                extension.Equals(".ts", StringComparison.OrdinalIgnoreCase) ||
-                extension.Equals("html", StringComparison.OrdinalIgnoreCase);
+                   extension.Equals(".ts", StringComparison.OrdinalIgnoreCase) ||
+                   extension.Equals(".html", StringComparison.OrdinalIgnoreCase);
         }
     }
 }
