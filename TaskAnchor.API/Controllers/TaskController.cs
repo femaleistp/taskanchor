@@ -21,32 +21,40 @@ namespace TaskAnchor.API.Controllers
         }
 
         [HttpPost]
-        public IActionResult CreateTask([FromBody] TaskItem task)
+        public IActionResult CreateTask([FromBody] CreateTaskRequest request)
         {
-            if (string.IsNullOrWhiteSpace(task.Title))
+            if (string.IsNullOrWhiteSpace(request.Title))
             {
                 return BadRequest("Title is required.");
             }
 
-            if(task.Title.Length > 100)
+            if(request.Title.Length > 100)
             {
                 return BadRequest("Title must be 100 characters or fewer.");
             }
 
-            if (!string.IsNullOrEmpty(task.Description) && task.Description.Length > 500)
+            if (!string.IsNullOrEmpty(request.Description) && request.Description.Length > 500)
             {
                 return BadRequest("Description must be 500 characters or fewer.");
             }
 
-            if (!string.IsNullOrEmpty(task.NextAction) && task.NextAction.Length > 200)
+            if (!string.IsNullOrEmpty(request.NextAction) && request.NextAction.Length > 200)
             {
                 return BadRequest("Next Action must be 200 characters or fewer.");
             }
 
             // Logic to create a new task
-            task.UserId = 1; // Temporary hardcoded user ID for testing purposes
-            task.Status = TaskStatus.Active;
-            task.LastUpdatedDate = TaskTimestampRules.GetUpdatedTimestamp();
+            var task = new TaskItem
+            {
+                Title = request.Title,
+                Description = request.Description,
+                PriorityLevel = request.PriorityLevel,
+                DueDate = request.DueDate,
+                NextAction = request.NextAction,
+                UserId = 1, // Temporary hardcoded user ID for testing purposes
+                Status = TaskStatus.Active,
+                LastUpdatedDate = TaskTimestampRules.GetUpdatedTimestamp()
+            };
 
             _context.Tasks.Add(task);
             _context.SaveChanges();
@@ -145,7 +153,7 @@ namespace TaskAnchor.API.Controllers
         }
 
         [HttpPut("{id}")]
-        public IActionResult UpdateTask(int id, [FromBody] TaskItem updatedTask)
+        public IActionResult UpdateTask(int id, [FromBody] UpdateTaskRequest updatedTask)
         {
             var existingTask = _context.Tasks.FirstOrDefault(t => t.TaskId == id && t.UserId == 1); // Temporary hardcoded user ID for testing purposes, should be t.TaskId == id in production
             if (existingTask == null)

@@ -219,20 +219,17 @@ namespace TaskAnchor.Tests
 
             var controller = new TasksController(context);
 
-            var task = new TaskItem
+            var request = new CreateTaskRequest
             {
-                UserId = 1,
                 Title = "   ",
                 Description = "Description should not be saved",
-                Status = TaskStatus.Active,
                 PriorityLevel = PriorityLevel.Medium,
                 DueDate = null,
-                NextAction = "Next action should not be saved",
-                LastUpdatedDate = DateTime.UtcNow
+                NextAction = "Next action should not be saved"
             };
 
             // Act
-            var result = controller.CreateTask(task);
+            var result = controller.CreateTask(request);
 
             // Assert
             var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
@@ -252,20 +249,17 @@ namespace TaskAnchor.Tests
 
             var controller = new TasksController(context);
 
-            var task = new TaskItem
+            var request = new CreateTaskRequest
             {
-                UserId = 1,
                 Title = new string('A', 101),
                 Description = "Description should not be saved",
-                Status = TaskStatus.Active,
                 PriorityLevel = PriorityLevel.Medium,
                 DueDate = null,
-                NextAction = "Next action should not be saved",
-                LastUpdatedDate = DateTime.UtcNow
+                NextAction = "Next action should not be saved"
             };
 
             // Act
-            var result = controller.CreateTask(task);
+            var result = controller.CreateTask(request);
 
             // Assert
             var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
@@ -285,20 +279,18 @@ namespace TaskAnchor.Tests
 
             var controller = new TasksController(context);
 
-            var task = new TaskItem
+
+            var request = new CreateTaskRequest
             {
-                UserId = 1,
                 Title = "Valid Title",
                 Description = "Valid description",
-                Status = TaskStatus.Active,
                 PriorityLevel = PriorityLevel.Medium,
                 DueDate = null,
-                NextAction = new string('N', 201),
-                LastUpdatedDate = DateTime.UtcNow
+                NextAction = new string('N', 201)
             };
 
             // Act
-            var result = controller.CreateTask(task);
+            var result = controller.CreateTask(request);
 
             // Assert
             var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
@@ -318,21 +310,17 @@ namespace TaskAnchor.Tests
 
             var controller = new TasksController(context);
 
-            var task = new TaskItem
+            var request = new CreateTaskRequest
             {
-                UserId = 1,
                 Title = "Valid Title",
                 Description = new string('D', 501),
-                Status = TaskStatus.Active,
                 PriorityLevel = PriorityLevel.Medium,
                 DueDate = null,
-                NextAction = "Next action should not be saved",
-                LastUpdatedDate = DateTime.UtcNow
+                NextAction = "Next action should not be saved"
             };
 
             // Act
-
-            var result = controller.CreateTask(task);
+            var result = controller.CreateTask(request);
 
             // Assert
             var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
@@ -352,20 +340,17 @@ namespace TaskAnchor.Tests
 
             var controller = new TasksController(context);
 
-            var task = new TaskItem
+            var request = new CreateTaskRequest
             {
-                UserId = 1,
                 Title = "<script>alert(\"x\")</script>",
                 Description = "' OR '1'='1",
-                Status = TaskStatus.Active,
                 PriorityLevel = PriorityLevel.Medium,
                 DueDate = null,
-                NextAction = "<b>Next action</b>",
-                LastUpdatedDate = DateTime.UtcNow
+                NextAction = "<b>Next action</b>"
             };
 
             // Act
-            controller.CreateTask(task);
+            controller.CreateTask(request);
 
             // Assert
             var savedTask = context.Tasks.First();
